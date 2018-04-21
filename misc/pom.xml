@@ -18,5 +18,6 @@
        <module>vhat-constants</module>
        <module>vhat-util</module>
        <module>security</module>
+       <module>differ</module>
     </modules>
 </project>
