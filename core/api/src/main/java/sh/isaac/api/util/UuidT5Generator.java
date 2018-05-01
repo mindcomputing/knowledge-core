@@ -61,7 +61,7 @@ import sh.isaac.api.bootstrap.TermAux;
  */
 public class UuidT5Generator {
    /** The Constant encoding. */
-   public static final String encoding = "8859_1";
+   public final static String encoding = "UTF-8";
 
    /** The Constant PATH_ID_FROM_FS_DESC. */
    public static final UUID PATH_ID_FROM_FS_DESC = UUID.fromString("5a2e7786-3e41-11dc-8314-0800200c9a66");
@@ -82,24 +82,6 @@ public class UuidT5Generator {
    public static final UUID AUTHOR_TIME_ID = UUID.fromString("c6915290-30fc-11e1-b86c-0800200c9a66");
 
    //~--- get methods ---------------------------------------------------------
-
-   /**
-    * Gets the desc uuid.
-    *
-    * @param text the text
-    * @param langPrimUuid the lang prim uuid
-    * @param conceptPrimUuid the concept prim uuid
-    * @return the desc uuid
-    * @throws NoSuchAlgorithmException the no such algorithm exception
-    * @throws UnsupportedEncodingException the unsupported encoding exception
-    */
-   public static UUID getDescUuid(String text,
-                                  UUID langPrimUuid,
-                                  UUID conceptPrimUuid)
-            throws NoSuchAlgorithmException,
-                   UnsupportedEncodingException {
-      return get(langPrimUuid, text + conceptPrimUuid.toString());
-   }
 
    /**
     * Gets the.

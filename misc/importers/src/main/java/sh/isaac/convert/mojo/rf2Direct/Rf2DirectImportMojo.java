@@ -46,10 +46,6 @@ import java.util.concurrent.Future;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.Appender;
-import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.appender.FileAppender;
-import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -61,6 +57,8 @@ import sh.isaac.api.bootstrap.TermAux;
 import sh.isaac.api.commit.StampService;
 import sh.isaac.api.constants.DatabaseInitialization;
 import sh.isaac.api.index.IndexBuilderService;
+import sh.isaac.convert.directUtils.DataWriteListenerImpl;
+import sh.isaac.convert.directUtils.LoggingConfig;
 import sh.isaac.converters.sharedUtils.ConverterBaseMojo;
 import sh.isaac.converters.sharedUtils.IBDFCreationUtility;
 import sh.isaac.converters.sharedUtils.stats.ConverterUUID;
@@ -84,7 +82,7 @@ public class Rf2DirectImportMojo extends ConverterBaseMojo
 	{
 		try
 		{
-			configureLogging();
+			LoggingConfig.configureLogging(outputDirectory, converterOutputArtifactClassifier);
 			
 			ImportType it = ImportType.parseFromString(converterOutputArtifactClassifier);
 			
@@ -146,7 +144,7 @@ public class Rf2DirectImportMojo extends ConverterBaseMojo
 			
 			StampService ss = Get.stampService();
 			
-			ConverterUUID.configureNamespace(MetaData.SNOMED_CT_CORE_MODULES____SOLOR.getPrimordialUuid());
+			Get.service(ConverterUUID.class).configureNamespace(MetaData.SNOMED_CT_CORE_MODULES____SOLOR.getPrimordialUuid());
 			importUtil = new IBDFCreationUtility(TermAux.USER.getPrimordialUuid(), MetaData.SNOMED_CT_CORE_MODULES____SOLOR.getPrimordialUuid(), 
 					TermAux.DEVELOPMENT_PATH.getPrimordialUuid(), listener.getWriterHandle());
 			
@@ -163,7 +161,7 @@ public class Rf2DirectImportMojo extends ConverterBaseMojo
 				if (moduleNid != MetaData.SOLOR_OVERLAY_MODULE____SOLOR.getNid() && moduleNid != MetaData.SOLOR_MODULE____SOLOR.getNid())
 				{
 					UUID module = Get.identifierService().getUuidPrimordialForNid(moduleNid);
-					ConverterUUID.configureNamespace(module);
+					Get.service(ConverterUUID.class).configureNamespace(module);
 					importUtil.setModule(module, importTime);
 					log.info("adding loader metadata to {}", Get.conceptDescriptionText(moduleNid));
 					
@@ -183,27 +181,5 @@ public class Rf2DirectImportMojo extends ConverterBaseMojo
 		{
 			throw new MojoExecutionException(ex.getLocalizedMessage(), ex);
 		}
-	}
-
-	private void configureLogging()
-	{
-		
-		LoggerContext lc = (LoggerContext) LogManager.getContext(false);
-		Appender a = lc.getConfiguration().getAppender("mylogger");
-		((org.apache.logging.log4j.core.config.AbstractConfiguration)lc.getConfiguration()).removeAppender("mylogger");  //Clean up from a previous run
-		lc.updateLoggers();
-		if (a != null) 
-		{
-			((org.apache.logging.log4j.core.Logger)lc.getRootLogger()).removeAppender(a);
-		}
-		
-		FileAppender fa = FileAppender.newBuilder().withName("mylogger").withAppend(false)
-				.withFileName(new File(outputDirectory, converterOutputArtifactClassifier + "-ConsoleOutput.txt").toString())
-				.withLayout(PatternLayout.newBuilder().withPattern("%-5p %d  [%t] %C{2} (%F:%L) - %m%n").build())
-				.setConfiguration(lc.getConfiguration()).build();
-		fa.start();
-		lc.getConfiguration().addAppender(fa);
-		lc.getRootLogger().addAppender(lc.getConfiguration().getAppender(fa.getName()));
-		lc.updateLoggers();
 	}
 }
