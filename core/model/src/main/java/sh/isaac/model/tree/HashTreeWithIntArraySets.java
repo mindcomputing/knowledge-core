@@ -63,6 +63,7 @@ import sh.isaac.api.alert.AlertType;
 import sh.isaac.api.bootstrap.TermAux;
 import sh.isaac.api.collections.NidSet;
 import sh.isaac.api.coordinate.ManifoldCoordinate;
+import sh.isaac.api.coordinate.PremiseType;
 import sh.isaac.api.tree.NodeStatus;
 import sh.isaac.api.tree.Tree;
 import sh.isaac.api.tree.TreeNodeVisitData;
@@ -712,35 +713,41 @@ public class HashTreeWithIntArraySets
 
    @Override
    public final int[] getParentNids(int childNid) {
-      if (this.childNid_ParentNidSetArray_Map.containsKey(childNid)) {
-         int[] parents = this.childNid_ParentNidSetArray_Map.get(childNid);
-         if (parents.length > 1) {
-             OpenIntHashSet redundantParents = new OpenIntHashSet();
-             for (int i = 0; i < parents.length -1; i++) {
-                 for (int j = 1; j < parents.length; j++) {
-                     if (isDescendentOf(parents[i], parents[j])) {
-                         // redundant parent j
-                         redundantParents.add(parents[j]);
-                     } else if (isDescendentOf(parents[j], parents[i])) {
-                         // redundant parent i
-                         redundantParents.add(parents[i]);
-                     }
-                 }
-             }
-             OpenIntHashSet closestParentSet = new OpenIntHashSet();
-             for (int parent: parents) {
-                 if (!redundantParents.contains(parent)) {
-                     closestParentSet.add(parent);
-                 }
-             }
-             IntArrayList closestParentList = closestParentSet.keys();
-             closestParentList.sort();
-             return closestParentList.elements();
-         }
-         return parents;
-      }
-
-      return new int[0];
+      return getParentNidsNoFilter(childNid);
+       
+//      if (this.childNid_ParentNidSetArray_Map.containsKey(childNid)) {
+//         int[] parents = this.childNid_ParentNidSetArray_Map.get(childNid);
+//         if (parents.length > 1 && manifoldCoordinate.getTaxonomyPremiseType() == PremiseType.INFERRED) {
+//             OpenIntHashSet redundantParents = new OpenIntHashSet();
+//             for (int i = 0; i < parents.length -1; i++) {
+//                 for (int j = 1; j < parents.length; j++) {
+//                     if (isDescendentOf(parents[i], parents[j])) {
+//                         // redundant parent j
+//                         redundantParents.add(parents[j]);
+//                     } else if (isDescendentOf(parents[j], parents[i])) {
+//                         // redundant parent i
+//                         redundantParents.add(parents[i]);
+//                     }
+//                 }
+//             }
+//             OpenIntHashSet closestParentSet = new OpenIntHashSet();
+//             for (int parent: parents) {
+//                 if (!redundantParents.contains(parent)) {
+//                     closestParentSet.add(parent);
+//                 }
+//             }
+//             IntArrayList closestParentList = closestParentSet.keys();
+//             closestParentList.sort();
+//             int removed = parents.length - closestParentList.elements().length;
+//             if (removed > 0) {
+//                LOG.debug("Removed {} redundant parents", removed);
+//             }
+//             return closestParentList.elements();
+//         }
+//         return parents;
+//      }
+//
+//      return new int[0];
    }
 
    /**
