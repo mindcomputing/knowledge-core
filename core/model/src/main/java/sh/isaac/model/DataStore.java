@@ -104,7 +104,7 @@ public interface DataStore
     * Gets the SemanticChronology nids for component.
     *
     * @param componentNid the component nid
-    * @return the SemanticChronology nids for component
+    * @return the SemanticChronology nids for component.  Should not return null, rather, return an empty array, if none
     */
    int[] getSemanticNidsForComponent(int componentNid);
    
@@ -198,5 +198,15 @@ public interface DataStore
     * @return true, if this implementation also implements {@link SequenceStore}
     */
    boolean implementsSequenceStore();
+   
+   /**
+    * If a store chooses to implement the 'extended' methods, which allow the DataStore to store all of the 
+    * data for ISAAC, they should override this method and return true.  In addition, they should implement the 
+    * {@link ExtendedStore} interface.
+    * @return true, if the extended store API is implemented
+    */
+   default boolean implementsExtendedStoreAPI() {
+      return false;
+   }
 }
 

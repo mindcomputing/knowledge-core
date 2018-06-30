@@ -76,7 +76,6 @@ import sh.isaac.api.task.TimedTaskWithProgressTracker;
 import sh.isaac.api.util.NumericUtils;
 import sh.isaac.model.ChronologyImpl;
 import sh.isaac.model.DataStoreSubService;
-import sh.isaac.model.ModelGet;
 import sh.isaac.model.semantic.SemanticChronologyImpl;
 
 /**
@@ -115,6 +114,8 @@ public class XodusDataStoreProvider implements DataStoreSubService
 	Cache<Integer, IsaacObjectType> assemblageToObjectTypeCache = Caffeine.newBuilder().maximumSize(100).build();
 	Cache<Integer, VersionType> assemblageToVersionTypeCache = Caffeine.newBuilder().maximumSize(100).build();
 
+	//TODO still need to fix the APIs to route the StampProvider, CommitProvider and UUIDIntMapMap into this API
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -158,7 +159,7 @@ public class XodusDataStoreProvider implements DataStoreSubService
 	@Override
 	public void shutdown()
 	{
-		LOG.info("Stopping Xodus ConceptProvider.");
+		LOG.info("Stopping Xodus Data Store.");
 		synchronized (xodusStores)  // Prevent inadvertent creation during iteration
 		{
 			try
@@ -333,19 +334,41 @@ public class XodusDataStoreProvider implements DataStoreSubService
 		{
 			final int assemblageNid = chronology.getAssemblageNid();
 
-			boolean wasNidSetup = ModelGet.identifierService().setupNid(chronology.getNid(), assemblageNid, chronology.getIsaacObjectType(),
-					chronology.getVersionType());
-
 			if (chronology instanceof SemanticChronologyImpl)
 			{
 				final SemanticChronologyImpl semanticChronology = (SemanticChronologyImpl) chronology;
 				Store componentToSemanticNidsMap = getStore(COMPONENT_TO_SEMANTIC_NIDS_MAP, true);
 				final int referencedComponentNid = semanticChronology.getReferencedComponentNid();
-
-				if (!wasNidSetup || !storeHasKey(referencedComponentNid, componentToSemanticNidsMap))
+				
+				//Need to find out if we already have a mapping from referencedComponentNid -> semanticChronology.getNid((
+				ArrayByteIterable computedKey = nidToIterable(referencedComponentNid);
+				AtomicBoolean have = new AtomicBoolean(false);
+				
+				Transaction readOnlyTxn = componentToSemanticNidsMap.getEnvironment().beginReadonlyTransaction();
+				try (Cursor cursor = componentToSemanticNidsMap.openCursor(readOnlyTxn))
 				{
-					componentToSemanticNidsMap.getEnvironment().executeInTransaction((Transaction txn) -> {
-						ArrayByteIterable computedKey = nidToIterable(referencedComponentNid);
+					ByteIterable v = cursor.getSearchKey(computedKey);
+					if (v != null && compressedByteIterableToNid(v) == semanticChronology.getNid())
+					{
+						have.set(true);
+					}
+					// there is a value for specified key, the variable v contains the leftmost value
+					while (v != null && !have.get() && cursor.getNextDup())
+					{
+						// this loop traverses all pairs with the same key, values differ on each iteration
+						v = cursor.getValue();
+						if (v != null && compressedByteIterableToNid(v) == semanticChronology.getNid())
+						{
+							have.set(true);
+						}
+					}
+				}
+				readOnlyTxn.abort();
+				
+				if (!have.get())
+				{
+					componentToSemanticNidsMap.getEnvironment().executeInTransaction((Transaction txn) -> 
+					{
 						componentToSemanticNidsMap.put(txn, computedKey, nidToIterable(semanticChronology.getNid()));
 					});
 				}
@@ -592,7 +615,15 @@ public class XodusDataStoreProvider implements DataStoreSubService
 			return false;
 		}
 		Store assemblageToData = getStore(getEnvIdForItem(assemblageId.getAsInt(), nid), CHRONICLE, false);
-		return storeHasKey(nid, assemblageToData);
+		if (storeHasKey(nid, assemblageToData))
+		{
+			if (getIsaacObjectTypeForAssemblageNid(assemblageId.getAsInt()) != ofType)
+			{
+				return false;
+			}
+			return true;
+		}
+		return false;
 	}
 
 	/**
