@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.OptionalInt;
+import java.util.OptionalLong;
 import java.util.Spliterator;
 import java.util.Spliterator.OfInt;
 import java.util.UUID;
@@ -35,6 +36,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import java.util.function.IntConsumer;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
@@ -47,13 +49,16 @@ import org.h2.mvstore.MVMap;
 import org.h2.mvstore.MVStore;
 import org.jvnet.hk2.annotations.Service;
 import sh.isaac.api.ConfigurationService;
+import sh.isaac.api.ConfigurationService.BuildMode;
 import sh.isaac.api.Get;
 import sh.isaac.api.LookupService;
-import sh.isaac.api.ConfigurationService.BuildMode;
 import sh.isaac.api.chronicle.VersionType;
 import sh.isaac.api.collections.NidSet;
 import sh.isaac.api.component.semantic.SemanticChronology;
 import sh.isaac.api.constants.DatabaseImplementation;
+import sh.isaac.api.datastore.ChronologySerializeable;
+import sh.isaac.api.datastore.ExtendedStore;
+import sh.isaac.api.datastore.ExtendedStoreData;
 import sh.isaac.api.externalizable.ByteArrayDataBuffer;
 import sh.isaac.api.externalizable.DataWriteListener;
 import sh.isaac.api.externalizable.IsaacObjectType;
@@ -72,10 +77,11 @@ import sh.isaac.model.DataStoreSubService;
 @Service (name="MV")
 @Singleton
 @Rank(value=-9)
-public class MVDataStoreProvider implements DataStoreSubService
+public class MVDataStoreProvider implements DataStoreSubService, ExtendedStore
 {
 	private static final Logger LOG = LogManager.getLogger();
 	private static final String MV_STORE = "mv-store";
+	private static final String SHARED_STORE = "shared-store";
 	private File mvFolder;
 
 	private MVStore store;
@@ -101,9 +107,10 @@ public class MVDataStoreProvider implements DataStoreSubService
 	ConcurrentHashMap<String, MVMap<Integer, byte[]>> chronicleMaps = new ConcurrentHashMap<>(100);
 	ConcurrentHashMap<String, MVMap<Integer, byte[][]>> versionMaps = new ConcurrentHashMap<>(100);
 	ConcurrentHashMap<String, MVMap<Integer, int[]>> taxonomyMaps = new ConcurrentHashMap<>(2);
-
-	//TODO still need to fix the APIs to route the StampProvider, CommitProvider and UUIDIntMapMap into this API
 	
+	ConcurrentHashMap<String, MVExtendedStore<?, ?, ?>> extendedStores = new ConcurrentHashMap<>(5);
+	MVMap<String, Long> sharedStore;
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -146,6 +153,7 @@ public class MVDataStoreProvider implements DataStoreSubService
 			nidToAssemblageNidMap = this.store.<Integer, Integer>openMap(NID_TO_ASSEMBLAGE_NID_MAP);
 			assemblageToIsaacObjectTypeMap = this.store.<Integer, Integer>openMap(ASSEMBLAGE_TO_ISAAC_OBJECT_TYPE_MAP);
 			assemblageToVersionTypeMap = this.store.<Integer, Integer>openMap(ASSEMBLAGE_TO_VERSION_TYPE_MAP);
+			sharedStore = this.store.<String, Long>openMap(SHARED_STORE);
 			
 			LOG.info("MV DataStore started");
 		}
@@ -180,6 +188,8 @@ public class MVDataStoreProvider implements DataStoreSubService
 			nidToAssemblageNidMap = null;
 			assemblageToIsaacObjectTypeMap = null;
 			assemblageToVersionTypeMap = null;
+			sharedStore = null;
+			extendedStores.clear();
 			taxonomyMaps.clear();
 			chronicleMaps.clear();
 			versionMaps.clear();
@@ -299,7 +309,7 @@ public class MVDataStoreProvider implements DataStoreSubService
 	}
 
 	@Override
-	public void putChronologyData(ChronologyImpl chronology)
+	public void putChronologyData(ChronologySerializeable chronology)
 	{
 		try
 		{
@@ -431,7 +441,7 @@ public class MVDataStoreProvider implements DataStoreSubService
 	}
 
 	@Override
-	public Optional<ByteArrayDataBuffer> getChronologyData(int nid)
+	public Optional<ByteArrayDataBuffer> getChronologyVersionData(int nid)
 	{
 		OptionalInt assemblageNid = getAssemblageOfNid(nid);
 		if (!assemblageNid.isPresent())
@@ -722,9 +732,67 @@ public class MVDataStoreProvider implements DataStoreSubService
 		}
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean implementsSequenceStore()
 	{
 		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean implementsExtendedStoreAPI()
+	{
+		return true;
+	}
+
+	//Extended Store API implementation below this
+	
+	/** 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public OptionalLong getSharedStoreLong(String key)
+	{
+		Long i = sharedStore.get(key);
+		return i == null ? OptionalLong.empty() : OptionalLong.of(i.longValue());
+	}
+
+	/** 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public OptionalLong putSharedStoreLong(String key, long value)
+	{
+		Long i = sharedStore.put(key, value);
+		return i == null ? OptionalLong.empty() : OptionalLong.of(i.longValue());
+	}
+
+	@Override
+	public OptionalLong removeSharedStoreLong(String key)
+	{
+		Long i = sharedStore.remove(key);
+		return i == null ? OptionalLong.empty() : OptionalLong.of(i.longValue());
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public <K, V> ExtendedStoreData<K, V> getStore(String storeName)
+	{
+		return getStore(storeName, null, null);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <K, V, VT> ExtendedStoreData<K, VT> getStore(String storeName, Function<VT, V> valueSerializer, Function<V, VT> valueDeserializer)
+	{
+		 return (ExtendedStoreData<K, VT>) extendedStores.computeIfAbsent(storeName, mapNameKey -> 
+		 	new MVExtendedStore<K, V, VT>(this.store.<K, V>openMap(mapNameKey), valueSerializer, valueDeserializer));
 	}
 }
