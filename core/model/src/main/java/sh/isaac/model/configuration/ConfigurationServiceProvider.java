@@ -410,6 +410,9 @@ public class ConfigurationServiceProvider
    
    @Override
    public void setDatabaseImplementation(DatabaseImplementation implementation) {
+   if (LookupService.isIsaacStarted()) {
+         throw new IllegalStateException("Can only set the database implementation prior to starting Isaac. Runlevel: " + LookupService.getCurrentRunLevel());
+      }
       dbImplementation = implementation;
    }
 
@@ -428,7 +431,6 @@ public class ConfigurationServiceProvider
          this.currentUser = Optional.empty();
          this.systemPropertyDataStoreFolderPath = null;
          this.systemPropertyIbdfImportPath = null;
-         this.userDataStoreFolderPath = null;
          this.userIbdfImportPath = null;
          this.dbImplementation = null;
       }
