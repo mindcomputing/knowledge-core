@@ -44,8 +44,6 @@ import org.apache.logging.log4j.Logger;
 import com.sun.javafx.application.PlatformImpl;
 import de.codecentric.centerdevice.MenuToolkit;
 import de.codecentric.centerdevice.javafxsvg.SvgImageLoaderFactory;
-import java.util.Arrays;
-import java.util.logging.Level;
 import java.util.prefs.BackingStoreException;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -65,6 +63,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.eclipse.fx.core.SystemUtils;
 import org.glassfish.hk2.api.MultiException;
 import sh.isaac.api.ApplicationStates;
 import sh.isaac.api.Get;
@@ -78,9 +77,9 @@ import sh.isaac.api.coordinate.LogicCoordinate;
 import sh.isaac.api.coordinate.StampCoordinate;
 import sh.isaac.api.preferences.IsaacPreferences;
 import sh.isaac.komet.iconography.Iconography;
-import static sh.isaac.komet.preferences.ApplicationPreferenceKeys.INITIALIZED;
-import sh.isaac.komet.preferences.ApplicationPreferences;
-import sh.isaac.komet.preferences.KometStageGroupPreferences;
+import sh.isaac.komet.preferences.GeneralPreferences;
+import sh.isaac.komet.preferences.PreferenceGroup;
+import sh.isaac.komet.preferences.RootPreferences;
 import sh.isaac.komet.statement.StatementView;
 import sh.isaac.komet.statement.StatementViewController;
 import sh.isaac.model.statement.ClinicalStatementImpl;
@@ -131,9 +130,9 @@ public class MainApp
 
         SvgImageLoaderFactory.install();
         LookupService.startupPreferenceProvider();
-        applicationPreferences = FxGet.applicationNode(ApplicationPreferences.class);
+        applicationPreferences = FxGet.applicationNode(GeneralPreferences.class);
 
-        if (applicationPreferences.getBoolean(INITIALIZED, false)) {
+        if (applicationPreferences.getBoolean(PreferenceGroup.Keys.INITIALIZED, false)) {
             firstRun = false;
         }
 
@@ -166,42 +165,31 @@ public class MainApp
             final ClassifierResults classifierResults = classifyTask.get();
         }
 
-        IsaacPreferences stageGroupPreferences = applicationPreferences.node(KometStageGroupPreferences.class);
-        if (stageGroupPreferences.hasChildren()) {
-            // create the existing stages
-            for (IsaacPreferences stageNode : stageGroupPreferences.children()) {
+        // open one new stage with defaults
+        // Create a node for stage preferences
+        UUID stageUuid = UUID.randomUUID();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/KometStageScene.fxml"));
+        BorderPane root = loader.load();
+        KometStageController controller = loader.getController();
 
-            }
-        } else {
-            // open one new stage with defaults
-            // Create a node for stage preferences
-            UUID stageUuid = UUID.randomUUID();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/KometStageScene.fxml"));
-            Parent root = loader.load();
-            KometStageController controller = loader.getController();
+        root.setId(stageUuid.toString());
 
-            root.setId(stageUuid.toString());
-
-            stage.setTitle("Viewer");
-
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.getIcons().add(new Image(MainApp.class.getResourceAsStream("/icons/KOMET.ico")));
-            stage.getIcons().add(new Image(MainApp.class.getResourceAsStream("/icons/KOMET.png")));
-
-            // GraphController.setSceneForControllers(scene);
-            scene.getStylesheets()
-                    .add(FxGet.fxConfiguration().getUserCSSURL().toString());
-            scene.getStylesheets()
-                    .add(Iconography.getStyleSheetStringUrl());
-            FxGet.statusMessageService()
-                    .addScene(scene, controller::reportStatus);
-            stage.show();
-            stage.setOnCloseRequest(MenuProvider::handleCloseRequest);
-            setupStageMenus(stage, root);
-        }
-
+        stage.setTitle("Viewer");
         
+        Scene scene = new Scene(setupStageMenus(stage, root));
+        stage.setScene(scene);
+        stage.getIcons().add(new Image(MainApp.class.getResourceAsStream("/icons/KOMET.ico")));
+        stage.getIcons().add(new Image(MainApp.class.getResourceAsStream("/icons/KOMET.png")));
+
+        // GraphController.setSceneForControllers(scene);
+        scene.getStylesheets()
+                .add(FxGet.fxConfiguration().getUserCSSURL().toString());
+        scene.getStylesheets()
+                .add(Iconography.getStyleSheetStringUrl());
+        FxGet.statusMessageService()
+                .addScene(scene, controller::reportStatus);
+        stage.setOnCloseRequest(MenuProvider::handleCloseRequest);
+        stage.show();
 
         // SNAPSHOT
         // Chronology
@@ -214,12 +202,12 @@ public class MainApp
         // CHILLDE
         // Knowledge, Language, Dialect, Chronology
         // KOLDAC
-        applicationPreferences.putBoolean(INITIALIZED, true);
         applicationPreferences.sync();
     }
 
-    protected void setupStageMenus(Stage stage, Parent root) throws MultiException {
-        // Get the toolkit
+    protected Parent setupStageMenus(Stage stage, BorderPane root) throws MultiException {
+        BorderPane stageRoot = root;
+         // Get the toolkit
         MenuToolkit tk = MenuToolkit.toolkit();  //Note, this only works on Mac....
         MenuBar mb = new MenuBar();
 
@@ -247,7 +235,18 @@ public class MainApp
                     }
                 }
             }
-            ap.getMenu().getItems().sort((MenuItem o1, MenuItem o2) -> o1.getText().compareTo(o2.getText()));
+            ap.getMenu().getItems().sort((MenuItem o1, MenuItem o2) -> {
+                // Separator menu items have null text. 
+                String o1Text = o1.getText();
+                if (o1Text == null) {
+                    o1Text = "";
+                }
+                String o2Text = o2.getText();
+                if (o2Text == null) {
+                    o2Text = "";
+                }
+                return o1Text.compareTo(o2Text);
+            });
 
             switch (ap) {
                 case APP:
@@ -279,7 +278,7 @@ public class MainApp
                         for (MenuProvider mp : LookupService.get().getAllServices(MenuProvider.class)) {
                             if (mp.getParentMenus().contains(AppMenu.NEW_WINDOW)) {
                                 for (MenuItem menuItem : mp.getMenuItems(AppMenu.NEW_WINDOW, primaryStage.getOwner())) {
-                                    menuItem.getProperties().put(MenuProvider.PARENT_PREFERENCES, FxGet.applicationNode(ApplicationPreferences.class));
+                                    menuItem.getProperties().put(MenuProvider.PARENT_PREFERENCES, FxGet.applicationNode(RootPreferences.class));
                                     newWindowMenu.getItems().add(menuItem);
                                 }
                             }
@@ -326,9 +325,8 @@ public class MainApp
             tk.setGlobalMenuBar(mb);
         } else {
             //And for everyone else....
-            BorderPane wrappingPane = new BorderPane(root);
-            wrappingPane.setTop(mb);
-            root = wrappingPane;
+            stageRoot = new BorderPane(stageRoot);
+            stageRoot.setTop(mb);
             stage.setHeight(stage.getHeight() + 20);
         }
 
@@ -344,6 +342,7 @@ public class MainApp
                         return PlatformImpl.setAccessibilityTheme(themeName);
                     }
                 });
+        return stageRoot;
     }
 
     private void close(ActionEvent event) {
@@ -365,20 +364,27 @@ public class MainApp
         try {
             Stage stage = new Stage();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/KometStageScene.fxml"));
-            Parent root = loader.load();
+            BorderPane root = loader.load();
             KometStageController controller = loader.getController();
 
             root.setId(UUID.randomUUID()
                     .toString());
 
-            if (MenuProvider.WINDOW_SEQUENCE.get() > 1) {
+            if (MenuProvider.WINDOW_SEQUENCE.get() >= 1) {
                 stage.setTitle("Viewer " + MenuProvider.WINDOW_SEQUENCE.incrementAndGet());
             } else {
                 stage.setTitle("Viewer");
+                MenuProvider.WINDOW_SEQUENCE.incrementAndGet();
             }
 
-            Scene scene = new Scene(root);
-
+            //Menu hackery
+            Scene scene;
+            if (SystemUtils.isMacOS()) {
+                scene = new Scene(root);
+            } else {
+                scene = new Scene(setupStageMenus(stage, root));
+            }
+ 
             stage.setScene(scene);
             stage.getIcons().add(new Image(MainApp.class.getResourceAsStream("/icons/KOMET.ico")));
             stage.getIcons().add(new Image(MainApp.class.getResourceAsStream("/icons/KOMET.png")));
@@ -390,20 +396,18 @@ public class MainApp
                     .add(Iconography.getStyleSheetStringUrl());
             FxGet.statusMessageService()
                     .addScene(scene, controller::reportStatus);
+            stage.setOnCloseRequest(MenuProvider::handleCloseRequest);            
             stage.show();
-            //Dan notes, this seems like a really bad idea on an auxiliary window.
-            //KEC: Yes, logic updated to count windows, and only close when just one is left... 
-            stage.setOnCloseRequest(MenuProvider::handleCloseRequest);
             MenuProvider.WINDOW_COUNT.incrementAndGet();
 
-            setupStageMenus(stage, root);
         } catch (IOException ex) {
             FxGet.dialogs().showErrorDialog("Error opening new KOMET window.", ex);
         }
     }
 
     private void handlePrefs(ActionEvent event) {
-        FxGet.kometPreferences().showPreferences("KOMET Preferences", applicationPreferences);
+        FxGet.kometPreferences().showPreferences("KOMET Preferences", 
+                applicationPreferences, Manifold.make(ManifoldGroup.TAXONOMY));
     }
 
     private void handleAbout(ActionEvent event) {
