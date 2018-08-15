@@ -11,6 +11,7 @@ pipeline {
 		stage('Build') {
 			steps {
 				//DEPLOY should be specified in jenkins -> configure system -> env variables - if you don't want it to deploy, leave the value blank.
+				//Or, set it to something like 'deploy -DaltDeploymentRepository=snapshotRepo::default::http://52.61.165.55:9092/nexus/content/repositories/snapshots/'
 				sh "mvn clean install $DEPLOY"
 				openTasks high: 'FIXME', normal: 'TODO', pattern: '**/*.java'
 			}
