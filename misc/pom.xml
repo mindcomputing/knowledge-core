@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>sh.isaac</groupId>
-        <artifactId>isaac</artifactId>
-        <version>4.52-SNAPSHOT</version>
-    </parent>
-    <artifactId>misc</artifactId>
-    <packaging>pom</packaging>
-    <name>ISAAC misc: (MMP)</name>
-    <description>Aggregator project for miscellaneous ISAAC modules</description>
-    <modules>
-       <module>exporters</module>
-       <module>importers</module>
-       <module>associations</module>
-       <module>util</module>
-       <module>vhat-constants</module>
-       <module>vhat-util</module>
-       <module>security</module>
-       <module>differ</module>
-    </modules>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>sh.isaac</groupId>
+		<artifactId>uts-core</artifactId>
+		<version>uts-5.01-SNAPSHOT</version>
+	</parent>
+	<groupId>sh.isaac.uts-core</groupId>
+	<artifactId>misc</artifactId>
+	<packaging>pom</packaging>
+	<name>ISAAC misc: (MMP)</name>
+	<description>Aggregator project for miscellaneous ISAAC modules</description>
+	<modules>
+		<module>exporters</module>
+		<module>importers</module>
+		<module>associations</module>
+		<module>util</module>
+		<module>vhat-constants</module>
+		<module>vhat-util</module>
+		<module>security</module>
+		<module>differ</module>
+	</modules>
 </project>

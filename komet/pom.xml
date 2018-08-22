@@ -1,33 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>sh.isaac</groupId>
-        <artifactId>isaac</artifactId>
-        <version>4.52-SNAPSHOT</version>
-    </parent>
-    <artifactId>komet</artifactId>
-    <name>ISAAC’s KOMET: (MMP)</name>
-    <description>Aggregator project for ISAAC's KOMET modules</description>
-    <packaging>pom</packaging>
-     <modules>
-        <module>taxonomy-view</module>
-        <module>iconography</module>
-        <module>drag-tab</module>
-        <module>application</module>
-        <module>gui-contracts</module>
-        <module>search-view</module>
-        <module>css</module>
-        <module>dialog</module>
-        <module>concept-detail</module>
-        <module>progress-view</module>
-        <module>assemblage-view</module>
-        <module>scripting</module>
-        <module>statement-view</module>
-        <module>semantic-view</module>
-        <module>countries-flags</module>
-        <module>export-view</module>
-          <module>open-jdk-fixes</module>
-          <module>komet-preferences</module>
-     </modules>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>sh.isaac</groupId>
+		<artifactId>uts-core</artifactId>
+		<version>uts-5.01-SNAPSHOT</version>
+	</parent>
+	<groupId>sh.isaac.uts-core</groupId>
+	<artifactId>komet</artifactId>
+	<name>ISAAC’s KOMET: (MMP)</name>
+	<description>Aggregator project for ISAAC's KOMET modules</description>
+	<packaging>pom</packaging>
+	<modules>
+		<module>taxonomy-view</module>
+		<module>iconography</module>
+		<module>drag-tab</module>
+		<module>application</module>
+		<module>gui-contracts</module>
+		<module>search-view</module>
+		<module>css</module>
+		<module>dialog</module>
+		<module>concept-detail</module>
+		<module>progress-view</module>
+		<module>assemblage-view</module>
+		<module>scripting</module>
+		<module>statement-view</module>
+		<module>semantic-view</module>
+		<module>countries-flags</module>
+		<module>export-view</module>
+		<module>open-jdk-fixes</module>
+		<module>komet-preferences</module>
+	</modules>
 </project>

@@ -1,48 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>sh.isaac</groupId>
-        <artifactId>isaac</artifactId>
-        <version>4.52-SNAPSHOT</version>
-    </parent>
-    <artifactId>provider</artifactId>
-    <packaging>pom</packaging>
-    <name>ISAAC provider: (MMP)</name>
-    <description>Aggregator project for provider ISAAC provider modules</description>
-    <profiles>
-        <profile>
-            <id>bdb</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <modules>
-                <module>bdb-datastore</module>
-            </modules>
-        </profile>
-    </profiles>
-    <modules>
-        <module>commit</module>
-        <module>coordinate</module>
-        <module>metacontent</module>
-        <module>path</module>
-        <module>progress</module>
-        <module>sync-git</module>
-        <module>concept</module>
-        <module>ibdf</module>
-        <module>logic</module>
-        <module>observable</module>
-        <module>query</module>
-        <module>stamp</module>
-        <module>drools</module>
-        <module>alert-resolver</module>
-        <module>preferences</module>
-        <module>filesystem-datastore</module>
-        <module>chronology</module>
-        <module>xodus-datastore</module>
-        <module>mv-datastore</module>
-        <module>memory-managment</module>
-        <module>datastore-locator</module>
-    </modules>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>sh.isaac</groupId>
+		<artifactId>uts-core</artifactId>
+		<version>uts-5.01-SNAPSHOT</version>
+	</parent>
+	<groupId>sh.isaac.uts-core</groupId>
+	<artifactId>provider</artifactId>
+	<packaging>pom</packaging>
+	<name>ISAAC provider: (MMP)</name>
+	<description>Aggregator project for provider ISAAC provider modules</description>
+	<profiles>
+		<profile>
+			<id>bdb</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<modules>
+				<module>bdb-datastore</module>
+			</modules>
+		</profile>
+	</profiles>
+	<modules>
+		<module>commit</module>
+		<module>coordinate</module>
+		<module>metacontent</module>
+		<module>path</module>
+		<module>progress</module>
+		<module>sync-git</module>
+		<module>concept</module>
+		<module>ibdf</module>
+		<module>logic</module>
+		<module>observable</module>
+		<module>query</module>
+		<module>stamp</module>
+		<module>drools</module>
+		<module>alert-resolver</module>
+		<module>preferences</module>
+		<module>filesystem-datastore</module>
+		<module>chronology</module>
+		<module>xodus-datastore</module>
+		<module>mv-datastore</module>
+		<module>memory-managment</module>
+		<module>datastore-locator</module>
+	</modules>
 </project>

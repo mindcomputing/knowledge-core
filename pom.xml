@@ -2,12 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
    <groupId>sh.isaac</groupId>
-   <artifactId>isaac</artifactId>
-   <version>4.52-SNAPSHOT</version>
+   <artifactId>uts-core</artifactId>
+   <version>uts-5.01-SNAPSHOT</version>
 
-   <name>ISAAC: (MMP) Informatics Analytic Architecture</name>
+   <name>UTS Core: Universal Terminology Suite</name>
 
-   <description>ISAAC: Informatics Analytic Architecture. ISAAC is a project to support
+   <description>UTS: Universal Terminology Suite: Based on ISAAC: Informatics Analytic Architecture. ISAAC is a project to support
       tooling for a coherent informatics  architecture that builds on top of a description-logic terminology foundation.
       This ISAAC parent pom that standardizes common dependencies and plugins for ISAAC modules.
    </description>
@@ -53,16 +53,8 @@
    <packaging>pom</packaging>
 
    <scm>
-      <url>https://git.isaac.sh/git/summary/ISAAC.git</url>
+      <url>https://bitbucket.vetsez.net/scm/uts/uts-core.git</url>
    </scm>
-
-   <distributionManagement>
-      <site>
-         <id>isaacs.website</id>
-         <name>ISAAC website</name>
-         <url>file:/Library/WebServer/Documents/isaac.web/</url>
-      </site>
-   </distributionManagement>
 
    <properties>
       <!-- https://stackoverflow.com/questions/26144541/why-am-i-getting-maven-error-unable-to-determine-if-resource-x-exists-in-http#35673586 -->
@@ -157,9 +149,9 @@
 
    <issueManagement>
       <system>Jira</system>
-      <url>http://issues.osehra.org/projects/ISAAC/summary</url>
+      <url>https://jira.vetsez.net/projects/UTS/</url>
    </issueManagement>
-   
+
    <repositories>
       <repository>
          <!-- Fontawesomefx -->
@@ -960,37 +952,6 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-source-plugin</artifactId>
          </plugin>
-         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-site-plugin</artifactId>
-            <executions>
-               <execution>
-                  <id>attach-descriptor</id>
-                  <goals>
-                     <goal>attach-descriptor</goal>
-                  </goals>
-               </execution>
-            </executions>
-         </plugin>
-         <plugin>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <executions>
-               <execution>
-                  <phase>post-site</phase>
-                  <configuration>
-                     <failOnError>false</failOnError>  <!-- TODO this needs to be fixed, no idea what all this site stuff is anyway... but some sub-projects don't have site folders, so this fails. -->
-                     <target>
-                        <replace token="div id=&quot;banner&quot;" value="div id=&quot;banner&quot; style=&quot;background-color:black;color:white;&quot;" dir="${project.build.directory}/site/">
-                           <include name="**/*.html" />
-                        </replace>
-                     </target>
-                  </configuration>
-                  <goals>
-                     <goal>run</goal>
-                  </goals>
-               </execution>
-            </executions>
-         </plugin>
          <!-- plugin>  Not sure why this is off globally
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
@@ -1120,65 +1081,6 @@
                         <goals>
                            <goal>translate</goal>
                         </goals>
-                     </execution>
-                  </executions>
-               </plugin>
-            </plugins>
-         </build>
-      </profile>
-      <profile>
-         <id>refactor-transform</id>
-         <activation>
-            <activeByDefault>false</activeByDefault>
-         </activation>
-         <dependencies>
-            <dependency>
-               <groupId>one.isaac.jindent</groupId>
-               <artifactId>isaac-conventions</artifactId>
-               <version>${isaac-conventions.version}</version>
-               <type>zip</type>
-            </dependency>
-         </dependencies>
-         <build>
-            <plugins>
-               <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-dependency-plugin</artifactId>
-                  <version>${maven-dependency-plugin.version}</version>
-                  <executions>
-                     <execution>
-                        <id>extract-conventions</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                           <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                           <artifactItems>
-                              <artifact>
-                                 <groupId>one.isaac.jindent</groupId>
-                                 <artifactId>isaac-conventions</artifactId>
-                                 <type>zip</type>
-                              </artifact>
-                           </artifactItems>
-                           <outputDirectory>${project.build.directory}/jindent</outputDirectory>
-                        </configuration>
-                     </execution>
-                  </executions>
-               </plugin>
-               <plugin>
-                  <groupId>komet.one</groupId>
-                  <artifactId>repackage-mojo</artifactId>
-                  <version>${repackage-mojo.version}</version>
-                  <executions>
-                     <execution>
-                        <id>repackage</id>
-                        <phase>process-sources</phase>
-                        <goals>
-                           <goal>repackage</goal>
-                        </goals>
-                        <configuration>
-                           <inputDirectory>${project.basedir}</inputDirectory>
-                        </configuration>
                      </execution>
                   </executions>
                </plugin>

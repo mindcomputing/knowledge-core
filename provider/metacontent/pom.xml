@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-   <modelVersion>4.0.0</modelVersion>
-   <parent>
-      <groupId>sh.isaac</groupId>
-      <artifactId>provider</artifactId>
-      <version>4.52-SNAPSHOT</version>
-   </parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>sh.isaac.uts-core</groupId>
+		<artifactId>provider</artifactId>
+		<version>uts-5.01-SNAPSHOT</version>
+	</parent>
+	<groupId>sh.isaac.uts-core.provider</groupId>
+	<artifactId>metacontent</artifactId>
+	<packaging>jar</packaging>
+	<name>ISAAC provider: MetaContent</name>
 
-   <groupId>sh.isaac.core</groupId>
-   <artifactId>metacontent</artifactId>
-   <packaging>jar</packaging>
-   <name>ISAAC provider: MetaContent</name>
-
-   <dependencies>
-      <dependency>
-         <groupId>com.h2database</groupId>
-         <artifactId>h2-mvstore</artifactId>
-      </dependency>
-      <dependency>
-         <groupId>sh.isaac.core</groupId>
-         <artifactId>api</artifactId>
-         <version>${project.version}</version>
-      </dependency>
-      <dependency>
-         <groupId>sh.isaac.core</groupId>
-         <artifactId>log-config</artifactId>
-         <version>${project.parent.version}</version>
-         <scope>test</scope>
-      </dependency>
-   </dependencies>
+	<dependencies>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2-mvstore</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>sh.isaac.uts-core.core</groupId>
+			<artifactId>api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>sh.isaac.uts-core.core</groupId>
+			<artifactId>log-config</artifactId>
+			<version>${project.parent.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 </project>

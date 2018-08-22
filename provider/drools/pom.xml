@@ -1,53 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-   <modelVersion>4.0.0</modelVersion>
-   <parent>
-      <groupId>sh.isaac</groupId>
-      <artifactId>provider</artifactId>
-      <version>4.52-SNAPSHOT</version>
-   </parent>
-   <groupId>sh.isaac.provider</groupId>
-   <artifactId>drools</artifactId>
-   <packaging>jar</packaging>
-   <name>ISAAC provider: Drools</name>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>sh.isaac.uts-core</groupId>
+		<artifactId>provider</artifactId>
+		<version>uts-5.01-SNAPSHOT</version>
+	</parent>
+	<groupId>sh.isaac.uts-core.provider</groupId>
+	<artifactId>drools</artifactId>
+	<packaging>jar</packaging>
+	<name>ISAAC provider: Drools</name>
 
-   <dependencies>
-      <dependency>
-         <groupId>sh.isaac.komet</groupId>
-         <artifactId>gui-contracts</artifactId>
-         <version>${project.version}</version>
-      </dependency>
-      <dependency>
-         <groupId>sh.isaac.core</groupId>
-         <artifactId>model</artifactId>
-         <version>${project.version}</version>
-      </dependency>
-      <dependency>
-         <groupId>org.kie</groupId>
-         <artifactId>kie-api</artifactId>
-      </dependency>
-      <dependency>
-         <groupId>org.drools</groupId>
-         <artifactId>drools-compiler</artifactId>
-         <scope>runtime</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.drools</groupId>
-         <artifactId>drools-core</artifactId>
-      </dependency>
-   </dependencies>
-<!--    <build>
-        <sourceDirectory>src</sourceDirectory>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <includes>
-                    <include>META-INF/kmodule.xml</include>
-                    <include>sh/isaac/provider/drools/AddAttachmentRules.drl</include>
-                    <include>sh/isaac/provider/drools/EditVersionRules.drl</include>
-                </includes>
-                <targetPath>.</targetPath>
-            </resource>
-        </resources>
-    </build>-->
+	<dependencies>
+		<dependency>
+			<groupId>sh.isaac.uts-core.komet</groupId>
+			<artifactId>gui-contracts</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>sh.isaac.uts-core.core</groupId>
+			<artifactId>model</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.kie</groupId>
+			<artifactId>kie-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.drools</groupId>
+			<artifactId>drools-compiler</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.drools</groupId>
+			<artifactId>drools-core</artifactId>
+		</dependency>
+	</dependencies>
+	<!-- <build> <sourceDirectory>src</sourceDirectory> <resources> <resource> <directory>src/main/resources</directory> <includes> <include>META-INF/kmodule.xml</include> 
+		<include>sh/isaac/provider/drools/AddAttachmentRules.drl</include> <include>sh/isaac/provider/drools/EditVersionRules.drl</include> </includes> 
+		<targetPath>.</targetPath> </resource> </resources> </build> -->
 </project>

@@ -1,64 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-   <modelVersion>4.0.0</modelVersion>
-   <parent>
-      <groupId>sh.isaac</groupId>
-      <artifactId>solor</artifactId>
-      <version>4.52-SNAPSHOT</version>
-   </parent>
-   <groupId>sh.isaac.solor</groupId>
-   <artifactId>solor-parent</artifactId>
-   <packaging>pom</packaging>
-   <name>ISAAC SOLOR: Parent pom</name>
-   <description>SOLOR parent pom for managing common dependencies and other configuration items 
-      for SOLOR projects. SOLOR projects are specific to managing SNOMED, LOINC, and RxNorm content, 
-      and publishing that content using maven dependency management, and ISAAC data structures, processed 
-      using ISAAC libraries.</description>
-    
-   <developers>
-      <developer>
-         <properties>
-            <info>For a listing of developers, clone the project and execute 'git shortlog -sn'</info>
-         </properties>
-      </developer>
-   </developers>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>sh.isaac.uts-core</groupId>
+		<artifactId>solor</artifactId>
+		<version>uts-5.01-SNAPSHOT</version>
+	</parent>
+	<groupId>sh.isaac.uts-core.solor</groupId>
+	<artifactId>solor-parent</artifactId>
+	<packaging>pom</packaging>
+	<name>ISAAC SOLOR: Parent pom</name>
+	<description>
+		SOLOR parent pom for managing common dependencies and other configuration items 
+		for SOLOR projects. SOLOR projects are specific to managing SNOMED, LOINC, and RxNorm content, 
+		and publishing that content using maven dependency management, and ISAAC data structures, processed 
+		using ISAAC libraries.
+	</description>
 
-   <build>
-      <pluginManagement>
-         <plugins>
-            <plugin>
-               <groupId>sh.isaac.solor</groupId>
-               <artifactId>solor-mojo</artifactId>
-               <version>${project.parent.version}</version>
-            </plugin>
-         </plugins>
-      </pluginManagement>
-      <plugins>
-         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-enforcer-plugin</artifactId>
-            <dependencies>
-               <dependency>
-                  <groupId>sh.isaac.solor</groupId>
-                  <artifactId>solor-mojo</artifactId>
-                  <version>${project.parent.version}</version>
-               </dependency>
-            </dependencies>
-            <executions>
-               <execution>
-                  <id>enforce</id>
-                  <phase>initialize</phase>
-                  <configuration>
-                     <rules>
-                        <myCustomRule implementation="sh.isaac.solor.mojo.VerifyIbdfVersionFormat" />
-                     </rules>
-                  </configuration>
-                  <goals>
-                     <goal>enforce</goal>
-                  </goals>
-               </execution>
-            </executions>
-         </plugin>             
-      </plugins>
-   </build>
+	<developers>
+		<developer>
+			<properties>
+				<info>For a listing of developers, clone the project and execute 'git shortlog -sn'</info>
+			</properties>
+		</developer>
+	</developers>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>sh.isaac.uts-core.solor</groupId>
+					<artifactId>solor-mojo</artifactId>
+					<version>${project.parent.version}</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<dependencies>
+					<dependency>
+						<groupId>sh.isaac.uts-core.solor</groupId>
+						<artifactId>solor-mojo</artifactId>
+						<version>${project.parent.version}</version>
+					</dependency>
+				</dependencies>
+				<executions>
+					<execution>
+						<id>enforce</id>
+						<phase>initialize</phase>
+						<configuration>
+							<rules>
+								<myCustomRule implementation="sh.isaac.solor.mojo.VerifyIbdfVersionFormat" />
+							</rules>
+						</configuration>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>

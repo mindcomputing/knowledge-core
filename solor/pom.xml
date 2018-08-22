@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>sh.isaac</groupId>
-        <artifactId>isaac</artifactId>
-        <version>4.52-SNAPSHOT</version>
-    </parent>
-    <artifactId>solor</artifactId>
-    <name>ISAAC SOLOR: (MMP)</name>
-    <description>Aggregator project for ISAAC's SOLOR modules</description>
-    <packaging>pom</packaging>
-    <modules>
-        <module>rxnorm-mojo</module>
-        <module>solor-parent</module>
-        <module>solor-mojo</module>
-        <module>direct-import</module>
-    </modules>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>sh.isaac</groupId>
+		<artifactId>uts-core</artifactId>
+		<version>uts-5.01-SNAPSHOT</version>
+	</parent>
+	<groupId>sh.isaac.uts-core</groupId>
+	<artifactId>solor</artifactId>
+	<name>ISAAC SOLOR: (MMP)</name>
+	<description>Aggregator project for ISAAC's SOLOR modules</description>
+	<packaging>pom</packaging>
+	<modules>
+		<module>rxnorm-mojo</module>
+		<module>solor-parent</module>
+		<module>solor-mojo</module>
+		<module>direct-import</module>
+	</modules>
 </project>

@@ -1,38 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>sh.isaac</groupId>
+		<groupId>sh.isaac.uts-core</groupId>
 		<artifactId>integration</artifactId>
-		<version>4.52-SNAPSHOT</version>
+		<version>uts-5.01-SNAPSHOT</version>
 	</parent>
-
-	<groupId>sh.isaac.integration</groupId>
+	<groupId>sh.isaac.uts-core.integration</groupId>
 	<artifactId>db-config-builder-ui</artifactId>
 	<packaging>jar</packaging>
 	<name>ISAAC integration: DB config builder Fx Gui</name>
 
 	<dependencies>
 		<dependency>
-			<groupId>sh.isaac.integration</groupId>
+			<groupId>sh.isaac.uts-core.integration</groupId>
 			<artifactId>db-config-builder</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>sh.isaac.integration</groupId>
+			<groupId>sh.isaac.uts-core.integration</groupId>
 			<artifactId>import-utils</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<!-- Need this to read converter options -->
 		<dependency>
-			<groupId>sh.isaac.misc</groupId>
+			<groupId>sh.isaac.uts-core.misc</groupId>
 			<artifactId>importers</artifactId>
 			<version>${project.parent.version}</version>
 			<exclusions>
 				<exclusion>
-					<groupId>sh.isaac.misc</groupId>
+					<groupId>sh.isaac.uts-core.misc</groupId>
 					<artifactId>vhat-util</artifactId>
-			</exclusion>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -73,7 +73,7 @@
 			<artifactId>wagon-provider-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>sh.isaac.komet</groupId>
+			<groupId>sh.isaac.uts-core.komet</groupId>
 			<artifactId>gui-contracts</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
@@ -109,8 +109,7 @@
 						</goals>
 						<configuration>
 							<schemaIncludes>
-								<!-- This is a tweaked version of the maven pom to make it easier to deal with the xs:any inside 
-								of <xs:element name="configuration" -->
+								<!-- This is a tweaked version of the maven pom to make it easier to deal with the xs:any inside of <xs:element name="configuration" -->
 								<include>maven-4.0.0-tweaked.xsd</include>
 								<include>assembly-1.1.2.xsd</include>
 							</schemaIncludes>
