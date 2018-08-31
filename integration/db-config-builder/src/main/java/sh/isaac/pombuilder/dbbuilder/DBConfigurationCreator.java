@@ -83,7 +83,7 @@ public class DBConfigurationCreator
 	private static final Logger LOG = LogManager.getLogger();
 
 	/** The Constant parentGroupId. */
-	private static final String PARENT_GROUP_ID = "sh.isaac.integration";
+	private static final String PARENT_GROUP_ID = "sh.isaac.uts-core.integration";
 
 	/** The Constant parentArtifactId. */
 	public static final String PARENT_ARTIFIACT_ID = "db-builder";
@@ -175,7 +175,7 @@ public class DBConfigurationCreator
 			final Dependencies dependencies = new Dependencies();
 			Dependency dependency = new Dependency();
 
-			dependency.setGroupId("sh.isaac.core");
+			dependency.setGroupId("sh.isaac.uts-core.core");
 			dependency.setArtifactId("metadata");
 			dependency.setClassifier("all");
 			dependency.setVersion(metadataVersion);
@@ -242,12 +242,12 @@ public class DBConfigurationCreator
 
 			// new plugin
 			plugin = new Plugin();
-			plugin.setGroupId("sh.isaac.core");
+			plugin.setGroupId("sh.isaac.uts-core.core");
 			plugin.setArtifactId("mojo");
 			plugin.setDependencies(new org.apache.maven.pom._4_0.Plugin.Dependencies());
 			
 			Dependency pd = new Dependency();
-			pd.setGroupId("sh.isaac.core");
+			pd.setGroupId("sh.isaac.uts-core.core");
 			pd.setArtifactId("log-config");
 			pd.setVersion(metadataVersion);
 			pd.setScope("compile");

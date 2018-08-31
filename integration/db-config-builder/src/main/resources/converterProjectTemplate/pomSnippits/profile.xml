@@ -11,7 +11,7 @@
 						<version>#CONVERTER_VERSION#</version>
 						<dependencies>
 							<dependency>
-								<groupId>sh.isaac.core</groupId>
+								<groupId>sh.isaac.uts-core.core</groupId>
 								<artifactId>log-config</artifactId>
 								<version>#CONVERTER_VERSION#</version>
 								<scope>compile</scope>
