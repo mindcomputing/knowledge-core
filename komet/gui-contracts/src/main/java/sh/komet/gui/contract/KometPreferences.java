@@ -26,5 +26,6 @@ import sh.komet.gui.manifold.Manifold;
  */
 @Contract
 public interface KometPreferences {
-    void showPreferences(String title, IsaacPreferences preferences, Manifold manifold);
+    void showPreferences(IsaacPreferences preferences, Manifold manifold);
+    void loadPreferences(IsaacPreferences preferences, Manifold manifold);
 }

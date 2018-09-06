@@ -284,7 +284,7 @@ public enum SupportedConverterTypes
     * version of the converter will execute against this uploaded content.  So, will hardcode them here for now, and developers will have to manually
     * update these if the patterns change in the future.
     */
-   protected final String converterGroupId = "sh.isaac.misc";
+   protected final String converterGroupId = "sh.isaac.uts-core.misc";
    protected final String converterArtifactId = "importers";
    private String converterOutputArtifactId;
    private String converterMojoName;  //Must match the value from the mojo - aka - @ Mojo( name = "convert-loinc-to-ibdf", defaultPhase... used as the goal in the pom.

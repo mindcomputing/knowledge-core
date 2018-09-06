@@ -27,13 +27,17 @@ import sh.komet.gui.manifold.Manifold;
  */
 public class RootPreferences extends AbstractPreferences {
 
-    public RootPreferences(IsaacPreferences preferencesNode, Manifold manifold) {
-        super(preferencesNode, preferencesNode.get(GROUP_NAME, "Root"), manifold);
+    public RootPreferences(IsaacPreferences preferencesNode, Manifold manifold, 
+            KometPreferencesController kpc) {
+        super(preferencesNode, preferencesNode.get(GROUP_NAME, "Root"), manifold, 
+                kpc);
         if (!initialized()) {
             // Add children nodes and reflection classes for children
+            addChild("User", UserPreferences.class);
             addChild("General", GeneralPreferences.class);
             addChild("Change sets", ChangeSetPreferences.class);
-            addChild("User", UserPreferences.class);
+            addChild("Attachment actions", AttachmentActionPreferences.class);
+            addChild("Logic actions", LogicActionPreferences.class);
         }
         save();
 

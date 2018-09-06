@@ -72,7 +72,7 @@ public class MavenArtifactUtilsTest
 				final File where = new File("").getAbsoluteFile();
 				URL snapshot = new URL(
 						"https://sagebits.net/nexus/repository/tmp-content/" + MavenArtifactUtils.makeMavenRelativePath("https://sagebits.net/nexus/repository/tmp-content/",
-								username, userpd, "sh.isaac.misc", "importers", "4.48-SNAPSHOT", "", "jar"));
+								username, userpd, "sh.isaac.uts-core.misc", "importers", "4.48-SNAPSHOT", "", "jar"));
 	
 				Task<File> task = new DownloadUnzipTask(username, userpd, snapshot, true, true, where);
 				Get.workExecutors().getExecutor().submit(task);

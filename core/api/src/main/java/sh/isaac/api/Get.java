@@ -380,6 +380,10 @@ public class Get
 
       return "No desc for: " + conceptNid;
    }
+   
+   public static String conceptDescriptionText(ConceptSpecification conceptSpec) {
+       return conceptDescriptionText(conceptSpec.getNid());
+   }
 
    /**
     * Concept description text list.
@@ -549,6 +553,15 @@ public class Get
       }
 
       return identifierService;
+   }
+   
+   /**
+    * Convenience method to get nids from the identifier service. 
+    * @param uuids
+    * @return a nid
+    */
+   public static int nidForUuids(UUID... uuids) {
+       return identifierService().getNidForUuids(uuids);
    }
 
    /**

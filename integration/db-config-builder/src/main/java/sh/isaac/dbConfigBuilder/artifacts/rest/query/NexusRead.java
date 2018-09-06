@@ -67,7 +67,7 @@ public class NexusRead implements ArtifactSearch
 			Map<String, Object> args = new HashMap<>();
 			args.put(JsonReader.USE_MAPS, true);
 
-			URLConnection service = new URL(getRestURL() + "beta/search?sh.isaac.misc&maven.artifactId=importers").openConnection();
+			URLConnection service = new URL(getRestURL() + "beta/search?sh.isaac.uts-core.misc&maven.artifactId=importers").openConnection();
 			String userpass = sp_.getArtifactUsername() + ":" + new String(sp_.getArtifactPassword());
 			String basicAuth = "Basic " + new String(Base64.getEncoder().encode(userpass.getBytes()));
 			service.setRequestProperty("Authorization", basicAuth);
@@ -106,7 +106,7 @@ public class NexusRead implements ArtifactSearch
 			Map<String, Object> args = new HashMap<>();
 			args.put(JsonReader.USE_MAPS, true);
 
-			URLConnection service = new URL(getRestURL() + "beta/search?sh.isaac.core&maven.artifactId=metadata").openConnection();
+			URLConnection service = new URL(getRestURL() + "beta/search?sh.isaac.uts-core.core&maven.artifactId=metadata").openConnection();
 			String userpass = sp_.getArtifactUsername() + ":" + new String(sp_.getArtifactPassword());
 			String basicAuth = "Basic " + new String(Base64.getEncoder().encode(userpass.getBytes()));
 			service.setRequestProperty("Authorization", basicAuth);

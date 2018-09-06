@@ -12,8 +12,8 @@
 	<name>ISAAC core: Metadata</name>
 
 	<description>
-      A module that reads various metadata source files, and generates the ISAAC metadata for an instance in multiple formats - java, xml, etc
-   </description>
+		A module that reads various metadata source files, and generates the ISAAC metadata for an instance in multiple formats - java, xml, etc
+	</description>
 
 	<dependencies>
 		<dependency>
