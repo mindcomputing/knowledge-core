@@ -4,8 +4,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>sh.isaac.uts-core</groupId>
-		<artifactId>provider</artifactId>
-		<version>uts-5.01-SNAPSHOT</version>
+		<artifactId>core</artifactId>
+		<version>uts-5.03-SNAPSHOT</version>
 	</parent>
 	<groupId>sh.isaac.uts-core.provider</groupId>
 	<artifactId>bdb-datastore</artifactId>
