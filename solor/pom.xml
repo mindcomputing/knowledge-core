@@ -16,5 +16,6 @@
 		<module>solor-parent</module>
 		<module>solor-mojo</module>
 		<module>direct-import</module>
+		<module>direct-export</module>
 	</modules>
 </project>
