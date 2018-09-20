@@ -44,7 +44,7 @@
 			<artifactId>controlsfx</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>sh.isaac.solor</groupId>
+			<groupId>sh.isaac.uts-core.solor</groupId>
 			<artifactId>direct-export</artifactId>
 			<version>${project.parent.version}</version>
 			<scope>compile</scope>
