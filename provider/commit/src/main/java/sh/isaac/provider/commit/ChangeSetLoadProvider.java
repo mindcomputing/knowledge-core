@@ -158,18 +158,10 @@ public class ChangeSetLoadProvider
                            .getStream()
                            .forEach(
                                o -> {
-                                   try {
-                                       commitService.importNoChecks(o);
-                                   } catch (Throwable e) {
-                                    LOG.error("Error importing: " + 
-                                            path.toAbsolutePath() + "\n" + o + "\n", e);
-                                   }
+                                  commitService.importNoChecks(o);
                                });
-                         try {
-                             commitService.postProcessImportNoChecks();
-                         } catch (Throwable e) {
-                             LOG.error("Error post processing: " + path.toAbsolutePath(), e);
-                         }
+                        commitService.postProcessImportNoChecks();
+
                         if (this.processedChangesets != null) {
                            this.processedChangesets.put(path.getFileName()
                                  .toString(), true);
