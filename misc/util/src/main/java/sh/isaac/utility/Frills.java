@@ -74,7 +74,6 @@ import sh.isaac.api.Get;
 import sh.isaac.api.IsaacCache;
 import sh.isaac.api.LookupService;
 import sh.isaac.api.Status;
-import sh.isaac.api.TaxonomySnapshotService;
 import sh.isaac.api.bootstrap.TermAux;
 import sh.isaac.api.chronicle.Chronology;
 import sh.isaac.api.chronicle.LatestVersion;
@@ -155,6 +154,7 @@ import sh.isaac.model.semantic.version.DynamicImpl;
 import sh.isaac.model.semantic.version.LogicGraphVersionImpl;
 import sh.isaac.model.semantic.version.LongVersionImpl;
 import sh.isaac.model.semantic.version.StringVersionImpl;
+import sh.isaac.api.TaxonomySnapshot;
 
 /**
  * The Class Frills.
@@ -1106,7 +1106,7 @@ public class Frills
     */
    public static Set<Integer> getAllChildrenOfConcept(int conceptNid, boolean recursive, boolean leafOnly, StampCoordinate stamp) {
       
-      TaxonomySnapshotService tss = Get.taxonomyService().getSnapshotNoTree(
+        TaxonomySnapshot tss = Get.taxonomyService().getSnapshotNoTree(
             new ManifoldCoordinateImpl((stamp == null ? Get.configurationService().getUserConfiguration(Optional.empty()).getStampCoordinate() : stamp),
                   LanguageCoordinates.getUsEnglishLanguageFullySpecifiedNameCoordinate()));
       
@@ -1121,7 +1121,7 @@ public class Frills
     * Recursively get Is a children of a concept.  May inadvertently return the requested starting sequence when leafOnly is true, and 
     * there are no children.
     */
-   private static Set<Integer> getAllChildrenOfConcept(Set<Integer> handledConceptNids, int conceptNid, boolean recursive, boolean leafOnly, TaxonomySnapshotService tss) {
+   private static Set<Integer> getAllChildrenOfConcept(Set<Integer> handledConceptNids, int conceptNid, boolean recursive, boolean leafOnly, TaxonomySnapshot tss) {
       Set<Integer> results = new HashSet<>();
 
       // This both prevents infinite recursion and avoids processing or returning of duplicates
@@ -2138,7 +2138,7 @@ public class Frills
       HashSet<Integer> modules = new HashSet<>();
       HashSet<Integer> terminologyTypes = new HashSet<>();
       
-      TaxonomySnapshotService tss = Get.taxonomyService().getStatedLatestSnapshot(
+      TaxonomySnapshot tss = Get.taxonomyService().getStatedLatestSnapshot(
             (stamp == null ? StampCoordinates.getDevelopmentLatest().getStampPosition().getStampPathNid() : stamp.getStampPosition().getStampPathNid()),
             (stamp == null ? NidSet.EMPTY : stamp.getModuleNids()),
             (stamp == null ? Status.ACTIVE_ONLY_SET : stamp.getAllowedStates()), false);

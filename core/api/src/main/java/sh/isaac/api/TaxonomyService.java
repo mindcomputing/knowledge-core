@@ -123,7 +123,7 @@ public interface TaxonomyService
     * @return the snapshot which is backed by a {@link Tree}, although that tree may not be complete for some time after
     * this call returns.
     */
-   TaxonomySnapshotService getSnapshot(ManifoldCoordinate tc);
+   TaxonomySnapshot getSnapshot(ManifoldCoordinate tc);
    
    /**
     * Gets the snapshot.  This method is for returning a Snapshot that does NOT build a tree in the background.
@@ -136,7 +136,7 @@ public interface TaxonomyService
     * @param mc the manifold coordinate
     * @return the snapshot that is NOT backed by a {@link Tree}
     */
-   TaxonomySnapshotService getSnapshotNoTree(ManifoldCoordinate mc);
+   TaxonomySnapshot getSnapshotNoTree(ManifoldCoordinate mc);
    
 
 	/**
@@ -150,8 +150,8 @@ public interface TaxonomyService
 	 * {@link #getSnapshotNoTree(ManifoldCoordinate)}
 	 * @return the Snapshot service
 	 */
-	TaxonomySnapshotService getStatedLatestSnapshot(int pathNid, NidSet modules, EnumSet<Status> allowedStates, boolean computeTree);
-   
+   TaxonomySnapshot getStatedLatestSnapshot(int pathNid, NidSet modules, EnumSet<Status> allowedStates, boolean computeTree);
+
    /**
     * 
     * @param conceptAssemblageNid The assemblage Nid which specifies the assemblage where the concepts in this tree
