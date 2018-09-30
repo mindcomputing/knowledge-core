@@ -149,11 +149,22 @@ public class DescriptionIndexer extends LuceneIndexer
          String key = pathNid + ":" + semanticChronology.getReferencedComponentNid();
          try
          {
+            //TODO once we settle on a set of modules for metadata, change this to use module, instead of hierarchy.
             isMetadata = isMetadataCache.get(key, pathAndRefComp -> {
-            //cache doesn't have the answer, needs to calculate.  We construct a snapshot of latest time, the path, and any module, active only.
-            TaxonomySnapshotService tss = Get.taxonomyService().getSnapshot(new ManifoldCoordinateImpl(
-                  new StampCoordinateImpl(StampPrecedence.PATH, new StampPositionImpl(Long.MAX_VALUE, pathNid), NidSet.EMPTY, new int[0], Status.ACTIVE_ONLY_SET), null));
-            return tss.isKindOf(semanticChronology.getReferencedComponentNid(), TermAux.SOLOR_METADATA.getNid());
+            try 
+            {
+               //cache doesn't have the answer, needs to calculate.  We construct a snapshot of latest time, the path, and any module, active only.
+               TaxonomySnapshotService tss = Get.taxonomyService().getSnapshot(new ManifoldCoordinateImpl(
+                     new StampCoordinateImpl(StampPrecedence.PATH, new StampPositionImpl(Long.MAX_VALUE, pathNid), NidSet.EMPTY, new int[0], Status.ACTIVE_ONLY_SET), null));
+               return tss.isKindOf(semanticChronology.getReferencedComponentNid(), TermAux.SOLOR_METADATA.getNid());
+            }
+            catch (Exception e) 
+            {
+               //This can happen, when loading content out-of-order.  Need to switch to a module approach to fix it.
+               LOG.debug("Failed to calculate parent path for {} because {}, will assume not metadata for indexing.", 
+                     semanticChronology.getReferencedComponentNid(), e);
+               return false;
+            }
             }).booleanValue();
          }
          catch (Exception e)
