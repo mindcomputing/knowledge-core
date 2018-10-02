@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>sh.isaac.uts-core</groupId>
-		<artifactId>komet</artifactId>
+		<artifactId>solor</artifactId>
 		<version>uts-5.03-SNAPSHOT</version>
 	</parent>
 	<groupId>sh.isaac.uts-core.solor</groupId>
