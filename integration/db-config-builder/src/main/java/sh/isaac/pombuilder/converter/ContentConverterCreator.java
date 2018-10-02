@@ -184,7 +184,7 @@ public class ContentConverterCreator
 				}
 
 				temp = FileUtil.readFile("converterProjectTemplate/pomSnippits/ibdfDependency.xml");
-				temp = temp.replace("#GROUPID#", "sh.isaac.core");
+				temp = temp.replace("#GROUPID#", "sh.isaac.uts-core.core");
 				temp = temp.replace("#ARTIFACTID#", "metadata");
 				temp = temp.replace("#CLASSIFIER#", "all");
 				temp = temp.replace("#VERSION#", converterVersion);
@@ -233,7 +233,7 @@ public class ContentConverterCreator
 					}
 					if (option.getValue() != null)
 					{
-						if (!option.getKey().isAllowMultiSelect() && (option.getValue().size() > 1))
+						if (!option.getKey().isAllowMultiSelectInPomMode() && (option.getValue().size() > 1))
 						{
 							LOG.info("Throwing exception back because the option " + option.getKey().getDisplayName() + " allows at most, one value");
 							throw new Exception("The option " + option.getKey().getDisplayName() + " allows at most, one value");
@@ -247,7 +247,7 @@ public class ContentConverterCreator
 
 						if (option.getValue().size() > 0)
 						{
-							if (option.getKey().isAllowMultiSelect())
+							if (option.getKey().isAllowMultiSelectInPomMode())
 							{
 								userOptions.append(optionIndent + "<" + option.getKey().getInternalName() + "s>\n");
 

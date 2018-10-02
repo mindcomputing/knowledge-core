@@ -120,7 +120,9 @@ import static sh.isaac.model.observable.ObservableFields.DESCRIPTION_DIALECT;
 import static sh.isaac.model.observable.ObservableFields.DESCRIPTION_DIALECT_DESCRIPTION;
 import static sh.isaac.model.observable.ObservableFields.DESCRIPTION_DIALECT_DIALECT;
 import static sh.isaac.model.observable.ObservableFields.MODULE_NID_PREFERENCE_LIST_FOR_STAMP_COORDINATE;
+import static sh.isaac.model.observable.ObservableFields.MODULE_OPTIONS_FOR_EDIT_COORDINATE;
 import static sh.isaac.model.observable.ObservableFields.NATIVE_ID_FOR_COMPONENT;
+import static sh.isaac.model.observable.ObservableFields.PATH_OPTIONS_FOR_EDIT_COORDINATE;
 import static sh.isaac.model.observable.ObservableFields.UUID_LIST_FOR_COMPONENT;
 
 //~--- classes ----------------------------------------------------------------
@@ -191,17 +193,62 @@ public class IsaacMetadataAuxiliary extends IsaacTaxonomy {
          popParent();
          createConcept(TermAux.SOLOR_METADATA).addDescription("version:" + AUXILIARY_METADATA_VERSION, TermAux.DEFINITION_DESCRIPTION_TYPE);
          pushParent(current());
+            // order (int), field type (concept) 
+            // order (int), field concept (concept)
+            createConcept(TermAux.SEMANTIC_TYPE);
+            pushParent(current());
+                createConcept(TermAux.MEMBERSHIP_SEMANTIC);
+                createConcept(TermAux.DYNAMIC_SEMANTIC);
+                createConcept(TermAux.CONCEPT_SEMANTIC).addComponentIntSemantic(TermAux.CONCEPT_FIELD, 0, TermAux.SEMANTIC_FIELD_DATA_TYPES_ASSEMBLAGE);
+                createConcept(TermAux.COMPONENT_SEMANTIC).addComponentIntSemantic(TermAux.COMPONENT_FIELD, 0, TermAux.SEMANTIC_FIELD_DATA_TYPES_ASSEMBLAGE);
+                createConcept(TermAux.LOGICAL_EXPRESSION_SEMANTIC).addComponentIntSemantic(TermAux.LOGICAL_EXPRESSION_FIELD, 0, TermAux.SEMANTIC_FIELD_DATA_TYPES_ASSEMBLAGE);
+                createConcept(TermAux.INTEGER_SEMANTIC).addComponentIntSemantic(TermAux.INTEGER_FIELD, 0, TermAux.SEMANTIC_FIELD_DATA_TYPES_ASSEMBLAGE);
+                createConcept(TermAux.STRING_SEMANTIC).addComponentIntSemantic(TermAux.STRING_FIELD, 0, TermAux.SEMANTIC_FIELD_DATA_TYPES_ASSEMBLAGE);
+                createConcept(TermAux.DESCRIPTION_SEMANTIC)
+                        .addComponentIntSemantic(TermAux.CONCEPT_FIELD, 1, TermAux.SEMANTIC_FIELD_DATA_TYPES_ASSEMBLAGE)
+                        .addComponentIntSemantic(TermAux.CONCEPT_FIELD, 2, TermAux.SEMANTIC_FIELD_DATA_TYPES_ASSEMBLAGE)
+                        .addComponentIntSemantic(TermAux.CONCEPT_FIELD, 3, TermAux.SEMANTIC_FIELD_DATA_TYPES_ASSEMBLAGE)
+                        .addComponentIntSemantic(TermAux.STRING_FIELD, 4, TermAux.SEMANTIC_FIELD_DATA_TYPES_ASSEMBLAGE);
+                popParent();
+            createConcept(TermAux.SEMANTIC_FIELD_TYPE);
+            pushParent(current());
+                createConcept(TermAux.ARRAY_FIELD);
+                createConcept(TermAux.BOOLEAN_FIELD);
+                createConcept(TermAux.BYTE_ARRAY_FIELD);
+                createConcept(TermAux.DOUBLE_FIELD);
+                createConcept(TermAux.FLOAT_FIELD);
+                createConcept(TermAux.INTEGER_FIELD);
+                createConcept(TermAux.LOGICAL_EXPRESSION_FIELD);
+                createConcept(TermAux.LONG_FIELD);
+                createConcept(TermAux.COMPONENT_FIELD);
+                pushParent(current());
+                    createConcept(TermAux.CONCEPT_FIELD);
+                    popParent();
+                createConcept(TermAux.STRING_FIELD);
+                createConcept(TermAux.POLYMORPHIC_FIELD);
+                createConcept(TermAux.UUID_FIELD);
+                popParent();
             createConcept("Module").mergeFromSpec(TermAux.UNSPECIFIED_MODULE);
             pushParent(current());
                createConcept(TermAux.SOLOR_MODULE).addDescription("SOLOR", TermAux.REGULAR_NAME_DESCRIPTION_TYPE);
+               pushParent(current());
+                  createConcept("SOLOR quality assurance rule module");
+                  createConcept("SOLOR temporary concept module")
+                          .addDescription("The temporary module is used for concepts such as those that represent feature paths, that are never part of a release.", TermAux.DEFINITION_DESCRIPTION_TYPE);
+                  createConcept("SOLOR automation rule module");
+                  createConcept("SOLOR genomic module").addDescription("Collection of Variant and Gene", TermAux.DEFINITION_DESCRIPTION_TYPE);
+                  // The second UUID here was the old value from the TermAux - but this was an orphan. to best fix the bug that resulted,
+                  // the type5 UUID from here was moved to TermAux, and the old UUID was added here as an additional.
+                  createConcept(TermAux.SOLOR_OVERLAY_MODULE).addDescription("SOLOR overlay", TermAux.REGULAR_NAME_DESCRIPTION_TYPE)
+                     .addUuids(UUID.fromString("1f2016a6-960e-11e5-8994-feff819cdc9f"));
+               
+                  popParent();
+
                createConcept(TermAux.SCT_CORE_MODULE);
                createConcept("US Extension modules", "US Extension");
                createConcept("LOINC® modules", "LOINC").addDescription("Logical Observation Identifiers Names and Codes", TermAux.DEFINITION_DESCRIPTION_TYPE);
                createConcept("RxNorm modules", "RxNorm");
                createConcept("Generated administration of module");
-               createConcept("SOLOR quality assurance rule module");
-               createConcept("SOLOR automation rule module");
-               createConcept("SOLOR genomic module").addDescription("Collection of Variant and Gene", TermAux.DEFINITION_DESCRIPTION_TYPE);
 
                //The second UUID here was the old value from the TermAux - but this was an orphan.  to best fix the bug that resulted, 
                // the type5 UUID from here was moved to TermAux, and the old UUID was added here as an additional.
@@ -211,10 +258,6 @@ public class IsaacMetadataAuxiliary extends IsaacTaxonomy {
                   createConcept(TermAux.VHAT_EDIT);
                   popParent();
 
-               // The second UUID here was the old value from the TermAux - but this was an orphan. to best fix the bug that resulted,
-               // the type5 UUID from here was moved to TermAux, and the old UUID was added here as an additional.
-               createConcept(TermAux.SOLOR_OVERLAY_MODULE).addDescription("SOLOR overlay", TermAux.REGULAR_NAME_DESCRIPTION_TYPE)
-                  .addUuids(UUID.fromString("1f2016a6-960e-11e5-8994-feff819cdc9f"));
                
                createConcept("HL7® v3 modules", "HL7v3").addDescription("Health Level 7 version 3", TermAux.DEFINITION_DESCRIPTION_TYPE);
                createConcept("NUCC modules", "NUCC").addDescription("National Uniform Claim Committee", TermAux.DEFINITION_DESCRIPTION_TYPE);
@@ -228,6 +271,7 @@ public class IsaacMetadataAuxiliary extends IsaacTaxonomy {
             pushParent(current());
                createConcept(TermAux.KEITH_CAMPBELL);
                createConcept(TermAux.DELOITTE_USER);
+               createConcept("Bootstrap administrator", "admin");
                popParent();
             createConcept(TermAux.PATH);
             pushParent(current());
@@ -296,7 +340,7 @@ public class IsaacMetadataAuxiliary extends IsaacTaxonomy {
                createConcept("MIM Number").addAssemblageMembership(TermAux.IDENTIFIER_SOURCE);
 
                popParent();
-            createConcept("Language");
+            createConcept(TermAux.LANGUAGE);
             pushParent(current());  //Adding the UUIDs from the retired "assemblage" only concept, which just made the metadata far more 
             //confusing than necessary, also, making 2 parents, one of language, the other under assemblage.
                createConcept(TermAux.ENGLISH_LANGUAGE, 
@@ -352,8 +396,11 @@ public class IsaacMetadataAuxiliary extends IsaacTaxonomy {
                createConcept("Quality assurance rule issue");
                createConcept("Automation issue");
                popParent();
+            createConcept(TermAux.SEMANTIC_FIELD_CONCEPTS);
             createConcept(TermAux.ASSEMBLAGE);
             pushParent(current());
+               createConcept(TermAux.SEMANTIC_FIELD_DATA_TYPES_ASSEMBLAGE);
+               createConcept(TermAux.ASSEMBLAGE_SEMANTIC_FIELDS);
                createConcept("Issue managment assemblage");
                pushParent(current());
                   createConcept("Content issue assemblage");
@@ -432,18 +479,16 @@ public class IsaacMetadataAuxiliary extends IsaacTaxonomy {
 
                   // addPathOrigin(pathOrigins, developmentPath, masterPath);
                   popParent();
-               createConcept("SOLOR assemblage").setPrimordialUuid("7a9b495e-69c1-53e5-a2d5-41be2429c146");
-               createConcept("SOLOR Content Metadata");
-               pushParent(current());
-                  createConcept(TermAux.DATABASE_UUID);
-                  createConcept("Source Artifact Version");
-                  createConcept("Source Release Date");
-                  createConcept("Converter Version");
-                  createConcept("Converted IBDF Artifact Version");
-                  createConcept("Converted IBDF Artifact Classifier");
-                  popParent();
                popParent();
-               
+            createConcept("Content Metadata");
+            pushParent(current());
+               createConcept(TermAux.DATABASE_UUID);
+               createConcept("Source Artifact Version");
+               createConcept("Source Release Date");
+               createConcept("Converter Version");
+               createConcept("Converted IBDF Artifact Version");
+               createConcept("Converted IBDF Artifact Classifier");
+               popParent();
             createConcept("Measurement semantic");
             pushParent(current());
                 createConcept(TermAux.TIME_MEASUREMENT_SEMANTIC);
@@ -472,9 +517,6 @@ public class IsaacMetadataAuxiliary extends IsaacTaxonomy {
                 popParent();
             popParent();
                 
-                
-                
-                
             createConcept("Axiom origin");
             pushParent(current());
                createConcept(TermAux.STATED_PREMISE_TYPE).addUuids(UUID.fromString("3fde38f6-e079-3cdc-a819-eda3ec74732d"));
@@ -490,10 +532,6 @@ public class IsaacMetadataAuxiliary extends IsaacTaxonomy {
                syn.addUuids(UUID.fromString("d6fad981-7df6-3388-94d8-238cc0465a79"));
                syn.addDescription("Synonyn", TermAux.REGULAR_NAME_DESCRIPTION_TYPE);
                createConcept(TermAux.DEFINITION_DESCRIPTION_TYPE);
-               createConcept(TermAux.PLURAL_NAME_DESCRIPTION_TYPE);
-               createConcept("Unknown description type");
-               createConcept("Abbreviation description type", "Abbreviation");
-               createConcept("Misspelled description type", "Misspelling");
                popParent();
             createConcept(TermAux.DESCRIPTION_TYPE_IN_SOURCE_TERMINOLOGY); // LOINC and RxNorm description types are created under this node
             createConcept(TermAux.RELATIONSHIP_TYPE_IN_SOURCE_TERMINOLOGY); // RxNorm relationship types are created under this node
@@ -502,6 +540,7 @@ public class IsaacMetadataAuxiliary extends IsaacTaxonomy {
                createConcept(TermAux.DESCRIPTION_CASE_SENSITIVE);
                createConcept(TermAux.DESCRIPTION_NOT_CASE_SENSITIVE);
                createConcept(TermAux.DESCRIPTION_INITIAL_CHARACTER_SENSITIVE);
+               createConcept("Not Applicable");
                popParent();
             createConcept("Description acceptability");
             pushParent(current());
@@ -600,11 +639,34 @@ public class IsaacMetadataAuxiliary extends IsaacTaxonomy {
                popParent();
             createConcept("Object properties");
             pushParent(current());
+               createConcept("Action properties");
+               pushParent(current());
+                  createConcept("Action name");
+                  createConcept(ObservableFields.ASSEMBLAGE_FOR_ACTION);
+                  createConcept(ObservableFields.CONCEPT_CONSTRAINTS);
+                  createConcept(ObservableFields.VERSION_TYPE_FOR_ACTION);
+                  createConcept(ObservableFields.ROLE_TYPE_TO_ADD);
+                  createConcept(ObservableFields.ASSEMBLAGE_FOR_CONSTRAINT);
+                  popParent();
+               createConcept("Configuration properties");
+               pushParent(current());
+                  createConcept("Configuration name", "Configuration name");
+                  createConcept("Datastore location", "Datastore location");
+                  popParent();
+               createConcept("Synchronization item properties");
+               pushParent(current());
+                  createConcept("Synchronication item name", "Item name");
+                  createConcept("Synchronication item url", "Item url");
+                  createConcept("Synchronication item username", "Username");
+                  createConcept("Synchronication item password", "Password");
+                  popParent();
                createConcept("Coordinate properties");
                pushParent(current());
                   createConcept(AUTHOR_NID_FOR_EDIT_COORDINATE);
                   createConcept(MODULE_NID_FOR_EDIT_COORDINATE);
+                  createConcept(MODULE_OPTIONS_FOR_EDIT_COORDINATE);
                   createConcept(PATH_NID_FOR_EDIT_CORDINATE);
+                  createConcept(PATH_OPTIONS_FOR_EDIT_COORDINATE);
                   createConcept(LANGUAGE_NID_FOR_LANGUAGE_COORDINATE);
                   createConcept(DIALECT_ASSEMBLAGE_NID_PREFERENCE_LIST_FOR_LANGUAGE_COORDINATE);
                   createConcept(MODULE_NID_PREFERENCE_LIST_FOR_STAMP_COORDINATE);
@@ -665,6 +727,7 @@ public class IsaacMetadataAuxiliary extends IsaacTaxonomy {
                pushParent(current());
                   createConcept(DESCRIPTION_LIST_FOR_CONCEPT);
                   createConcept(CONCEPT_VERSION);
+                  createConcept(ObservableFields.CONCEPT_IS_ASSEMBLAGE);
                   popParent();
                createConcept("Corelation properties");
                pushParent(current());
@@ -681,9 +744,12 @@ public class IsaacMetadataAuxiliary extends IsaacTaxonomy {
                   createConcept(ObservableFields.ENABLE_EDIT);
                   createConcept(ObservableFields.KOMET_USER);
                   createConcept(ObservableFields.KOMET_USER_LIST);
+                  createConcept(ObservableFields.MODULE_FOR_USER);
+                  createConcept(ObservableFields.PATH_FOR_USER);
                   popParent();
                createConcept("Semantic properties");
                pushParent(current());
+                  createConcept(ObservableFields.SEMANTIC_FIELD_NAME);
                   createConcept(ObservableFields.STRING_VALUE_FOR_SEMANTIC);
                   createConcept(ObservableFields.COMPONENT_NID_FOR_SEMANTIC);
                   createConcept(ObservableFields.LOGIC_GRAPH_FOR_SEMANTIC);

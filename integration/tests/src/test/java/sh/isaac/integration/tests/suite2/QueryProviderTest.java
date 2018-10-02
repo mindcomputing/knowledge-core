@@ -19,6 +19,7 @@
 package sh.isaac.integration.tests.suite2;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,7 +41,7 @@ import sh.isaac.api.constants.SystemPropertyConstants;
 import sh.isaac.api.index.AmpRestriction;
 import sh.isaac.api.index.SearchResult;
 import sh.isaac.api.util.RecursiveDelete;
-import sh.isaac.convert.mojo.turtle.TurtleImportMojo;
+import sh.isaac.convert.mojo.turtle.TurtleImportMojoDirect;
 import sh.isaac.model.configuration.StampCoordinates;
 import sh.isaac.provider.query.lucene.indexers.DescriptionIndexer;
 import sh.isaac.provider.query.lucene.indexers.SemanticIndexer;
@@ -69,9 +70,9 @@ public class QueryProviderTest {
 		Get.configurationService().setDatabaseInitializationMode(DatabaseInitialization.LOAD_METADATA);
 		LookupService.startupIsaac();
 
-		TurtleImportMojo tim = new TurtleImportMojo(null, QueryProviderTest.class.getResourceAsStream("/turtle/bevontology-0.8.ttl"), "0.8");
-		
-		tim.processTurtle();
+		TurtleImportMojoDirect timd = new TurtleImportMojoDirect();
+		timd.configure(null, Paths.get(QueryProviderTest.class.getResource("/turtle/bevontology-0.8.ttl").toURI()), "0.8", null);
+		timd.convertContent(update -> {});
 		
 		di = LookupService.get().getService(DescriptionIndexer.class);
 		di.forceMerge();  //Just a way to force the query readers to refresh more quickly than they would
@@ -104,7 +105,7 @@ public class QueryProviderTest {
 	@Test
 	public void testSizeLimits2() {
 		
-		int expectedMaxHits = 158;
+		int expectedMaxHits = 242;
 		
 		Assert.assertEquals(di.query("bevon", Integer.MAX_VALUE).size(), expectedMaxHits);
 		
@@ -202,21 +203,21 @@ public class QueryProviderTest {
 		Assert.assertEquals(di.query("mash", null).size(), 4);
 
 		Assert.assertEquals(di.query("mash AND cereal", null).size(), 1);
-		Assert.assertEquals(di.query("bevon AND metadata AND (ISAAC)", null).size(), 1);
-		Assert.assertEquals(di.query("bevon AND metadata AND \\(ISAAC\\)", null).size(), 1);
-		Assert.assertEquals(di.query("metadata AND \"Beverage Ontology\" AND (ISAAC)", null).size(), 1);
+		Assert.assertEquals(di.query("dynamic AND assemblages AND (SOLOR)", null).size(), 1);
+		Assert.assertEquals(di.query("dynamic AND assemblages AND \\(SOLOR\\)", null).size(), 1);
+		Assert.assertEquals(di.query("\"Beverage Ontology\"", null).size(), 5);
 		
 		
 		
-		Assert.assertEquals(di.query("bevon AND metadata NOT \\(ISAAC\\)", null).size(), 1);
-		//This query won't work as expected, because the way we are searching, the white space analyzer keeps the text as ... "(SOLOR)" so "NOT SOLOR"
-		//matches on the whitespace analyzed field, as it doesn't contain the token "SOLOR".
-		//Assert.assertEquals(di.query("bevon AND metadata NOT ISAAC", null).size(), 1);
-		Assert.assertEquals(di.query("bevon AND metadata NOT (ISAAC)", null).size(), 1);
+		Assert.assertEquals(di.query("dynamic AND assemblages NOT \\(SOLOR\\)", null).size(), 1);
+		//This query won't work as expected, because the way we are searching, the white space analyzer keeps the text as ... "(BEVON)" so "NOT BEVON"
+		//matches on the whitespace analyzed field, as it doesn't contain the token "BEVON".
+		//Assert.assertEquals(di.query("dynamic AND assemblages NOT SOLOR", null).size(), 1);
+		Assert.assertEquals(di.query("dynamic AND assemblages NOT (SOLOR)", null).size(), 1);
 
-		Assert.assertEquals(di.query("bevon OR (ISAAC)", null).size(), 100);
-		Assert.assertEquals(di.query("bevon ISAAC", null).size(), 100);
-		Assert.assertEquals(di.query("bevon (ISAAC)", null).size(), 100);
+		Assert.assertEquals(di.query("bevon OR (SOLOR)", null).size(), 100);
+		Assert.assertEquals(di.query("bevon SOLOR", null).size(), 100);
+		Assert.assertEquals(di.query("bevon (SOLOR)", null).size(), 100);
 		Assert.assertEquals(di.query("bevon isaac", null).size(), 100);
 	}
 	
@@ -252,10 +253,10 @@ public class QueryProviderTest {
 	public void testPredicate() {
 		
 		//no predicate
-		Assert.assertEquals(di.query("rdfs.co", false, null, null, null, 1, Integer.MAX_VALUE, null).size(), 141);
+		Assert.assertEquals(di.query("rdfs.co", false, null, null, null, 1, Integer.MAX_VALUE, null).size(), 183);
 		
 		//no fail predicate
-		Assert.assertEquals(di.query("rdfs.co", false, null, (nid -> true), null, 1, Integer.MAX_VALUE, null).size(), 141);
+		Assert.assertEquals(di.query("rdfs.co", false, null, (nid -> true), null, 1, Integer.MAX_VALUE, null).size(), 183);
 		
 		//no pass predicate
 		Assert.assertEquals(di.query("rdfs.co", false, null, (nid -> false), null, 1, Integer.MAX_VALUE, null).size(), 0);
@@ -305,7 +306,7 @@ public class QueryProviderTest {
 	@Test
 	public void testPrefixWithMergeOnConcepts() {
 		
-		Assert.assertEquals(di.query("whis", true, null, null, 1, 125, null).size(), 53);
+		Assert.assertEquals(di.query("whis", true, null, null, 1, 125, null).size(), 54);
 		
 		Assert.assertEquals(di.mergeResultsOnConcept(di.query("whis", true, null, null, 1, 125, null)).size(), 25);
 	}

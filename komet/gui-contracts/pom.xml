@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>sh.isaac.uts-core</groupId>
 		<artifactId>komet</artifactId>
-		<version>uts-5.02</version>
+		<version>uts-5.03</version>
 	</parent>
 	<groupId>sh.isaac.uts-core.komet</groupId>
 	<artifactId>gui-contracts</artifactId>
@@ -34,6 +34,11 @@
 			<type>jar</type>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-core</artifactId>
+			<version>1.3.2</version>
+		</dependency>
+		<dependency>
 			<groupId>sh.isaac.uts-core.komet</groupId>
 			<artifactId>iconography</artifactId>
 			<version>${project.parent.version}</version>
@@ -54,6 +59,12 @@
 		<dependency>
 			<groupId>sh.isaac.uts-core.solor</groupId>
 			<artifactId>direct-import</artifactId>
+			<version>${project.parent.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>sh.isaac.uts-core.misc</groupId>
+			<artifactId>importers</artifactId>
 			<version>${project.parent.version}</version>
 			<scope>compile</scope>
 		</dependency>

@@ -338,9 +338,9 @@ public class AxiomView {
             LogicGraphVersion version = latestVersion.get();
             ObservableSemanticChronologyImpl observableSemanticChronology = new ObservableSemanticChronologyImpl(version.getChronology());
             ObservableLogicGraphVersionImpl observableVersion = new ObservableLogicGraphVersionImpl(version, observableSemanticChronology);
-            ObservableLogicGraphVersionImpl mutableVersion = observableVersion.makeAutonomousAnalog(manifold.getEditCoordinate());
+            ObservableLogicGraphVersionImpl mutableVersion = observableVersion.makeAutonomousAnalog(FxGet.editCoordinate());
             mutableVersion.setGraphData(this.expression.getData(DataTarget.INTERNAL));
-            Get.commitService().commit(manifold.getEditCoordinate(), "Axiom view edit", mutableVersion);
+            Get.commitService().commit(FxGet.editCoordinate(), "Axiom view edit", mutableVersion);
         }
         updateExpression();
     }
@@ -797,7 +797,8 @@ public class AxiomView {
                     = FxGet.rulesDrivenKometService().getEditLogicalExpressionNodeMenuItems(
                             manifold,
                             logicNode,
-                            AxiomView.this.expression, this::updateExpressionForClauseView);
+                            AxiomView.this.expression, this::updateExpressionForClauseView,
+                            mouseEvent);
 
             if (!actionItems.isEmpty()) {
                 contextMenu.getItems().add(new SeparatorMenuItem());

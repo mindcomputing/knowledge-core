@@ -39,9 +39,9 @@
 
 package sh.isaac.api.component.semantic.version;
 
-import org.apache.logging.log4j.LogManager;
 import sh.isaac.api.Get;
 import sh.isaac.api.bootstrap.TermAux;
+import sh.isaac.api.chronicle.LatestVersion;
 import sh.isaac.api.chronicle.VersionType;
 
 /**
@@ -83,18 +83,15 @@ public interface DescriptionVersion
       //"Regular name description type (SOLOR)" in a GUI dropdown of description types
       if (nid == TermAux.FULLY_QUALIFIED_NAME_DESCRIPTION_TYPE.getNid()) {
          return "Fully Qualified Name";
-      }
-      else if (nid == TermAux.REGULAR_NAME_DESCRIPTION_TYPE.getNid()) {
+      } else if (nid == TermAux.REGULAR_NAME_DESCRIPTION_TYPE.getNid()) {
           return "Regular Name";
-      }
-      else if (nid == TermAux.PLURAL_NAME_DESCRIPTION_TYPE.getNid()) {
-          return "Plural Name";
       } else if (nid == TermAux.DEFINITION_DESCRIPTION_TYPE.getNid()) {
           return "Definition";
-      }
-      else {
-         LogManager.getLogger().warn("Unexpected description type {}!", nid);
-         return Get.conceptDescriptionText(nid);
+      } else {
+         LatestVersion<DescriptionVersion> lv = Get.defaultCoordinate().getLanguageCoordinate().getDescription(nid, 
+               new int[] {TermAux.REGULAR_NAME_DESCRIPTION_TYPE.getNid(), TermAux.FULLY_QUALIFIED_NAME_DESCRIPTION_TYPE.getNid()},
+               Get.defaultCoordinate());
+         return lv.isPresent() ? lv.get().getText() : Get.conceptDescriptionText(nid);
       }
    }
 

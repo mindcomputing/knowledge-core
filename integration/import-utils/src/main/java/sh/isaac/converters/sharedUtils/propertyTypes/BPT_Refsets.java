@@ -39,8 +39,6 @@
 
 package sh.isaac.converters.sharedUtils.propertyTypes;
 
-import java.util.UUID;
-import sh.isaac.MetaData;
 import sh.isaac.converters.sharedUtils.stats.ConverterUUID;
 
 /**
@@ -48,9 +46,9 @@ import sh.isaac.converters.sharedUtils.stats.ConverterUUID;
  *
  * @author Daniel Armbrust
  */
-public class BPT_Refsets extends PropertyType implements BPT_HasAltMetaDataParent {
+public class BPT_Refsets extends PropertyType {
    /**
-    * Instantiates a new BP T refsets.
+    * Instantiates a new BPT_Refsets.
     *
     * @param terminologyName
     *           the terminology name
@@ -61,17 +59,13 @@ public class BPT_Refsets extends PropertyType implements BPT_HasAltMetaDataParen
    }
    
    /**
-    * Instantiates a new BP T refsets.
+    * Instantiates a new BPT_Refsets
     *
     * @param terminologyName
     *           the terminology name
     */
    public BPT_Refsets(String terminologyName) {
      this(terminologyName, null);
-   }
-
-   public UUID getAltMetaDataParentUUID() {
-     return MetaData.SOLOR_ASSEMBLAGE____SOLOR.getPrimordialUuid();
    }
 }
 

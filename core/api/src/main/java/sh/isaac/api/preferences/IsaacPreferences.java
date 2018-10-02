@@ -27,11 +27,11 @@ import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.NodeChangeListener;
 import java.util.prefs.PreferenceChangeListener;
+import sh.isaac.api.ConceptProxy;
+import sh.isaac.api.component.concept.ConceptSpecification;
 import sh.isaac.api.util.PasswordHasher;
 
 /**
@@ -612,7 +612,7 @@ public interface IsaacPreferences {
      * Removes this preference node and all of its descendants, invalidating any
      * preferences contained in the removed nodes. Once a node has been removed,
      * attempting any method other than {@link #name()},
-     * {@link #absolutePath()}, {@link #isUserNode()}, {@link #flush()} or
+     * {@link #absolutePath()}, {@link #flush()} or
      * {@link #node(String) nodeExists("")} on the corresponding
      * <tt>Preferences</tt> instance will fail with an
      * <tt>IllegalStateException</tt>. (The methods defined on {@link Object}
@@ -658,7 +658,7 @@ public interface IsaacPreferences {
     /**
      *
      *
-     * @return the preference node type. APPLICATION, USER, or SYSTEM.
+     * @return the preference node type. CONFIGURATION, USER, or SYSTEM.
      */
     PreferenceNodeType getNodeType();
 
@@ -909,7 +909,7 @@ public interface IsaacPreferences {
         for (int i = 0; i < list.size(); i++) {
             builder.append(list.get(i));
             if (i < list.size() - 1) {
-                builder.append("^");
+                builder.append("|!%|");
             }
         }
         put(key, builder.toString());
@@ -919,12 +919,32 @@ public interface IsaacPreferences {
         return getList(enumToGeneralKey(key));
     }
 
+    default List<String> getList(Enum key, List<String> defaultList) {
+        List<String> list = getList(enumToGeneralKey(key));
+        if (list.isEmpty()) {
+            return defaultList;
+        }
+        return list;
+    }
+
+    default List<String> getList(String key, List<String> defaultList) {
+        List<String> list = getList(key);
+        if (list.isEmpty()) {
+            return defaultList;
+        }
+        return list;
+    }
+
     default List<String> getList(String key) {
         Optional<String> value = get(key);
         if (value.isPresent()) {
             String strValue = value.get();
-            String[] elements = strValue.split("\\^");
-            return new ArrayList(Arrays.asList(elements));
+            if (strValue.equals("")) {
+               // nothing to do. 
+            } else {
+                String[] elements = strValue.split("\\|!%\\|");
+                return new ArrayList(Arrays.asList(elements));
+            }
         }
         return new ArrayList<>();
     }
@@ -944,7 +964,7 @@ public interface IsaacPreferences {
     default Optional<char[]> getPassword(String key) {
         try {
             Optional<String> encryptedPassword = get(key);
-            if (encryptedPassword.isPresent()) {
+            if (encryptedPassword.isPresent() && !encryptedPassword.get().isEmpty()) {
                 return Optional.of(PasswordHasher.decryptToChars("obfuscate-komet".toCharArray(), 
 								encryptedPassword.get()));
             }
@@ -971,4 +991,37 @@ public interface IsaacPreferences {
         }
         return defaultPassword;
     }
+    
+    default Optional<ConceptSpecification> getConceptSpecification(Enum key) {
+        return getConceptSpecification(enumToGeneralKey(key));
+    }
+
+    default Optional<ConceptSpecification> getConceptSpecification(String key) {
+        Optional<String> spec = get(key);
+        if (spec.isPresent()) {
+            return Optional.of(new ConceptProxy(spec.get()));
+        }
+        return Optional.empty();
+    }
+    
+    default ConceptSpecification getConceptSpecification(Enum key, ConceptSpecification defaultValue) {
+        return getConceptSpecification(enumToGeneralKey(key), defaultValue);
+    }
+    
+    default ConceptSpecification getConceptSpecification(String key, ConceptSpecification defaultValue) {
+        Optional<String> spec = get(key);
+        if (spec.isPresent()) {
+            return new ConceptProxy(spec.get());
+        }
+        return defaultValue;
+    }
+        
+    default void putConceptSpecification(String key, ConceptSpecification defaultValue) {
+        put(key, defaultValue.toExternalString());
+    }
+    
+    default void putConceptSpecification(Enum key, ConceptSpecification defaultValue) {
+        put(enumToGeneralKey(key), defaultValue.toExternalString());
+    }
+
 }

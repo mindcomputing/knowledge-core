@@ -97,7 +97,6 @@ public class DynamicConstants implements ModuleProvidedConstants, IsaacCache {
    /** The unknown concept. */
    public final UUID UNKNOWN_CONCEPT = UUID.fromString("00000000-0000-0000-C000-000000000046");
 
-   /** The dynamic dt nid. */
 
    // Set up all of the data type columns
    public final MetadataConceptConstant DYNAMIC_DT_NID = new MetadataConceptConstant("nid", UUID.fromString("d1a17272-9785-51aa-8bde-cc556ab32ebb")) {
@@ -325,8 +324,7 @@ public class DynamicConstants implements ModuleProvidedConstants, IsaacCache {
    // This is the assemblage type that is usually present on a concept when it is used as an assemblage itself to describe the attached data -
    // the attached
    // refex using this for an assemblage will describe a data column that is to be attached with the refex. This assemblage type wouldn't be
-   // used if there was
-   // no data to attach.
+   // used if there was no data to attach.
    public final MetadataDynamicConstant DYNAMIC_EXTENSION_DEFINITION = new MetadataDynamicConstant("Dynamic extension definition",
          UUID.fromString("406e872b-2e19-5f5e-a71d-e4e4b2c68fe5"),
          "This concept is used as an assemblage for defining new extensions.  " + "The attached data columns describe what columns are required to define a new Semantic.",
@@ -340,7 +338,7 @@ public class DynamicConstants implements ModuleProvidedConstants, IsaacCache {
                            .createDynamicStringData(DynamicValidatorType.COMPONENT_TYPE.name() + "|" + DynamicValidatorType.EXTERNAL.name() + "|"
                                  + DynamicValidatorType.GREATER_THAN.name() + "|" + DynamicValidatorType.GREATER_THAN_OR_EQUAL.name() + "|" + DynamicValidatorType.INTERVAL.name()
                                  + "|" + DynamicValidatorType.IS_CHILD_OF.name() + "|" + DynamicValidatorType.IS_KIND_OF.name() + "|" + DynamicValidatorType.LESS_THAN.name() + "|"
-                                 + DynamicValidatorType.LESS_THAN_OR_EQUAL.name() + "|" + DynamicValidatorType.REGEXP.name()),
+                                 + DynamicValidatorType.LESS_THAN_OR_EQUAL.name() + "|" + DynamicValidatorType.REGEXP.name() + "|" + DynamicValidatorType.ONE_OF.name()),
                      true),
                new DynamicColumnInfo(6, this.DYNAMIC_COLUMN_VALIDATOR_DATA.getPrimordialUuid(), DynamicDataType.ARRAY, null, false, true) },
          null) {
@@ -406,12 +404,27 @@ public class DynamicConstants implements ModuleProvidedConstants, IsaacCache {
                LookupService.getService(DynamicUtility.class).createDynamicUUIDData(TermAux.RELATIONSHIP_TYPE_IN_SOURCE_TERMINOLOGY.getPrimordialUuid()), true) }) {
    };
 
-   /** The dynamic prisme user id. */
-
-   // TODO [DAN 3] rewrite this with multiple columns, to store whatever interesting data is passed over the json from prisme that we choose to store.
-   public final MetadataDynamicConstant DYNAMIC_PRISME_USER_ID = new MetadataDynamicConstant("PRISME user ID", UUID.fromString("00e6cca4-3c5b-5f2e-b2d8-2c4a6f8f6b46"),
-         "Used to store a PRISME user ID on a user/author concept",
+   /** The dynamic external user id. */
+   public final MetadataDynamicConstant DYNAMIC_EXTERNAL_USER_ID = new MetadataDynamicConstant("External user ID", UUID.fromString("00e6cca4-3c5b-5f2e-b2d8-2c4a6f8f6b46"),
+         "Used to store an external user ID on a user/author concept",
          new DynamicColumnInfo[] { new DynamicColumnInfo(0, this.DYNAMIC_COLUMN_VALUE.getPrimordialUuid(), DynamicDataType.STRING, null, true, true) }) {
+   };
+   
+   /** The dynamic description core type is used to mark description types that come from non snomed terminologies
+    * as the equivalent of one of the core types.  This information can then be utilized in constructing the language
+    * ranking defaults - so when the user selects FQN or Regular Name in the GUI, we can pick the appropriate description
+    * type to use as a substitute, when no FQN or Regular Name type is found. */
+   public final MetadataDynamicConstant DYNAMIC_DESCRIPTION_CORE_TYPE = new MetadataDynamicConstant("Description core type", 
+         UUID.fromString("351955ff-30f4-5806-a0a5-5dda79756377"),
+         "Used to mark non-snomed descriptions as one of the core snomed types.",
+         new DynamicColumnInfo[] { new DynamicColumnInfo(0, this.DYNAMIC_COLUMN_VALUE.getPrimordialUuid(), DynamicDataType.UUID, 
+               LookupService.getService(DynamicUtility.class).createDynamicUUIDData(TermAux.REGULAR_NAME_DESCRIPTION_TYPE.getPrimordialUuid()), true,
+               DynamicValidatorType.ONE_OF, 
+               LookupService.getService(DynamicUtility.class).createDynamicStringArrayData(
+                  TermAux.REGULAR_NAME_DESCRIPTION_TYPE.getPrimordialUuid().toString(),
+                  TermAux.FULLY_QUALIFIED_NAME_DESCRIPTION_TYPE.getPrimordialUuid().toString(),
+                  TermAux.DEFINITION_DESCRIPTION_TYPE.getPrimordialUuid().toString()),
+               true) }) {
    };
 
    // An organizational concept which serves as a parent concept for dynamic fields defined in the system
@@ -427,7 +440,8 @@ public class DynamicConstants implements ModuleProvidedConstants, IsaacCache {
          addChild(DynamicConstants.this.DYNAMIC_ASSOCIATION_INVERSE_NAME);
          addChild(DynamicConstants.this.DYNAMIC_EXTENDED_DESCRIPTION_TYPE);
          addChild(DynamicConstants.this.DYNAMIC_EXTENDED_RELATIONSHIP_TYPE);
-         addChild(DynamicConstants.this.DYNAMIC_PRISME_USER_ID);
+         addChild(DynamicConstants.this.DYNAMIC_DESCRIPTION_CORE_TYPE);
+         addChild(DynamicConstants.this.DYNAMIC_EXTERNAL_USER_ID);
          setParent(TermAux.ASSEMBLAGE);
       }
    };
@@ -456,7 +470,7 @@ public class DynamicConstants implements ModuleProvidedConstants, IsaacCache {
     */
    @Override
    public MetadataConceptConstant[] getConstantsToCreate() {
-      return new MetadataConceptConstant[] { this.DYNAMIC_ASSEMBLAGES, this.DYNAMIC_METADATA };
+      return new MetadataConceptConstant[] {this.DYNAMIC_METADATA , this.DYNAMIC_ASSEMBLAGES};
    }
 
    /**
@@ -470,6 +484,10 @@ public class DynamicConstants implements ModuleProvidedConstants, IsaacCache {
       }
 
       return cache;
+   }
+   
+   @Override public int getModuleRank() {
+      return Integer.MAX_VALUE;
    }
 //J+
 }

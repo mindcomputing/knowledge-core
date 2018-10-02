@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>sh.isaac.uts-core</groupId>
 		<artifactId>solor</artifactId>
-		<version>uts-5.02</version>
+		<version>uts-5.03</version>
 	</parent>
 	<groupId>sh.isaac.uts-core.solor</groupId>
 	<artifactId>direct-import</artifactId>
@@ -31,6 +31,10 @@
 			<artifactId>util</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
 		<!-- When mojos execute, route all logging through log4j2 -->
 		<dependency>
 			<groupId>sh.isaac.uts-core.core</groupId>
@@ -46,7 +50,7 @@
 		<dependency>
 			<groupId>sh.isaac.uts-core.provider</groupId>
 			<artifactId>query</artifactId>
-			<version>uts-5.02</version>
+			<version>uts-5.03</version>
 		</dependency>
 	</dependencies>
 </project>

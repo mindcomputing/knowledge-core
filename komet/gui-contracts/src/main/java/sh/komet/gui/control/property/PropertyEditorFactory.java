@@ -21,6 +21,7 @@ import sh.komet.gui.control.concept.ConceptLabel;
 import sh.komet.gui.control.concept.ConceptForControlWrapper;
 import sh.komet.gui.control.measure.PropertySheetMeasureWrapper;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -29,6 +30,7 @@ import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -40,23 +42,31 @@ import org.controlsfx.control.PropertySheet;
 import org.controlsfx.property.editor.AbstractPropertyEditor;
 import org.controlsfx.property.editor.Editors;
 import org.controlsfx.property.editor.PropertyEditor;
+import sh.isaac.api.Get;
 import sh.isaac.api.Status;
+import sh.isaac.api.chronicle.VersionType;
 import sh.isaac.api.component.concept.ConceptSpecification;
 import sh.isaac.model.statement.MeasureImpl;
 import sh.isaac.model.statement.ResultImpl;
 import sh.komet.gui.control.PropertySheetBooleanWrapper;
+import sh.komet.gui.control.PropertySheetItemStringListWrapper;
 import sh.komet.gui.control.PropertySheetPasswordWrapper;
 import sh.komet.gui.control.PropertySheetStatusWrapper;
 import sh.komet.gui.control.PropertySheetTextWrapper;
 import sh.komet.gui.control.circumstance.CircumstanceEditor;
 import sh.komet.gui.control.circumstance.PropertySheetCircumstanceWrapper;
 import sh.komet.gui.control.concept.ConceptListEditor;
+import sh.komet.gui.control.concept.ConceptSpecificationEditor;
 import sh.komet.gui.control.concept.PropertySheetConceptListWrapper;
+import sh.komet.gui.control.concept.PropertySheetItemConceptConstraintWrapper;
+import sh.komet.gui.control.concept.PropertySheetItemConceptWrapper;
+import sh.komet.gui.control.concept.PropertySheetItemConceptWrapperEditor;
 import sh.komet.gui.control.list.ListEditor;
 import sh.komet.gui.control.list.PropertySheetListWrapper;
 import sh.komet.gui.control.measure.MeasureEditor;
 import sh.komet.gui.control.result.PropertySheetResultWrapper;
 import sh.komet.gui.control.result.ResultEditor;
+import sh.komet.gui.control.versiontype.PropertySheetItemVersionTypeWrapper;
 import sh.komet.gui.manifold.HistoryRecord;
 import sh.komet.gui.manifold.Manifold;
 
@@ -76,10 +86,19 @@ public class PropertyEditorFactory implements Callback<PropertySheet.Item, Prope
     public PropertyEditor<?> call(PropertySheet.Item propertySheetItem) {
         if (propertySheetItem instanceof PropertySheetItemConceptNidWrapper) {
             return createCustomChoiceEditor((PropertySheetItemConceptNidWrapper) propertySheetItem);
+        } else if (propertySheetItem instanceof PropertySheetItemConceptConstraintWrapper) {
+            return new PropertySheetItemConceptWrapperEditor(manifoldForDisplay);
+        } else if (propertySheetItem instanceof PropertySheetItemConceptWrapper) {
+            return new ConceptSpecificationEditor((PropertySheetItemConceptWrapper) propertySheetItem, manifoldForDisplay);
         } else if (propertySheetItem instanceof PropertySheetStatusWrapper) {
             return Editors.createChoiceEditor(propertySheetItem, Status.makeActiveAndInactiveSet());
         } else if (propertySheetItem instanceof PropertySheetTextWrapper) {
             return Editors.createTextEditor(propertySheetItem);
+        } else if (propertySheetItem instanceof PropertySheetItemVersionTypeWrapper) {
+            return Editors.createChoiceEditor(propertySheetItem, Arrays.asList(VersionType.values()));
+        } else if (propertySheetItem instanceof PropertySheetItemStringListWrapper) {
+            PropertySheetItemStringListWrapper wrappedItem = (PropertySheetItemStringListWrapper) propertySheetItem;
+            return Editors.createChoiceEditor(propertySheetItem, wrappedItem.getAllowedValues());
         } else if (propertySheetItem instanceof PropertySheetMeasureWrapper) {
             PropertySheetMeasureWrapper measureWrapper = (PropertySheetMeasureWrapper) propertySheetItem;
             MeasureEditor measureEditor = new MeasureEditor(manifoldForDisplay);
@@ -149,13 +168,25 @@ public class PropertyEditorFactory implements Callback<PropertySheet.Item, Prope
                 PropertyEditor editor = Editors.createChoiceEditor(item, collection);
                 ComboBox editorControl = (ComboBox) editor.getEditor();
                 editorControl.setMaxWidth(Double.MAX_VALUE);
-                ConceptSpecification defaultConcept = (ConceptSpecification) item.getDefaultValue();
-                ConceptSpecification currentValue = (ConceptSpecification) item.getValue();
+                Object defaultValue = item.getDefaultValue();
+                ConceptSpecification defaultConcept;
+                if (defaultValue instanceof ConceptSpecification) {
+                    defaultConcept = (ConceptSpecification) defaultValue;
+                } else {
+                    defaultConcept = Get.conceptSpecification((Integer) defaultValue);
+                }
+                Object currentValue = item.getValue();
+
                 if (currentValue == null) {
                     editor.setValue(new ConceptForControlWrapper(manifoldForDisplay, defaultConcept.getNid()));
                 } else {
-
-                    editor.setValue(new ConceptForControlWrapper(manifoldForDisplay, currentValue.getNid()));
+                    ConceptSpecification currentConcept;
+                    if (currentValue instanceof ConceptSpecification) {
+                        currentConcept = (ConceptSpecification) currentValue;
+                    } else {
+                        currentConcept = Get.conceptSpecification((Integer) currentValue);
+                    }
+                    editor.setValue(new ConceptForControlWrapper(manifoldForDisplay, currentConcept.getNid()));
                 }
                 return editor;
             }
@@ -176,6 +207,12 @@ public class PropertyEditorFactory implements Callback<PropertySheet.Item, Prope
                 TextField editorControl = (TextField) editor.getEditor();
                 editorControl.setText((String) item.getValue());
                 editorControl.setMaxWidth(Double.MAX_VALUE);
+                return editor;
+            }
+            case BOOLEAN: {
+                PropertyEditor editor = Editors.createCheckEditor(item);
+                CheckBox checkBox = (CheckBox) editor.getEditor();
+                checkBox.setText(item.getName());
                 return editor;
             }
             case UNSPECIFIED:
@@ -203,7 +240,7 @@ public class PropertyEditorFactory implements Callback<PropertySheet.Item, Prope
                     Collection<HistoryRecord> groupHistory = Manifold.getGroupHistory(manifoldGroup);
                     for (HistoryRecord record : groupHistory) {
                         MenuItem conceptItem = new MenuItem(
-                            manifoldForDisplay.getPreferredDescriptionText(record.getComponentId())
+                                manifoldForDisplay.getPreferredDescriptionText(record.getComponentId())
                         );
                         conceptItem.setOnAction((ActionEvent event) -> {
                             label.setValue(record.getComponentId());

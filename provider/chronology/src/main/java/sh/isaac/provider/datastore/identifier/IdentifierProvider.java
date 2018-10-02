@@ -180,7 +180,8 @@ public class IdentifierProvider
    //~--- getValueSpliterator methods ---------------------------------------------------------
    @Override
    public IsaacObjectType getObjectTypeForComponent(int componentNid) {
-      IsaacObjectType temp = this.store.getIsaacObjectTypeForAssemblageNid(getAssemblageNid(componentNid).getAsInt());
+      int assemblageNid = getAssemblageNid(componentNid).orElse(Integer.MAX_VALUE);
+      IsaacObjectType temp = assemblageNid == Integer.MAX_VALUE ? IsaacObjectType.UNKNOWN : this.store.getIsaacObjectTypeForAssemblageNid(assemblageNid);
       if (temp == IsaacObjectType.UNKNOWN) {
          Optional<? extends Chronology> temp2 = Get.identifiedObjectService().getChronology(componentNid);
          if (temp2.isPresent()) {

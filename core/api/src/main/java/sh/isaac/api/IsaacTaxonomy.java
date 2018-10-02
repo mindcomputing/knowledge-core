@@ -433,15 +433,16 @@ public class IsaacTaxonomy {
          {
              regularName = SemanticTags.stripSemanticTagIfPresent(concept.getFullyQualifiedName());
          }
-         String constantName = regularName.toUpperCase();
          
-         if (regularName.indexOf("(") > 0 || regularName.indexOf(")") > 0) {
-             throw new RuntimeException("The metadata concept '" + regularName + "' contains parens, which is illegal.");
+         String constantName = SemanticTags.stripSemanticTagIfPresent(concept.getFullyQualifiedName()).toUpperCase();
+         
+         if (constantName.indexOf("(") > 0 || constantName.indexOf(")") > 0) {
+             throw new RuntimeException("The metadata concept '" + constantName + "' contains parens, which is illegal.");
          }
 
          constantName = DescriptionToToken.get(constantName);
          if (!genConstants.add(constantName)) {
-            throw new RuntimeException("Duplicate definition of regular name for constant " + constantName + " " + concept.getFullyQualifiedName());
+            throw new RuntimeException("Duplicate definition of fqn name for constant " + constantName + " " + concept.getFullyQualifiedName());
          }
          out.append("\n" + constantName + ":\n");
          out.append("    fqn: " + concept.getFullyQualifiedName() + "\n");

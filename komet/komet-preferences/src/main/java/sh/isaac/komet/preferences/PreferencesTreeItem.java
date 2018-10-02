@@ -20,10 +20,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.scene.control.TreeItem;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import sh.isaac.api.preferences.IsaacPreferences;
 import sh.komet.gui.manifold.Manifold;
 
@@ -32,41 +31,73 @@ import sh.komet.gui.manifold.Manifold;
  * @author kec
  */
 public class PreferencesTreeItem extends TreeItem<PreferenceGroup> {
-     private static final org.apache.logging.log4j.Logger LOG = LogManager.getLogger();
+     private static final Logger LOG = LogManager.getLogger();
   public enum Properties {
         PROPERTY_SHEET_CLASS,
         CHILDREN_NODES
+        
     } 
     
-    final IsaacPreferences preferences;
+    IsaacPreferences preferences;
+    final KometPreferencesController controller;
     
     private PreferencesTreeItem(PreferenceGroup value,
-            IsaacPreferences preferences, Manifold manifold) {
+            IsaacPreferences preferences, Manifold manifold, KometPreferencesController controller) {
         super(value);
         this.preferences = preferences;
+        this.controller = controller;
         List<String> propertySheetChildren = preferences.getList(Properties.CHILDREN_NODES);
         for (String child: propertySheetChildren) {
-            Optional<PreferencesTreeItem> childTreeItem = from(preferences.node(child), manifold);
+            Optional<PreferencesTreeItem> childTreeItem = from(preferences.node(child), manifold, controller);
             if (childTreeItem.isPresent()) {
                 getChildren().add(childTreeItem.get());
+                childTreeItem.get().getValue().setTreeItem(childTreeItem.get());
             }
         }
     }
     
-    public static Optional<PreferencesTreeItem> from(IsaacPreferences preferences, Manifold manifold)  {
-        Optional<String> propertySheetClass = preferences.get(Properties.PROPERTY_SHEET_CLASS);
-        if (propertySheetClass.isPresent()) {
+    public void select() {
+        this.controller.getPreferenceTree().getSelectionModel().select(this);
+    }
+    
+    public void removeChild(String uuid) {
+        List<String> propertySheetChildren = preferences.getList(Properties.CHILDREN_NODES);
+        propertySheetChildren.remove(uuid);
+        preferences.putList(Properties.CHILDREN_NODES, propertySheetChildren);
+
+    }
+    
+    public static Optional<PreferencesTreeItem> from(IsaacPreferences preferences, 
+            Manifold manifold, KometPreferencesController controller)  {
+        Optional<String> optionalPropertySheetClass = preferences.get(Properties.PROPERTY_SHEET_CLASS);
+        if (optionalPropertySheetClass.isPresent()) {
             try {
-                Class preferencesSheetClass = Class.forName(propertySheetClass.get());
-                Constructor<PreferenceGroup> c = preferencesSheetClass.getConstructor(IsaacPreferences.class, Manifold.class);
-                PreferenceGroup preferencesSheet = c.newInstance(preferences, manifold); 
-                return Optional.of(new PreferencesTreeItem(preferencesSheet, preferences, manifold));
+                String propertySheetClassName = optionalPropertySheetClass.get();
+                if (propertySheetClassName.equals("sh.isaac.komet.preferences.GeneralPreferences")) {
+                    propertySheetClassName = "sh.isaac.komet.preferences.ConfigurationPreferences";
+                } else if (propertySheetClassName.equals("sh.isaac.komet.preferences.ChangeSetPreferences")) {
+                    propertySheetClassName = "sh.isaac.komet.preferences.SynchronizationItems";
+                } else if (propertySheetClassName.equals("sh.isaac.komet.preferences.AttachmentActionPreferences")) {
+                    propertySheetClassName = "sh.isaac.komet.preferences.AttachmentItems";
+                } else if (propertySheetClassName.equals("sh.isaac.komet.preferences.LogicActionPreferences")) {
+                    propertySheetClassName = "sh.isaac.komet.preferences.LogicItems";
+                } 
+                Class preferencesSheetClass = Class.forName(propertySheetClassName);
+                Constructor<PreferenceGroup> c = preferencesSheetClass.getConstructor(
+                        IsaacPreferences.class, 
+                        Manifold.class, 
+                        KometPreferencesController.class);
+                PreferenceGroup preferencesSheet = c.newInstance(preferences, manifold, controller); 
+                PreferencesTreeItem preferencesTreeItem = new PreferencesTreeItem(preferencesSheet, preferences, 
+                        manifold, controller);
+                preferencesSheet.setTreeItem(preferencesTreeItem);
+                return Optional.of(preferencesTreeItem);
             } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
                 LOG.error(ex.getLocalizedMessage(), ex);
             }
         } else {
             preferences.put(Properties.PROPERTY_SHEET_CLASS, RootPreferences.class.getName());
-            return from(preferences, manifold);
+            return from(preferences, manifold, controller);
         }
         return Optional.empty();
     }

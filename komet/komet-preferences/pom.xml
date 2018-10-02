@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>sh.isaac.uts-core</groupId>
 		<artifactId>komet</artifactId>
-		<version>uts-5.02</version>
+		<version>uts-5.03</version>
 	</parent>
 	<groupId>sh.isaac.uts-core.komet</groupId>
 	<artifactId>komet-preferences</artifactId>
@@ -12,10 +12,8 @@
 
 	<name>ISAAC’s KOMET: Preferences</name>
 	<description>
-		User configurable preferences from within KOMET. Incorporates PreferencesFx, which is licensed under Apache 2. 
-		https://github.com/dlemmermann/PreferencesFX
+		User configurable preferences from within KOMET. 
 	</description>
-
 	<dependencies>
 		<dependency>
 			<groupId>sh.isaac.uts-core.core</groupId>
@@ -29,21 +27,5 @@
 			<version>${project.parent.version}</version>
 			<type>jar</type>
 		</dependency>
-		<dependency>
-			<groupId>com.dlsc.preferencesfx</groupId>
-			<artifactId>preferencesfx-core</artifactId>
-			<version>2.0.3</version>
-		</dependency>
 	</dependencies>
-	<repositories>
-		<repository>
-			<id>jcenter</id>
-			<url>http://jcenter.bintray.com</url>
-		</repository>
-		<repository>
-			<name>BestSolution e(fx)clipse releases</name>
-			<id>efxclipse-releases</id>
-			<url>http://maven.bestsolution.at/efxclipse-releases/</url>
-		</repository>
-	</repositories>
 </project>

@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>sh.isaac.uts-core</groupId>
 		<artifactId>komet</artifactId>
-		<version>uts-5.02</version>
+		<version>uts-5.03</version>
 	</parent>
 	<groupId>sh.isaac.uts-core.komet</groupId>
 	<artifactId>drag-tab</artifactId>
@@ -18,12 +18,17 @@
 
 	<name>ISAAC’s KOMET: Dragable tab</name>
 	<description>
-      A drag and drop tab implementation for ISAAC's KOMET
-   </description>
+		A drag and drop tab implementation for ISAAC's KOMET
+	</description>
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>sh.isaac.uts-core.core</groupId>
+			<artifactId>api</artifactId>
+			<version>${parent.version}</version>
 		</dependency>
 	</dependencies>
 </project>

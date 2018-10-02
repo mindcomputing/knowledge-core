@@ -393,7 +393,7 @@ public class MavenArtifactUtils
 		ArrayList<Converter> files = new ArrayList<>();
 		if (mavenRepositoryFolder.isDirectory())
 		{
-			File browseFolder = new File(mavenRepositoryFolder, "sh/isaac/misc/importers");
+			File browseFolder = new File(mavenRepositoryFolder, "sh/isaac/uts-core/misc/importers");
 			for (File versionFolder : browseFolder.listFiles())
 			{
 				if (versionFolder.isDirectory())
@@ -402,7 +402,7 @@ public class MavenArtifactUtils
 					{
 						if (content.getName().toLowerCase().endsWith(".pom"))
 						{
-							files.add(new Converter("sh.isaac.misc", "importers", versionFolder.getName()));
+							files.add(new Converter("sh.isaac.uts-core.misc", "importers", versionFolder.getName()));
 						}
 					}
 				}
@@ -422,7 +422,7 @@ public class MavenArtifactUtils
 		ArrayList<IBDFFile> files = new ArrayList<>();
 		if (mavenRepositoryFolder.isDirectory())
 		{
-			File browseFolder = new File(mavenRepositoryFolder, "sh/isaac/core/metadata");
+			File browseFolder = new File(mavenRepositoryFolder, "sh/isaac/uts-core/core/metadata");
 			for (File versionFolder : browseFolder.listFiles())
 			{
 				if (versionFolder.isDirectory())
@@ -447,7 +447,7 @@ public class MavenArtifactUtils
 					}
 					for (String classifier : ibdfClassifiers)
 					{
-						files.add(new IBDFFile("sh.isaac.core", "metadata", versionFolder.getName(), classifier));
+						files.add(new IBDFFile("sh.isaac.uts-core.core", "metadata", versionFolder.getName(), classifier));
 					}
 				}
 			}
