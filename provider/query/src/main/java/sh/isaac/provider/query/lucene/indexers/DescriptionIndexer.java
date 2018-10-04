@@ -55,7 +55,7 @@ import sh.isaac.api.coordinate.StampCoordinate;
 import sh.isaac.api.coordinate.StampPrecedence;
 import sh.isaac.api.externalizable.IsaacObjectType;
 import sh.isaac.api.identity.StampedVersion;
-import sh.isaac.api.index.AmpRestriction;
+import sh.isaac.api.index.AuthorModulePathRestriction;
 import sh.isaac.api.index.ComponentSearchResult;
 import sh.isaac.api.index.IndexDescriptionQueryService;
 import sh.isaac.api.index.SearchResult;
@@ -256,7 +256,7 @@ public class DescriptionIndexer extends LuceneIndexer
          boolean prefixSearch,
          int[] assemblageConcepts,
          Predicate<Integer> filter,
-         AmpRestriction amp,
+         AuthorModulePathRestriction amp,
          boolean metadataOnly,
          int[] descriptionTypes,
          int[] extendedDescriptionTypes,
@@ -381,7 +381,7 @@ public class DescriptionIndexer extends LuceneIndexer
          boolean prefixSearch,
          int[] assemblageConcepts,
          Predicate<Integer> filter,
-         AmpRestriction amp,
+         AuthorModulePathRestriction amp,
          Integer pageNum,
          Integer sizeLimit,
          Long targetGeneration) {

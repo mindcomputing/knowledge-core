@@ -34,7 +34,7 @@
  * Licensed under the Apache License, Version 2.0.
  *
  */
-package sh.isaac.provider.datastore.identifier;
+package sh.isaac.provider.identifier;
 
 import java.io.File;
 import java.io.IOException;
@@ -175,8 +175,7 @@ public class IdentifierProvider
     public IsaacObjectType getObjectTypeForComponent(int componentNid) {
         OptionalInt optionalAssemblageNid = getAssemblageNid(componentNid);
         if (optionalAssemblageNid.isPresent()) {
-            int assemblageNid = getAssemblageNid(componentNid).orElse(Integer.MAX_VALUE);
-            IsaacObjectType temp = assemblageNid == Integer.MAX_VALUE ? IsaacObjectType.UNKNOWN : this.store.getIsaacObjectTypeForAssemblageNid(assemblageNid);        	
+            IsaacObjectType temp = this.store.getIsaacObjectTypeForAssemblageNid(optionalAssemblageNid.getAsInt());
             if (temp == IsaacObjectType.UNKNOWN) {
                 Optional<? extends Chronology> temp2 = Get.identifiedObjectService().getChronology(componentNid);
                 if (temp2.isPresent()) {

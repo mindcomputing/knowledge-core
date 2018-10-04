@@ -82,6 +82,7 @@ import org.jvnet.hk2.annotations.Service;
 
 import sh.isaac.api.ConceptActiveService;
 import sh.isaac.api.Get;
+import sh.isaac.api.IdentifierService;
 import sh.isaac.api.LookupService;
 import sh.isaac.api.RefreshListener;
 import sh.isaac.api.Status;
@@ -108,7 +109,6 @@ import sh.isaac.model.coordinate.ManifoldCoordinateImpl;
 import sh.isaac.model.coordinate.StampCoordinateImpl;
 import sh.isaac.model.coordinate.StampPositionImpl;
 import sh.isaac.provider.datastore.chronology.ChronologyUpdate;
-import sh.isaac.provider.datastore.identifier.IdentifierProvider;
 import sh.isaac.api.TaxonomySnapshot;
 import sh.isaac.api.tree.TaxonomyLinkage;
 
@@ -153,7 +153,7 @@ public class TaxonomyProvider
     /**
      * The identifier service.
      */
-    private IdentifierProvider identifierService;
+    private IdentifierService identifierService;
     private DataStore store;
 
     //~--- constructors --------------------------------------------------------
@@ -274,7 +274,7 @@ public class TaxonomyProvider
             this.store = Get.service(DataStore.class);
             Get.commitService()
                     .addChangeListener(this);
-            this.identifierService = Get.service(IdentifierProvider.class);
+            this.identifierService = Get.identifierService();
             this.semanticNidsForUnhandledChanges.clear();
             this.pendingUpdateTasks.clear();
             this.snapshotCache.clear();
