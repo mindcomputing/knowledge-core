@@ -99,6 +99,11 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>sh.isaac.uts-core.komet</groupId>
+			<artifactId>changeset-view</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>sh.isaac.uts-core.provider</groupId>
 			<artifactId>datastore-locator</artifactId>
 			<version>${project.version}</version>
