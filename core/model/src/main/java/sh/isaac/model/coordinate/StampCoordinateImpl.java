@@ -273,8 +273,21 @@ public class StampCoordinateImpl
    public StampCoordinate makeCoordinateAnalog(EnumSet<Status> states) {
       return new StampCoordinateImpl(this.stampPrecedence, this.stampPosition, this.moduleNids, this.modulePriorityList, states);
    }
-
+   
    /**
+    * @see sh.isaac.api.coordinate.StampCoordinate#makeModuleAnalog(int[], boolean)
+    */
+   @Override
+   public StampCoordinate makeModuleAnalog(int[] modules, boolean add) {
+      NidSet newNids = new NidSet();
+      newNids.addAll(modules);
+      if (add) {
+         newNids.addAll(this.moduleNids);
+      }
+      return new StampCoordinateImpl(this.stampPrecedence, this.stampPosition, newNids, this.modulePriorityList, this.allowedStates);
+   }
+
+/**
     * To string.
     *
     * @return the string

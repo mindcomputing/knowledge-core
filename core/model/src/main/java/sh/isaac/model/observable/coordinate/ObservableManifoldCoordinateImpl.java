@@ -188,7 +188,12 @@ public class ObservableManifoldCoordinateImpl
       return new ObservableManifoldCoordinateImpl(this.manifoldCoordinate.makeCoordinateAnalog(state));
    }
 
-   /**
+   @Override
+   public ObservableManifoldCoordinate makeModuleAnalog(int[] modules, boolean add) {
+      return new ObservableManifoldCoordinateImpl(this.manifoldCoordinate.makeModuleAnalog(modules, add));
+   }
+
+/**
     * Premise type property.
     *
     * @return the object property

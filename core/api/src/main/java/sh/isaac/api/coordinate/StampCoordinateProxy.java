@@ -63,6 +63,9 @@ public interface StampCoordinateProxy extends StampCoordinate {
    public default StampCoordinate makeCoordinateAnalog(Status... state) {
       return getStampCoordinate().makeCoordinateAnalog(state);
    }
-   
-   
+
+   @Override
+   default StampCoordinate makeModuleAnalog(int[] modules, boolean add) {
+      return getStampCoordinate().makeModuleAnalog(modules, add);
+   }
 }

@@ -322,6 +322,11 @@ public class ConceptSnapshotImpl
    }
 
    @Override
+   public StampCoordinate makeModuleAnalog(int[] modules, boolean add) {
+      return this.manifoldCoordinate.makeModuleAnalog(modules, add);
+   }
+
+   @Override
    public PremiseType getTaxonomyPremiseType() {
       return this.manifoldCoordinate.getTaxonomyPremiseType();
    }

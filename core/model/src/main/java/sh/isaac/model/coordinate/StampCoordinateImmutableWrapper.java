@@ -62,6 +62,11 @@ public class StampCoordinateImmutableWrapper implements StampCoordinate {
     }
 
     @Override
+    public StampCoordinate makeModuleAnalog(int[] modules, boolean add) {
+        return stampCoordinate.makeModuleAnalog(modules, add);
+    }
+
+    @Override
     public String toString() {
         return stampCoordinate.toString();
     }
