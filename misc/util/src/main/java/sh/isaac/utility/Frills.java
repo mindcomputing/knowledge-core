@@ -467,12 +467,24 @@ public class Frills
    
    /**
     * Walk up the module tree, looking for the module concept nid directly under {@link MetaData#MODULE____SOLOR} - return it if found, otherwise, return null.
+    * 
+    * @param module the module to look up
+    * @param stamp - optional - uses default if not provided.  If provided, and doesn't include the metadata modules, it will use a modified stamp
+    * that includes the metadata module, since that module is required to read the module hierarchy.
     */
-   private static Integer findTermTypeConcept(int conceptModuleNid, StampCoordinate stamp)
-   {
+   private static Integer findTermTypeConcept(int conceptModuleNid, StampCoordinate stamp) {
+      StampCoordinate stampToUse = stamp == null ? StampCoordinates.getDevelopmentLatest() : stamp;
+      
+      if (stamp!= null) {
+         //ensure the provided stamp includes the metadata module
+         if (stamp.getModuleNids().size() > 0 && !stamp.getModuleNids().contains(MetaData.SOLOR_MODULE____SOLOR.getNid()))
+         {
+            stampToUse = stamp.makeModuleAnalog(new int[] {MetaData.SOLOR_MODULE____SOLOR.getNid()}, true);
+         }
+      }
+      
       int[] parents = Get.taxonomyService().getSnapshot(
-            new ManifoldCoordinateImpl(stamp == null ? StampCoordinates.getDevelopmentLatest(): stamp, 
-                  LanguageCoordinates.getUsEnglishLanguageFullySpecifiedNameCoordinate()))
+            new ManifoldCoordinateImpl(stampToUse, LanguageCoordinates.getUsEnglishLanguageFullySpecifiedNameCoordinate()))
             .getTaxonomyParentConceptNids(conceptModuleNid);
       for (int current : parents)
       {
@@ -482,7 +494,7 @@ public class Frills
          }
          else
          {
-            return findTermTypeConcept(current, stamp);
+            return findTermTypeConcept(current, stampToUse);
          }
       }
       return null;
@@ -2091,17 +2103,30 @@ public class Frills
       }
 
       for (int moduleNid : modules) {
-         Integer temp = (MODULE_TO_TERM_TYPE_CACHE.get(moduleNid, mNid -> {
-            if (tss.isKindOf(mNid, MetaData.MODULE____SOLOR.getNid())) {
-               return findTermTypeConcept(moduleNid, stamp);
-            }
-            return null;
-         }));
-         if (temp != null){
-            terminologyTypes.add(temp);
-         }
+         terminologyTypes.add(getTerminologyTypeForModule(moduleNid, stamp));
       }
       return terminologyTypes;
+   }
+   
+   /**
+    * For a given module concept, walk up the module hierarchy, and return the terminology type concept that represents the module, 
+    * which would be a module concept that is a direct child on {@link MetaData#MODULE____SOLOR}
+    * @param module the module to look up
+    * @param stamp - optional - uses default if not provided.  If provided, and doesn't include the metadata modules, it will use a modified stamp
+    * that includes the metadata module, since that module is required to read the module hierarchy.
+    * @return the terminology type module
+    */
+   public static int getTerminologyTypeForModule(int module, StampCoordinate stamp)
+   {
+      Integer temp = (MODULE_TO_TERM_TYPE_CACHE.get(module, mNid -> {
+          return findTermTypeConcept(module, stamp);
+        }));
+        if (temp == null) {
+           throw new RuntimeException("The passed in module '" + module + " " + Get.conceptDescriptionText(module) +  " ' was not a child of MODULE (SOLOR)");
+        }
+        else {
+           return temp.intValue();
+        }
    }
 
    /**
