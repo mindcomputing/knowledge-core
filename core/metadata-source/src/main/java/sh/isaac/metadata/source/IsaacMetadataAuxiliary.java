@@ -926,6 +926,7 @@ public class IsaacMetadataAuxiliary extends IsaacTaxonomy {
             createConcept("Query clause parameters");
             pushParent(current());
                createConcept("Query string");
+               createConcept("Let item key");
                popParent();
             popParent(); 
          popParent(); // ISAAC root should still be parent on stack...
