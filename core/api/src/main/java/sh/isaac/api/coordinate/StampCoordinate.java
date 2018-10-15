@@ -39,14 +39,19 @@
 
 package sh.isaac.api.coordinate;
 
+import java.util.Collection;
+
 //~--- JDK imports ------------------------------------------------------------
 
 import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
 
 //~--- non-JDK imports --------------------------------------------------------
 
 import sh.isaac.api.Status;
 import sh.isaac.api.collections.NidSet;
+import sh.isaac.api.component.concept.ConceptSpecification;
 
 //~--- interfaces -------------------------------------------------------------
 
@@ -82,6 +87,15 @@ public interface StampCoordinate
     * stamp coordinate.
     */
    NidSet getModuleNids();
+   
+   /**
+    * An empty list is a wild-card, and should match all modules. If there are
+    * one or more modules specified, only those modules will be included
+    * in the results.
+    * @return the set of modules to include in results based on this
+    * stamp coordinate.
+    */
+   Set<ConceptSpecification> getModuleSpecifications();
 
    /**
     * Gets the module preference list for versions. Used to adjudicate which component to 
@@ -90,7 +104,7 @@ public interface StampCoordinate
     * @return the module preference list for versions. 
     */
 
-   int[] getModulePreferenceListForVersions();
+   List<ConceptSpecification> getModulePreferenceListForVersions();
    /**
     * Gets the stamp position.
     *
@@ -118,6 +132,6 @@ public interface StampCoordinate
     * supplied modules should replace the existing modules
     * @return the new coordinate
     */
-   public StampCoordinate makeModuleAnalog(int[] modules, boolean add);
+   public StampCoordinate makeModuleAnalog(Collection<ConceptSpecification> modules, boolean add);
 }
 

@@ -42,6 +42,7 @@ package sh.isaac.model.concept;
 //~--- JDK imports ------------------------------------------------------------
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -54,6 +55,7 @@ import sh.isaac.api.Status;
 import sh.isaac.api.chronicle.LatestVersion;
 import sh.isaac.api.commit.CommitStates;
 import sh.isaac.api.component.concept.ConceptSnapshot;
+import sh.isaac.api.component.concept.ConceptSpecification;
 import sh.isaac.api.component.concept.ConceptVersion;
 import sh.isaac.api.component.semantic.SemanticChronology;
 import sh.isaac.api.coordinate.LanguageCoordinate;
@@ -322,7 +324,7 @@ public class ConceptSnapshotImpl
    }
 
    @Override
-   public StampCoordinate makeModuleAnalog(int[] modules, boolean add) {
+   public StampCoordinate makeModuleAnalog(Collection<ConceptSpecification> modules, boolean add) {
       return this.manifoldCoordinate.makeModuleAnalog(modules, add);
    }
 
@@ -390,8 +392,13 @@ public class ConceptSnapshotImpl
     }
 
     @Override
-    public int[] getModulePreferenceListForVersions() {
+    public List<ConceptSpecification> getModulePreferenceListForVersions() {
         return this.manifoldCoordinate.getModulePreferenceListForVersions();
+    }
+
+    @Override
+    public Set<ConceptSpecification> getModuleSpecifications() {
+        return this.manifoldCoordinate.getModuleSpecifications();
     }
     
 }

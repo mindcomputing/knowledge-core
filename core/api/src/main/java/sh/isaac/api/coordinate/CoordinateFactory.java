@@ -42,6 +42,7 @@ package sh.isaac.api.coordinate;
 //~--- JDK imports ------------------------------------------------------------
 
 import java.time.temporal.TemporalAccessor;
+import java.util.Collection;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -157,12 +158,7 @@ public interface CoordinateFactory
     * @param dateTimeText the text to parse such as "2007-12-03T10:15:30", which is specified by the ISO-8601 extended offset date-time format.
     * @return a new instance that implements {@code StampCoordinate} with the provided temporal information
     */
-   StampCoordinate createStampCoordinate(ConceptSpecification stampPath,
-         StampPrecedence precedence,
-         List<ConceptSpecification> moduleSpecificationList,
-         int[] modulePriorityList,
-         EnumSet<Status> allowedStateSet,
-         CharSequence dateTimeText);
+   StampCoordinate createStampCoordinate(ConceptSpecification stampPath, StampPrecedence precedence, List<ConceptSpecification> moduleSpecificationList, java.util.List modulePriorityList, EnumSet<Status> allowedStateSet, CharSequence dateTimeText);
 
    /**
     * Creates a new Coordinate object.
@@ -180,8 +176,8 @@ public interface CoordinateFactory
     */
    StampCoordinate createStampCoordinate(ConceptSpecification stampPath,
          StampPrecedence precedence,
-         List<ConceptSpecification> moduleSpecificationList,
-         int[] modulePriorityList,
+         Collection<ConceptSpecification> moduleSpecificationList,
+         List<ConceptSpecification> modulePriorityList,
          EnumSet<Status> allowedStateSet,
          TemporalAccessor temporal);
 
@@ -206,8 +202,8 @@ public interface CoordinateFactory
     */
    StampCoordinate createStampCoordinate(ConceptSpecification stampPath,
          StampPrecedence precedence,
-         List<ConceptSpecification> moduleSpecificationList,
-         int[] modulePriorityList,
+         Collection<ConceptSpecification> moduleSpecificationList,
+         List<ConceptSpecification> modulePriorityList,
          EnumSet<Status> allowedStateSet,
          int year,
          int month,
