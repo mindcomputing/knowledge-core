@@ -360,8 +360,8 @@ public class ObservableManifoldCoordinateImpl
     }
 
     @Override
-    public List<ConceptSpecification> getModulePreferenceListForVersions() {
-        return manifoldCoordinate.getModulePreferenceListForVersions();
+    public List<ConceptSpecification> getModulePreferenceOrderForVersions() {
+        return manifoldCoordinate.getModulePreferenceOrderForVersions();
     }
 
     @Override

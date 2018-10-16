@@ -104,7 +104,7 @@ public interface StampCoordinate
     * @return the module preference list for versions. 
     */
 
-   List<ConceptSpecification> getModulePreferenceListForVersions();
+   List<ConceptSpecification> getModulePreferenceOrderForVersions();
    /**
     * Gets the stamp position.
     *

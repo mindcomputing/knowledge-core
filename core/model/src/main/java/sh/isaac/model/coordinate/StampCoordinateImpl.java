@@ -445,7 +445,7 @@ public class StampCoordinateImpl
    }
 
     @Override
-    public List<ConceptSpecification> getModulePreferenceListForVersions() {
+    public List<ConceptSpecification> getModulePreferenceOrderForVersions() {
         return this.modulePriorityList;
     }
    
