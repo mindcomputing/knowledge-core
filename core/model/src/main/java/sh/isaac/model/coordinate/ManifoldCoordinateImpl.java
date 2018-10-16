@@ -233,6 +233,17 @@ public class ManifoldCoordinateImpl
    }
 
    /**
+    * @see sh.isaac.api.coordinate.StampCoordinate#makeModuleAnalog(int[], boolean)
+    */
+   @Override
+   public ManifoldCoordinateImpl makeModuleAnalog(int[] modules, boolean add) {
+      return new ManifoldCoordinateImpl(this.taxonomyPremiseType, 
+            this.stampCoordinate.makeModuleAnalog(modules, add), 
+            this.languageCoordinate, 
+            this.logicCoordinate);
+   }
+
+   /**
     * To string.
     *
     * @return the string
