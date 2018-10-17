@@ -488,15 +488,17 @@ public class Frills
             .getTaxonomyParentConceptNids(conceptModuleNid);
       for (int current : parents)
       {
-         if (current == MetaData.MODULE____SOLOR.getNid())
-         {
+         if (current == MetaData.MODULE____SOLOR.getNid()) {
             return conceptModuleNid;
          }
-         else
-         {
-            return findTermTypeConcept(current, stampToUse);
+         else {
+            Integer recursive = findTermTypeConcept(current, stampToUse);
+            if (recursive != null) {  //only return this one if it had a path to MODULE_SOLOR, otherwise, let the loop continue.
+               return recursive;
+            }
          }
       }
+      //None of the parents has a path to MODULE_SOLOR
       return null;
    }
 
