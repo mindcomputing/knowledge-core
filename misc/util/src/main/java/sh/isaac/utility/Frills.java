@@ -69,6 +69,7 @@ import org.jvnet.hk2.annotations.Service;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import sh.isaac.MetaData;
+import sh.isaac.api.ConceptProxy;
 import sh.isaac.api.Get;
 import sh.isaac.api.IsaacCache;
 import sh.isaac.api.LookupService;
@@ -128,11 +129,13 @@ import sh.isaac.api.logic.NodeSemantic;
 import sh.isaac.api.logic.assertions.Assertion;
 import sh.isaac.api.util.NumericUtils;
 import sh.isaac.api.util.SctId;
+import sh.isaac.api.util.SemanticTags;
 import sh.isaac.api.util.TaskCompleteCallback;
 import sh.isaac.api.util.UUIDUtil;
 import sh.isaac.mapping.constants.IsaacMappingConstants;
 import sh.isaac.model.VersionImpl;
 import sh.isaac.model.concept.ConceptVersionImpl;
+import sh.isaac.model.configuration.EditCoordinates;
 import sh.isaac.model.configuration.LanguageCoordinates;
 import sh.isaac.model.configuration.LogicCoordinates;
 import sh.isaac.model.configuration.StampCoordinates;
@@ -153,7 +156,6 @@ import sh.isaac.model.semantic.version.LogicGraphVersionImpl;
 import sh.isaac.model.semantic.version.LongVersionImpl;
 import sh.isaac.model.semantic.version.StringVersionImpl;
 
-
 /**
  * The Class Frills.
  */
@@ -168,6 +170,7 @@ public class Frills
    private static final Cache<Integer, Boolean> IS_ASSOCIATION_CLASS = Caffeine.newBuilder().maximumSize(50).build();
    private static final Cache<Integer, Boolean> IS_MAPPING_CLASS = Caffeine.newBuilder().maximumSize(50).build();
    private static final Cache<Integer, Integer> MODULE_TO_TERM_TYPE_CACHE = Caffeine.newBuilder().maximumSize(50).build();
+   private static final Cache<Integer, Integer> EDIT_MODULE_FOR_TERMINOLOGY_CACHE = Caffeine.newBuilder().maximumSize(50).build();
 
 
    /**
@@ -254,7 +257,7 @@ public class Frills
          NecessarySet(And(ConceptAssertion(parentConcept, defBuilder)));
 
          final LogicalExpression parentDef = defBuilder.build();
-         final ConceptBuilder builder = conceptBuilderService.getDefaultConceptBuilder(semanticFQN, null, parentDef, MetaData.CONCEPT_ASSEMBLAGE____SOLOR.getNid());
+         final ConceptBuilder builder = conceptBuilderService.getDefaultConceptBuilder(semanticFQN, null, parentDef, MetaData.SOLOR_CONCEPT_ASSEMBLAGE____SOLOR.getNid());
          DescriptionBuilder<? extends SemanticChronology, ? extends MutableDescriptionVersion> definitionBuilder =
             descriptionBuilderService.getDescriptionBuilder(
                 semanticPreferredTerm,
@@ -466,6 +469,59 @@ public class Frills
    }
    
    /**
+    * For a specified module, such as "NUCC modules" or "NUCC 17.1 module" create (if necessary) a module following the pattern:
+    * Module
+    *   NUCC modules
+    *     NUCC Edit
+    * 
+    * and then return the nid for "NUCC Edit".  The FSN and Regular name for the created concept will be based off of the "NUCC modules" concept, 
+    * plus the word "Edit".
+    * 
+    * @param module The terminology type module concept - typically a direct child of {@link MetaData#MODULE____SOLOR} but can also be nested deeper.
+    * @return the "Edit" module for this terminology type, which will be created, if necessary.
+    */
+   public static int createAndGetDefaultEditModule(int module) {
+
+      return EDIT_MODULE_FOR_TERMINOLOGY_CACHE.get(module, moduleAgain -> {
+         
+         final int termTypeConcept = findTermTypeConcept(moduleAgain, null);
+         final StampCoordinate stamp = StampCoordinates.getDevelopmentLatest();
+         final LanguageCoordinate fqnCoord = LanguageCoordinates.getUsEnglishLanguageFullySpecifiedNameCoordinate();
+         
+         //iterate the children, find one that has a FQN than ends with "Edit (SOLOR)"
+         int[] termTypeChildren = Get.taxonomyService().getSnapshot(new ManifoldCoordinateImpl(stamp, fqnCoord)).getTaxonomyChildConceptNids(termTypeConcept);
+         for (int nid : termTypeChildren) {
+            String fqn = fqnCoord.getFullyQualifiedName(nid, stamp).orElseGet(() -> "");
+            int index = fqn.indexOf("Edit (" + ConceptProxy.METADATA_SEMANTIC_TAG + ")"); 
+            if (index > 0) {
+               LOG.debug("Returning existing default edit module nid of {} for {}", Get.conceptDescriptionText(nid), Get.conceptDescriptionText(moduleAgain));
+               return nid;
+            }
+         }
+         
+         //We didn't find one... need to create it.
+         LOG.debug("Creating edit module concept for terminology type {}", Get.conceptDescriptionText(termTypeConcept));
+         String termTypeFQN = fqnCoord.getFullyQualifiedName(termTypeConcept, stamp).get();
+         termTypeFQN = SemanticTags.stripSemanticTagIfPresent(termTypeFQN);
+         if (termTypeFQN.endsWith(" modules")) {  //Common pattern
+            termTypeFQN = termTypeFQN.substring(0, termTypeFQN.length() - " modules".length());
+         }
+         termTypeFQN = termTypeFQN + " Edit";
+         
+         final LogicalExpressionBuilder defBuilder = LookupService.getService(LogicalExpressionBuilderService.class).getLogicalExpressionBuilder();
+         NecessarySet(And(ConceptAssertion(termTypeConcept, defBuilder)));
+         
+         try {
+            return Get.conceptBuilderService().getDefaultConceptBuilder(termTypeFQN, ConceptProxy.METADATA_SEMANTIC_TAG, defBuilder.build(), 
+                 MetaData.SOLOR_CONCEPT_ASSEMBLAGE____SOLOR.getNid()).build(EditCoordinates.getDefaultUserMetadata(), ChangeCheckerMode.ACTIVE).get().getNid();
+         }
+         catch (Exception e) {
+            throw new RuntimeException("Failed to create concept", e);
+         }
+      });
+   }
+   
+   /**
     * Walk up the module tree, looking for the module concept nid directly under {@link MetaData#MODULE____SOLOR} - return it if found, otherwise, return null.
     * 
     * @param module the module to look up
@@ -488,15 +544,17 @@ public class Frills
             .getTaxonomyParentConceptNids(conceptModuleNid);
       for (int current : parents)
       {
-         if (current == MetaData.MODULE____SOLOR.getNid())
-         {
+         if (current == MetaData.MODULE____SOLOR.getNid()) {
             return conceptModuleNid;
          }
-         else
-         {
-            return findTermTypeConcept(current, stampToUse);
+         else {
+            Integer recursive = findTermTypeConcept(current, stampToUse);
+            if (recursive != null) {  //only return this one if it had a path to MODULE_SOLOR, otherwise, let the loop continue.
+               return recursive;
+            }
          }
       }
+      //None of the parents has a path to MODULE_SOLOR
       return null;
    }
 
@@ -2101,6 +2159,9 @@ public class Frills
             terminologyTypes.add(MetaData.SOLOR_MODULE____SOLOR.getNid());
          }
       }
+      
+      //This isn't a valid module to ask for terminology type on
+      modules.remove(MetaData.MODULE____SOLOR.getNid());
 
       for (int moduleNid : modules) {
          terminologyTypes.add(getTerminologyTypeForModule(moduleNid, stamp));
@@ -2404,6 +2465,7 @@ public class Frills
       IS_ASSOCIATION_CLASS.invalidateAll();
       IS_MAPPING_CLASS.invalidateAll();
       MODULE_TO_TERM_TYPE_CACHE.invalidateAll();
+      EDIT_MODULE_FOR_TERMINOLOGY_CACHE.invalidateAll();
    }
 }
 
