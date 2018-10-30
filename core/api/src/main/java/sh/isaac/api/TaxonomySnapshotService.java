@@ -93,7 +93,7 @@ public interface TaxonomySnapshotService {
    /**
     * Gets the roots.
     *
-    * @return the roo concept nids
+    * @return the root concept nids
     */
    int[] getRoots();
 
