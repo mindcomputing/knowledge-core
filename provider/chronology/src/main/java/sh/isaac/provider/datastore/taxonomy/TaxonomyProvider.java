@@ -187,6 +187,7 @@ public class TaxonomyProvider
     public void handleCommit(CommitRecord commitRecord) {
         // If a logic graph changed, clear our cache.
         if (this.semanticNidsForUnhandledChanges.size() > 0) {
+            LOG.debug("Clearing snapshot cache due to commit");
             this.snapshotCache.clear();
         }
 
@@ -204,6 +205,7 @@ public class TaxonomyProvider
 
     @Override
     public void notifyTaxonomyListenersToRefresh() {
+        LOG.debug("Clearing snapshot cache due notify request");
         snapshotCache.clear();
         Platform.runLater(
                 () -> {
@@ -421,6 +423,7 @@ public class TaxonomyProvider
         public int hashCode() {
             int hash = 7;
             hash = 29 * hash + Objects.hashCode(this.taxPremiseType);
+            hash = 29 * hash + this.stampCoordinate.hashCode();
             return hash;
         }
 
@@ -455,7 +458,7 @@ public class TaxonomyProvider
             return treeTask;
         }
 
-        LOG.debug("Building tree for {}", tc);
+        LOG.debug("Building tree for {}, cache key {}", tc, snapshotCacheKey.hashCode());
         IntFunction<int[]> taxonomyDataProvider = new IntFunction<int[]>() {
             final int assemblageNid = tc.getLogicCoordinate().getConceptAssemblageNid();
             @Override

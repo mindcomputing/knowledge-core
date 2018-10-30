@@ -200,25 +200,31 @@ public class StampCoordinateImpl
             return false;
         }
         
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof StampCoordinate)) {
             return false;
         }
         
-        final StampCoordinateImpl other = (StampCoordinateImpl) obj;
+        final StampCoordinate other = (StampCoordinate) obj;
         
-        if (this.stampPrecedence != other.stampPrecedence) {
+        if (this.stampPrecedence != other.getStampPrecedence()) {
             return false;
         }
         
-        if (!Objects.equals(this.stampPosition, other.stampPosition)) {
+        if (!Objects.equals(this.stampPosition, other.getStampPosition())) {
             return false;
         }
         
-        if (!this.allowedStates.equals(other.allowedStates)) {
+        if (!this.allowedStates.equals(other.getAllowedStates())) {
             return false;
         }
         
-        return this.moduleNids.equals(other.moduleNids);
+        if ((modulePriorityList == null && other.getModulePreferenceListForVersions() != null) 
+                || (modulePriorityList != null && other.getModulePreferenceListForVersions() == null)
+                || modulePriorityList != null && !Arrays.equals(this.modulePriorityList, other.getModulePreferenceListForVersions())) {
+             return false;
+        }
+        
+        return this.moduleNids.equals(other.getModuleNids());
     }
 
    /**
@@ -234,6 +240,7 @@ public class StampCoordinateImpl
       hash = 11 * hash + Objects.hashCode(this.stampPosition);
       hash = 11 * hash + Objects.hashCode(this.moduleNids);
       hash = 11 * hash + Objects.hashCode(this.allowedStates);
+      hash = 11 * hash + (this.modulePriorityList == null ? 0 : Arrays.hashCode(this.modulePriorityList));
       return hash;
    }
 
