@@ -55,6 +55,7 @@ import sh.isaac.api.collections.NidSet;
 import sh.isaac.api.coordinate.ManifoldCoordinate;
 import sh.isaac.api.coordinate.PremiseType;
 import sh.isaac.api.component.semantic.SemanticChronology;
+import sh.isaac.api.tree.Tree;
 import sh.isaac.api.tree.TreeNodeVisitData;
 
 //~--- interfaces -------------------------------------------------------------
@@ -112,12 +113,30 @@ public interface TaxonomyService
    IntStream getAllRelationshipOriginNidsOfType(int destinationConceptNid, IntSet typeConceptNidSet);
 
    /**
-    * Gets the snapshot.
+    * Gets the snapshot.  This method is for returning a Snapshot that builds an entire tree in a background thread.
+    * The returned {@link TaxonomySnapshotService} can be used immediately, while it computes in the background - until
+    * the entire tree is computed, it will answer queries via direct lookups.  After the tree is computed, it will use
+    * the case to answer queries.  This approach is best for a use case where the TaxonomySnapshotService will be used 
+    * for many queries for a period of time.
     *
     * @param tc the tc
-    * @return the snapshot
+    * @return the snapshot which is backed by a {@link Tree}, although that tree may not be complete for some time after
+    * this call returns.
     */
    TaxonomySnapshotService getSnapshot(ManifoldCoordinate tc);
+   
+   /**
+    * Gets the snapshot.  This method is for returning a Snapshot that does NOT build a tree in the background.
+    * Every query will be answered by direct computation on the call.  Implementations may do some caching of answers
+    * previously computed.  
+    * 
+    * This approach is best for a use case where the TaxonomySnapshotService will be used to answer a single query, and 
+    * then be thrown away.
+    *
+    * @param mc the manifold coordinate
+    * @return the snapshot that is NOT backed by a {@link Tree}
+    */
+   TaxonomySnapshotService getSnapshotNoTree(ManifoldCoordinate mc);
    
 
 	/**
@@ -127,9 +146,11 @@ public interface TaxonomyService
 	 * @param pathNid
 	 * @param modules
 	 * @param allowedStates
+	 * @param computeTree true, if this should call {@link #getSnapshot(ManifoldCoordinate)}, false if it should call
+	 * {@link #getSnapshotNoTree(ManifoldCoordinate)}
 	 * @return the Snapshot service
 	 */
-	TaxonomySnapshotService getStatedLatestSnapshot(int pathNid, NidSet modules, EnumSet<Status> allowedStates);
+	TaxonomySnapshotService getStatedLatestSnapshot(int pathNid, NidSet modules, EnumSet<Status> allowedStates, boolean computeTree);
    
    /**
     * 
