@@ -137,7 +137,7 @@ public class StampCoordinateImpl
                               StampPosition stampPosition,
                               Set<ConceptSpecification> moduleSpecifications,
                               EnumSet<Status> allowedStates) {
-      this(stampPrecedence, stampPosition, moduleSpecifications, new ArrayList(), allowedStates);
+      this(stampPrecedence, stampPosition, moduleSpecifications, new ArrayList<>(), allowedStates);
    }
 
    /**
@@ -157,7 +157,7 @@ public class StampCoordinateImpl
                               EnumSet<Status> allowedStates) {
       this(stampPrecedence,
            stampPosition,
-           new HashSet(moduleSpecifications),
+           new HashSet<>(moduleSpecifications),
            moduleSpecificationPriorities,
            allowedStates);
    }
@@ -206,9 +206,9 @@ public class StampCoordinateImpl
             return false;
         }
         
-        if ((modulePriorityList == null && other.getModulePreferenceListForVersions() != null) 
-                || (modulePriorityList != null && other.getModulePreferenceListForVersions() == null)
-                || modulePriorityList != null && !this.modulePriorityList.equals(other.getModulePreferenceListForVersions())) {
+        if ((modulePriorityList == null && other.getModulePreferenceOrderForVersions() != null) 
+                || (modulePriorityList != null && other.getModulePreferenceOrderForVersions() == null)
+                || modulePriorityList != null && !this.modulePriorityList.equals(other.getModulePreferenceOrderForVersions())) {
              return false;
         }
         return this.moduleSpecifications.equals(other.getModuleSpecifications());
@@ -438,8 +438,8 @@ public class StampCoordinateImpl
    public StampCoordinateImpl deepClone() {
       StampCoordinateImpl newCoordinate = new StampCoordinateImpl(stampPrecedence,
                               stampPosition.deepClone(),
-                              new HashSet(moduleSpecifications),
-                              new ArrayList(this.modulePriorityList),
+                              new HashSet<>(moduleSpecifications),
+                              new ArrayList<>(this.modulePriorityList),
                               EnumSet.copyOf(allowedStates));
       return newCoordinate;
    }
