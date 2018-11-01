@@ -39,10 +39,9 @@
 
 package sh.isaac.model.coordinate;
 
-import java.util.Collection;
-
 //~--- JDK imports ------------------------------------------------------------
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;

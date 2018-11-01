@@ -39,10 +39,9 @@
 
 package sh.isaac.model.observable.coordinate;
 
-import java.util.Collection;
-
 //~--- JDK imports ------------------------------------------------------------
 
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
 import javafx.beans.InvalidationListener;

@@ -39,10 +39,9 @@
 
 package sh.isaac.api.coordinate;
 
-import java.util.Collection;
-
 //~--- JDK imports ------------------------------------------------------------
 
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
