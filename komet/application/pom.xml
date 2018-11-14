@@ -95,8 +95,18 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>sh.isaac.uts-core.provider</groupId>
+			<artifactId>identifier</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>sh.isaac.uts-core.komet</groupId>
 			<artifactId>changeset-view</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>sh.isaac.uts-core.provider</groupId>
+			<artifactId>datastore-locator</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -155,12 +165,6 @@
 			<artifactId>gui-contracts</artifactId>
 			<version>${project.parent.version}</version>
 			<type>jar</type>
-			<exclusions>
-				<exclusion>
-					<groupId>sh.isaac.provider</groupId>
-					<artifactId>datastore-locator</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>sh.isaac.uts-core.komet</groupId>
@@ -562,21 +566,6 @@
 					</plugin>
 				</plugins>
 			</build>
-		</profile>
-		<profile>
-			<id>file-datastore</id>
-			<activation>
-				<property>
-					<name>!explicit-datstore</name>
-				</property>
-			</activation>
-			<dependencies>
-				<dependency>
-					<groupId>sh.isaac.uts-core.provider</groupId>
-					<artifactId>datastore-locator</artifactId>
-					<version>${project.version}</version>
-				</dependency>
-			</dependencies>
 		</profile>
 		<profile>
 			<id>postgres-datastore</id>

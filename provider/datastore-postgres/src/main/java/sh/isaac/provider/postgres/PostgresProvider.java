@@ -37,14 +37,18 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.function.BinaryOperator;
 import java.util.stream.IntStream;
+import javax.inject.Singleton;
 import javax.xml.bind.DatatypeConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.mahout.math.list.IntArrayList;
+import org.glassfish.hk2.api.Rank;
+import org.jvnet.hk2.annotations.Service;
 import sh.isaac.api.IdentifierService;
 import sh.isaac.api.LookupService;
 import sh.isaac.api.chronicle.VersionType;
 import sh.isaac.api.collections.NidSet;
+import sh.isaac.api.constants.DatabaseImplementation;
 import sh.isaac.api.datastore.ChronologySerializeable;
 import sh.isaac.api.externalizable.ByteArrayDataBuffer;
 import sh.isaac.api.externalizable.DataWriteListener;
@@ -60,6 +64,10 @@ import sh.isaac.model.semantic.version.SemanticVersionImpl;
  *
  * @author kec
  */
+/** Align this with {@link DatabaseImplementation#POSTGRESQL} */
+@Service (name="POSTGRESQL")
+@Singleton
+@Rank(value=-50)
 public class PostgresProvider
     implements DataStoreSubService, IdentifierService { // ExtendedStore
 

@@ -52,10 +52,10 @@ import java.util.concurrent.Future;
 import java.util.stream.IntStream;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-
 //~--- non-JDK imports --------------------------------------------------------
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.glassfish.hk2.api.Rank;
 import org.glassfish.hk2.runlevel.RunLevel;
 import org.jvnet.hk2.annotations.Service;
 import sh.isaac.api.Get;
@@ -80,6 +80,7 @@ import sh.isaac.api.externalizable.IsaacObjectType;
  */
 @Service
 @RunLevel(value = LookupService.SL_L2)
+@Rank(value=10)
 public class IdentifierProvider
         implements IdentifierService {
 
