@@ -183,6 +183,7 @@ public class LoincTPImportMojoDirect extends DirectConverterBaseMojo implements 
 		
 		BufferedWriter loincExpressionDebug = null;
 		
+		log.info("Searching" + inputFileLocationPath);
 		try
 		{
 			Files.walk(inputFileLocationPath, new FileVisitOption[] {}).forEach(path -> 
@@ -196,6 +197,10 @@ public class LoincTPImportMojoDirect extends DirectConverterBaseMojo implements 
 					else if (path.toString().toLowerCase().equals("loinc.csv"))
 					{
 						loincData.set(new LoincCsvFileReader(path, false));
+					}
+					else if (path.toString().toLowerCase().endsWith(".zip") && path.toString().toLowerCase().contains("snomedct_loinc"))
+					{
+						ler.set(new LoincExpressionReader(path));
 					}
 					else if (path.toString().toLowerCase().endsWith(".zip"))
 					{
@@ -225,6 +230,7 @@ public class LoincTPImportMojoDirect extends DirectConverterBaseMojo implements 
 									}
 									
 								}
+								ze = zis.getNextEntry();
 							}
 						}
 					}
@@ -425,7 +431,7 @@ public class LoincTPImportMojoDirect extends DirectConverterBaseMojo implements 
 				}
 				catch (Exception e)
 				{
-					getLog().error("Failed with expression line number at " + expLineNumber + " " + e + " skipping line");
+					log.error("Failed with expression line number at " + expLineNumber + " " + e + " skipping line");
 				}
 				
 				expressionLine = ler.get().readLine();
@@ -463,10 +469,6 @@ public class LoincTPImportMojoDirect extends DirectConverterBaseMojo implements 
 		}
 		finally
 		{
-			if (ler.get() != null)
-			{
-				ler.get().close();
-			}
 			if (loincExpressionDebug != null)
 			{
 				loincExpressionDebug.close();

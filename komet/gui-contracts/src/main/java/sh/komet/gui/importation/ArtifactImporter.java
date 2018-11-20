@@ -134,6 +134,7 @@ public class ArtifactImporter
 						dc.configure(null, root, sdo.getVersion(), Get.defaultCoordinate());
 
 						//TODO in the future, add the GUI widgets that let the users specify the options.
+						//TODO we also need to support additional required input IBDF files, and making sure other required data is loaded
 						//Use the defaults for now, just to get things working...
 						if (dc.getConverterOptions() != null)
 						{

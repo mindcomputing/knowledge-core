@@ -1826,8 +1826,7 @@ public class Frills
       final IndexQueryService si = LookupService.get().getService(IndexSemanticQueryService.class);
 
       if (si != null) {
-         // force the prefix algorithm, and add a trailing space - quickest way to do an exact-match type of search
-         final List<SearchResult> result = si.query(sctID + " ",
+         final List<SearchResult> result = si.query(sctID + "",
                                                      true,
                                                      new int[] { MetaData.SCTID____SOLOR.getNid() },
                                                      null,

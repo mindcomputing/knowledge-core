@@ -52,7 +52,5 @@ public class LoincTPMojoRunner extends LoincTPImportMojoDirect
 		{
 			Platform.exit();
 		}
-
 	}
-
 }

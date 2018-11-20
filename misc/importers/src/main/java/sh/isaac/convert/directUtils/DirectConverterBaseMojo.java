@@ -225,12 +225,6 @@ public abstract class DirectConverterBaseMojo extends AbstractMojo
 			
 			readbackCoordinate = StampCoordinates.getDevelopmentLatest();
 
-			// Don't need to build indexes
-			for (IndexBuilderService ibs : LookupService.getServices(IndexBuilderService.class))
-			{
-				ibs.setEnabled(false);
-			}
-			
 			File[] filesToPreload = getIBDFFilesToPreload();
 			if (filesToPreload != null && filesToPreload.length > 0)
 			{
@@ -242,6 +236,13 @@ public abstract class DirectConverterBaseMojo extends AbstractMojo
 				lt.setActiveOnly(IBDFPreloadActiveOnly());
 				lt.skipVersionTypes(getIBDFSkipTypes());
 				lt.execute();
+			}
+			
+			// Don't need to build indexes - but don't disable till after the pre-loads, as we might need indexes on those.
+			for (IndexBuilderService ibs : LookupService.getServices(IndexBuilderService.class))
+			{
+				ibs.refreshQueryEngine();  //refresh, so that the data loaded above is available
+				ibs.setEnabled(false);
 			}
 			
 			DataWriteListenerImpl listener = new DataWriteListenerImpl(ibdfFileToWrite, toIgnore == null ? null : toIgnore.get());
