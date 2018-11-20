@@ -74,7 +74,6 @@ import sh.isaac.api.Get;
 import sh.isaac.api.IsaacCache;
 import sh.isaac.api.LookupService;
 import sh.isaac.api.Status;
-import sh.isaac.api.TaxonomySnapshotService;
 import sh.isaac.api.bootstrap.TermAux;
 import sh.isaac.api.chronicle.Chronology;
 import sh.isaac.api.chronicle.LatestVersion;
@@ -139,6 +138,7 @@ import sh.isaac.model.configuration.EditCoordinates;
 import sh.isaac.model.configuration.LanguageCoordinates;
 import sh.isaac.model.configuration.LogicCoordinates;
 import sh.isaac.model.configuration.StampCoordinates;
+import sh.isaac.model.coordinate.EditCoordinateImpl;
 import sh.isaac.model.coordinate.ManifoldCoordinateImpl;
 import sh.isaac.model.coordinate.StampCoordinateImpl;
 import sh.isaac.model.coordinate.StampPositionImpl;
@@ -155,6 +155,7 @@ import sh.isaac.model.semantic.version.DynamicImpl;
 import sh.isaac.model.semantic.version.LogicGraphVersionImpl;
 import sh.isaac.model.semantic.version.LongVersionImpl;
 import sh.isaac.model.semantic.version.StringVersionImpl;
+import sh.isaac.api.TaxonomySnapshot;
 
 /**
  * The Class Frills.
@@ -514,7 +515,8 @@ public class Frills
          //TODO switch this over to the observable create / commit pattern
          try {
             int nid = Get.conceptBuilderService().getDefaultConceptBuilder(termTypeFQN, ConceptProxy.METADATA_SEMANTIC_TAG, defBuilder.build(), 
-                 MetaData.SOLOR_CONCEPT_ASSEMBLAGE____SOLOR.getNid()).build(EditCoordinates.getDefaultUserMetadata(), ChangeCheckerMode.ACTIVE).get().getNid();
+                 MetaData.SOLOR_CONCEPT_ASSEMBLAGE____SOLOR.getNid()).build(
+                       new EditCoordinateImpl(TermAux.USER.getNid(),  TermAux.CORE_METADATA_MODULE.getNid(), TermAux.DEVELOPMENT_PATH.getNid()), ChangeCheckerMode.ACTIVE).get().getNid();
              commitCheck(Get.commitService().commit(Get.configurationService().getGlobalDatastoreConfiguration().getDefaultEditCoordinate(),
                  "creating new edit module for terminology type " + Get.conceptDescriptionText(termTypeConcept)));
              return nid;
@@ -537,9 +539,9 @@ public class Frills
       
       if (stamp!= null) {
          //ensure the provided stamp includes the metadata module
-         if (stamp.getModuleNids().size() > 0 && !stamp.getModuleNids().contains(MetaData.SOLOR_MODULE____SOLOR.getNid()))
+         if (stamp.getModuleNids().size() > 0 && !stamp.getModuleNids().contains(MetaData.CORE_METADATA_MODULE____SOLOR.getNid()))
          {
-            stampToUse = stamp.makeModuleAnalog(new int[] {MetaData.SOLOR_MODULE____SOLOR.getNid()}, true);
+            stampToUse = stamp.makeModuleAnalog(Arrays.asList(new ConceptSpecification[] {MetaData.CORE_METADATA_MODULE____SOLOR}), true);
          }
       }
       
@@ -762,13 +764,13 @@ public class Frills
    public static StampCoordinate makeStampCoordinateAnalogVaryingByModulesOnly(StampCoordinate existingStampCoordinate,
          int requiredModuleSequence,
          int... optionalModuleSequences) {
-      final NidSet moduleSequenceSet = new NidSet();
+      final HashSet<ConceptSpecification> moduleSet = new HashSet();
 
-      moduleSequenceSet.add(requiredModuleSequence);
+      moduleSet.add(Get.conceptSpecification(requiredModuleSequence));
 
       if (optionalModuleSequences != null) {
          for (final int seq: optionalModuleSequences) {
-            moduleSequenceSet.add(seq);
+            moduleSet.add(Get.conceptSpecification(seq));
          }
       }
 
@@ -779,8 +781,8 @@ public class Frills
       final StampCoordinate newStampCoordinate = new StampCoordinateImpl(
                                                      existingStampCoordinate.getStampPrecedence(),
                                                            existingStampCoordinate.getStampPosition(),
-                                                           moduleSequenceSet,
-                                                           new int[0],
+                                                           moduleSet,
+                                                           new ArrayList(),
                                                            allowedStates);
 
       return newStampCoordinate;
@@ -1106,7 +1108,7 @@ public class Frills
     */
    public static Set<Integer> getAllChildrenOfConcept(int conceptNid, boolean recursive, boolean leafOnly, StampCoordinate stamp) {
       
-      TaxonomySnapshotService tss = Get.taxonomyService().getSnapshotNoTree(
+      TaxonomySnapshot tss = Get.taxonomyService().getSnapshotNoTree(
             new ManifoldCoordinateImpl((stamp == null ? Get.configurationService().getUserConfiguration(Optional.empty()).getStampCoordinate() : stamp),
                   LanguageCoordinates.getUsEnglishLanguageFullySpecifiedNameCoordinate()));
       
@@ -1121,7 +1123,7 @@ public class Frills
     * Recursively get Is a children of a concept.  May inadvertently return the requested starting sequence when leafOnly is true, and 
     * there are no children.
     */
-   private static Set<Integer> getAllChildrenOfConcept(Set<Integer> handledConceptNids, int conceptNid, boolean recursive, boolean leafOnly, TaxonomySnapshotService tss) {
+   private static Set<Integer> getAllChildrenOfConcept(Set<Integer> handledConceptNids, int conceptNid, boolean recursive, boolean leafOnly, TaxonomySnapshot tss) {
       Set<Integer> results = new HashSet<>();
 
       // This both prevents infinite recursion and avoids processing or returning of duplicates
@@ -1824,8 +1826,7 @@ public class Frills
       final IndexQueryService si = LookupService.get().getService(IndexSemanticQueryService.class);
 
       if (si != null) {
-         // force the prefix algorithm, and add a trailing space - quickest way to do an exact-match type of search
-         final List<SearchResult> result = si.query(sctID + " ",
+         final List<SearchResult> result = si.query(sctID + "",
                                                      true,
                                                      new int[] { MetaData.SCTID____SOLOR.getNid() },
                                                      null,
@@ -2020,8 +2021,8 @@ public class Frills
       final StampCoordinateImpl temp = new StampCoordinateImpl(
                                            stampCoordinate.getStampPrecedence(),
                                                  stampPosition,
-                                                 stampCoordinate.getModuleNids(),
-                                                 new int[0],
+                                                 stampCoordinate.getModuleSpecifications(),
+                                                 new ArrayList(),
                                                  stampCoordinate.getAllowedStates());
 
       if (temp.getModuleNids()
@@ -2061,8 +2062,8 @@ public class Frills
       final StampCoordinate stampCoordinate = new StampCoordinateImpl(
                                                   precedence,
                                                         stampPosition,
-                                                        NidSet.of(stamp.getModuleNid()),
-                                                        new int[0],
+                                                        Arrays.asList(new ConceptSpecification[] { Get.conceptSpecification(stamp.getModuleNid())}),
+                                                        new ArrayList<>(),
                                                         EnumSet.of(stamp.getStatus()));
 
       LOG.debug("Created StampCoordinate from Stamp: " + stamp + ": " + stampCoordinate);
@@ -2097,8 +2098,8 @@ public class Frills
       final StampCoordinate stampCoordinate = new StampCoordinateImpl(
                                                   precedence,
                                                         stampPosition,
-                                                        NidSet.of(version.getModuleNid()),
-                                                        new int[0],
+                                                        Arrays.asList(new ConceptSpecification[] { Get.conceptSpecification(version.getModuleNid())}),
+                                                        new ArrayList<>(),
                                                         EnumSet.of(version.getStatus()));
 
       LOG.debug("Created StampCoordinate from StampedVersion: " + toString(version) + ": " + stampCoordinate);
@@ -2138,9 +2139,9 @@ public class Frills
       HashSet<Integer> modules = new HashSet<>();
       HashSet<Integer> terminologyTypes = new HashSet<>();
       
-      TaxonomySnapshotService tss = Get.taxonomyService().getStatedLatestSnapshot(
-            (stamp == null ? StampCoordinates.getDevelopmentLatest().getStampPosition().getStampPathNid() : stamp.getStampPosition().getStampPathNid()),
-            (stamp == null ? NidSet.EMPTY : stamp.getModuleNids()),
+      TaxonomySnapshot tss = Get.taxonomyService().getStatedLatestSnapshot(
+            (stamp == null ? StampCoordinates.getDevelopmentLatest().getStampPosition().getStampPathSpecification().getNid() : stamp.getStampPosition().getStampPathSpecification().getNid()),
+            (stamp == null ? new HashSet<>() : stamp.getModuleSpecifications()),
             (stamp == null ? Status.ACTIVE_ONLY_SET : stamp.getAllowedStates()), false);
 
       if (stamp == null) {
@@ -2329,30 +2330,31 @@ public class Frills
       // StampCoordinate with LATEST ACTIVE_ONLY from all VHAT modules
       final StampPosition stampPosition = new StampPositionImpl(Long.MAX_VALUE, TermAux.DEVELOPMENT_PATH.getNid());
       final Set<Integer> vhatModules = Frills.getAllChildrenOfConcept(MetaData.VHAT_MODULES____SOLOR.getNid(), true, true, null);
-      final StampCoordinate stampCoordinate = new StampCoordinateImpl(StampPrecedence.PATH, stampPosition, NidSet.of(vhatModules), new int[0], Status.ACTIVE_ONLY_SET);
+      final Set<ConceptSpecification> vhatModulesConceptSpecSet = new HashSet<>();
+      vhatModules.forEach((moduleNid) -> {
+          vhatModulesConceptSpecSet.add(Get.conceptSpecification(moduleNid));
+       });
+      final StampCoordinate stampCoordinate = new StampCoordinateImpl(StampPrecedence.PATH, stampPosition, vhatModulesConceptSpecSet, new ArrayList(), Status.ACTIVE_ONLY_SET);
 
       final Set<Integer> matchingVuidSemanticNids = new HashSet<>();
 
-      final Predicate<Integer> filter = new Predicate<Integer>() {
-         @Override
-         public boolean test(Integer t) {
-            final Optional<? extends SemanticChronology> SemanticChronologyToCheck = 
+      final Predicate<Integer> filter = (Integer t) -> {
+          final Optional<? extends SemanticChronology> SemanticChronologyToCheck = 
                   (Optional<? extends SemanticChronology>) Get.assemblageService().getOptionalSemanticChronology(t);
-            // This check should be redundant
-            if (SemanticChronologyToCheck.isPresent() && SemanticChronologyToCheck.get().getAssemblageNid() == MetaData.VUID____SOLOR.getNid()) {
-               final SemanticChronology existingVuidSemantic = ((SemanticChronology) SemanticChronologyToCheck.get());
-               LatestVersion<Version> latestVersionOptional = existingVuidSemantic.getLatestVersion(stampCoordinate);
-
-               if (latestVersionOptional.isPresent()) {
+          // This check should be redundant
+          if (SemanticChronologyToCheck.isPresent() && SemanticChronologyToCheck.get().getAssemblageNid() == MetaData.VUID____SOLOR.getNid()) {
+              final SemanticChronology existingVuidSemantic = ((SemanticChronology) SemanticChronologyToCheck.get());
+              LatestVersion<Version> latestVersionOptional = existingVuidSemantic.getLatestVersion(stampCoordinate);
+              
+              if (latestVersionOptional.isPresent()) {
                   // TODO do we care about contradictions?
                   StringVersion semanticVersion = ((StringVersion)latestVersionOptional.get());
                   if ((vuID + "").equals(semanticVersion.getString())) {
-                     return true;
+                      return true;
                   }
-               }
-            }
-            return false;
-         }
+              }
+          }
+          return false;
       };
       // force the prefix algorithm, and add a trailing space - quickest way to do an exact-match type of search
       List<SearchResult> results = si.query(vuID + " ", true, new int[] { MetaData.VUID____SOLOR.getNid() }, filter, null, null, 1000, Long.MAX_VALUE);

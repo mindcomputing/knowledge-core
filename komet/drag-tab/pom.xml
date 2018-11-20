@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>sh.isaac.uts-core</groupId>
 		<artifactId>komet</artifactId>
-		<version>uts-5.08</version>
+		<version>uts-5.09</version>
 	</parent>
 	<groupId>sh.isaac.uts-core.komet</groupId>
 	<artifactId>drag-tab</artifactId>
@@ -28,7 +28,7 @@
 		<dependency>
 			<groupId>sh.isaac.uts-core.core</groupId>
 			<artifactId>api</artifactId>
-			<version>${parent.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 </project>

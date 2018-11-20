@@ -42,7 +42,7 @@ package sh.isaac.api.query.clauses;
 //~--- JDK imports ------------------------------------------------------------
 
 import java.util.EnumSet;
-import java.util.concurrent.ExecutionException;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -62,6 +62,7 @@ import sh.isaac.api.query.LeafClause;
 import sh.isaac.api.query.Query;
 import sh.isaac.api.query.WhereClause;
 import sh.isaac.api.coordinate.ManifoldCoordinate;
+import sh.isaac.api.query.LetItemKey;
 
 //~--- classes ----------------------------------------------------------------
 
@@ -77,15 +78,15 @@ public class RelationshipIsCircular
         extends LeafClause {
    /** The rel type key. */
    @XmlElement
-   String relTypeKey;
+   LetItemKey relTypeKey;
 
-   /** The view coordinate key. */
+   /** the manifold coordinate key. */
    @XmlElement
-   String viewCoordinateKey;
+   LetItemKey manifoldCoordinateKey;
 
    /** The rel type subsumption key. */
    @XmlElement
-   String relTypeSubsumptionKey;
+   LetItemKey relTypeSubsumptionKey;
 
    /** The rel type set. */
    NidSet relTypeSet;
@@ -102,20 +103,24 @@ public class RelationshipIsCircular
     *
     * @param enclosingQuery the enclosing query
     * @param relTypeKey the rel type key
-    * @param viewCoordinateKey the view coordinate key
+    * @param manifoldCoordinateKey the manifold coordinate key
     * @param relTypeSubsumptionKey the rel type subsumption key
     */
    public RelationshipIsCircular(Query enclosingQuery,
-                                 String relTypeKey,
-                                 String viewCoordinateKey,
-                                 String relTypeSubsumptionKey) {
+                                 LetItemKey relTypeKey,
+                                 LetItemKey manifoldCoordinateKey,
+                                 LetItemKey relTypeSubsumptionKey) {
       super(enclosingQuery);
       this.relTypeKey            = relTypeKey;
-      this.viewCoordinateKey     = viewCoordinateKey;
+      this.manifoldCoordinateKey     = manifoldCoordinateKey;
       this.relTypeSubsumptionKey = relTypeSubsumptionKey;
    }
 
    //~--- methods -------------------------------------------------------------
+    @Override
+    public void resetResults() {
+        // no cached data in task. 
+    }
 
    /**
     * Compute possible components.
@@ -124,10 +129,10 @@ public class RelationshipIsCircular
     * @return the nid set
     */
    @Override
-   public NidSet computePossibleComponents(NidSet incomingPossibleComponents) {
+   public Map<ConceptSpecification, NidSet> computePossibleComponents(Map<ConceptSpecification, NidSet> incomingPossibleComponents) {
 //    System.out.println("Let declerations: " + enclosingQuery.getLetDeclarations());
       final ManifoldCoordinate manifoldCoordinate = (ManifoldCoordinate) this.enclosingQuery.getLetDeclarations()
-                                                                                            .get(this.viewCoordinateKey);
+                                                                                            .get(this.manifoldCoordinateKey);
       final ConceptSpecification relType = (ConceptSpecification) this.enclosingQuery.getLetDeclarations()
                                                                                      .get(this.relTypeKey);
       Boolean relTypeSubsumption = (Boolean) this.enclosingQuery.getLetDeclarations()
@@ -170,7 +175,7 @@ public class RelationshipIsCircular
       throw new UnsupportedOperationException();
 
       /*
-       * ManifoldCoordinate manifoldCoordinate = (ManifoldCoordinate) enclosingQuery.getLetDeclarations().get(viewCoordinateKey);
+       * ManifoldCoordinate manifoldCoordinate = (ManifoldCoordinate) enclosingQuery.getLetDeclarations().get(manifoldCoordinateKey);
        * Get.taxonomyService().getAllRelationshipDestinationSequencesOfType(
        *       conceptVersion.getChronology().getConceptSequence(), relTypeSet, viewCoordinate)
        *       .forEach((destinationSequence) -> {
@@ -180,6 +185,11 @@ public class RelationshipIsCircular
        *       });
        */
    }
+    @Override
+    public ClauseSemantic getClauseSemantic() {
+        return ClauseSemantic.RELATIONSHIP_IS_CIRCULAR;
+    }
+   
 
    /**
     * Gets the where clause.
@@ -194,7 +204,7 @@ public class RelationshipIsCircular
       whereClause.getLetKeys()
                  .add(this.relTypeKey);
       whereClause.getLetKeys()
-                 .add(this.viewCoordinateKey);
+                 .add(this.manifoldCoordinateKey);
       whereClause.getLetKeys()
                  .add(this.relTypeSubsumptionKey);
 

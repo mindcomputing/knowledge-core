@@ -40,6 +40,7 @@
 package sh.isaac.api;
 
 import java.util.EnumSet;
+import java.util.Set;
 import java.util.function.BinaryOperator;
 
 //~--- JDK imports ------------------------------------------------------------
@@ -52,6 +53,7 @@ import java.util.stream.IntStream;
 import org.jvnet.hk2.annotations.Contract;
 import sh.isaac.api.collections.IntSet;
 import sh.isaac.api.collections.NidSet;
+import sh.isaac.api.component.concept.ConceptSpecification;
 import sh.isaac.api.coordinate.ManifoldCoordinate;
 import sh.isaac.api.coordinate.PremiseType;
 import sh.isaac.api.component.semantic.SemanticChronology;
@@ -123,7 +125,7 @@ public interface TaxonomyService
     * @return the snapshot which is backed by a {@link Tree}, although that tree may not be complete for some time after
     * this call returns.
     */
-   TaxonomySnapshotService getSnapshot(ManifoldCoordinate tc);
+   TaxonomySnapshot getSnapshot(ManifoldCoordinate tc);
    
    /**
     * Gets the snapshot.  This method is for returning a Snapshot that does NOT build a tree in the background.
@@ -136,7 +138,7 @@ public interface TaxonomyService
     * @param mc the manifold coordinate
     * @return the snapshot that is NOT backed by a {@link Tree}
     */
-   TaxonomySnapshotService getSnapshotNoTree(ManifoldCoordinate mc);
+   TaxonomySnapshot getSnapshotNoTree(ManifoldCoordinate mc);
    
 
 	/**
@@ -150,8 +152,8 @@ public interface TaxonomyService
 	 * {@link #getSnapshotNoTree(ManifoldCoordinate)}
 	 * @return the Snapshot service
 	 */
-	TaxonomySnapshotService getStatedLatestSnapshot(int pathNid, NidSet modules, EnumSet<Status> allowedStates, boolean computeTree);
-   
+   TaxonomySnapshot getStatedLatestSnapshot(int pathNid, Set<ConceptSpecification> modules, EnumSet<Status> allowedStates, boolean computeTree);
+
    /**
     * 
     * @param conceptAssemblageNid The assemblage Nid which specifies the assemblage where the concepts in this tree

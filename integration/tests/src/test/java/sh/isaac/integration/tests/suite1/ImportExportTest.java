@@ -79,7 +79,6 @@ import sh.isaac.api.logic.LogicalExpression;
 import sh.isaac.api.logic.LogicalExpressionBuilder;
 import sh.isaac.api.tree.Tree;
 import sh.isaac.MetaData;
-import sh.isaac.api.TaxonomySnapshotService;
 import sh.isaac.api.bootstrap.TermAux;
 import sh.isaac.api.collections.NidSet;
 import sh.isaac.api.component.semantic.SemanticChronology;
@@ -89,12 +88,13 @@ import sh.isaac.model.logic.definition.LogicalExpressionBuilderProvider;
 import static sh.isaac.api.logic.LogicalExpressionBuilder.And;
 import static sh.isaac.api.logic.LogicalExpressionBuilder.ConceptAssertion;
 import static sh.isaac.api.logic.LogicalExpressionBuilder.Feature;
-import static sh.isaac.api.logic.LogicalExpressionBuilder.FloatLiteral;
+import static sh.isaac.api.logic.LogicalExpressionBuilder.DoubleLiteral;
 import static sh.isaac.api.logic.LogicalExpressionBuilder.SomeRole;
 import static sh.isaac.api.logic.LogicalExpressionBuilder.SufficientSet;
 import sh.isaac.api.coordinate.ManifoldCoordinate;
 import sh.isaac.api.tree.TreeNodeVisitData;
 import sh.isaac.model.ModelGet;
+import sh.isaac.api.TaxonomySnapshot;
 
 //~--- classes ----------------------------------------------------------------
 
@@ -166,7 +166,7 @@ public class ImportExportTest {
       final LogicalExpressionBuilder defBuilder = this.builderProvider.getLogicalExpressionBuilder();
 
       SufficientSet(And(SomeRole(MetaData.ROLE_GROUP____SOLOR,
-                                 And(Feature(MetaData.INGREDIENT_STRENGTH____SOLOR, FloatLiteral(1.2345F, defBuilder)),
+                                 And(Feature(MetaData.INGREDIENT_STRENGTH____SOLOR, DoubleLiteral(1.2345F, defBuilder)),
                                      ConceptAssertion(MetaData.MASTER_PATH____SOLOR, defBuilder)))));
 
       final LogicalExpression              logicGraphDef    = defBuilder.build();
@@ -298,8 +298,8 @@ public class ImportExportTest {
       final ManifoldCoordinate manifoldCoordinate = Get.configurationService().getGlobalDatastoreConfiguration()
               .getDefaultManifoldCoordinate()
               .makeCoordinateAnalog(PremiseType.INFERRED);
-      TaxonomySnapshotService taxonomySnapshotService = Get.taxonomyService().getSnapshot(manifoldCoordinate);
-      final int[] roots = taxonomySnapshotService.getRoots();
+      TaxonomySnapshot taxonomySnapshotService = Get.taxonomyService().getSnapshot(manifoldCoordinate);
+      final int[] roots = taxonomySnapshotService.getRootNids();
       final NidSet rootAssemblages = new NidSet();
       for (int rootNid: roots) {
          rootAssemblages.add(ModelGet.identifierService().getAssemblageNid(rootNid).getAsInt());
@@ -335,7 +335,7 @@ public class ImportExportTest {
    )
    public void testGetAssemblageConceptNids() {
       int[] assemblageNids = ModelGet.dataStore().getAssemblageConceptNids();
-      Assert.assertEquals(assemblageNids.length, 12);
+      Assert.assertEquals(assemblageNids.length, 14);
       Assert.assertTrue(Arrays.toString(assemblageNids).contains(MetaData.ENGLISH_LANGUAGE____SOLOR.getNid() + ""));
    }
 
@@ -402,8 +402,8 @@ public class ImportExportTest {
               .getDefaultManifoldCoordinate()
               .makeCoordinateAnalog(PremiseType.STATED);
       LOG.info("Concepts in database: " + Get.conceptService().getConceptCount());
-      TaxonomySnapshotService taxonomySnapshotService = Get.taxonomyService().getSnapshot(manifoldCoordinate);
-      final int[] roots = taxonomySnapshotService.getRoots();
+      TaxonomySnapshot taxonomySnapshotService = Get.taxonomyService().getSnapshot(manifoldCoordinate);
+      final int[] roots = taxonomySnapshotService.getRootNids();
       Assert.assertEquals(roots.length, 1, "Root count != 1: " + Arrays.asList(roots));
       final Tree          taxonomyTree  = taxonomySnapshotService.getTaxonomyTree();
       final AtomicInteger taxonomyCount = new AtomicInteger(0);

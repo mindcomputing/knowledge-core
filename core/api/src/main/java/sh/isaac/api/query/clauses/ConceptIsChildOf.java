@@ -42,6 +42,8 @@ package sh.isaac.api.query.clauses;
 //~--- JDK imports ------------------------------------------------------------
 
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -61,6 +63,7 @@ import sh.isaac.api.query.LeafClause;
 import sh.isaac.api.query.Query;
 import sh.isaac.api.query.WhereClause;
 import sh.isaac.api.coordinate.ManifoldCoordinate;
+import sh.isaac.api.query.LetItemKey;
 
 //~--- classes ----------------------------------------------------------------
 
@@ -79,11 +82,11 @@ public class ConceptIsChildOf
         extends LeafClause {
    /** The child of spec key. */
    @XmlElement
-   String childOfSpecKey;
+   LetItemKey childOfSpecKey;
 
-   /** The view coordinate key. */
+   /** the manifold coordinate key. */
    @XmlElement
-   String viewCoordinateKey;
+   LetItemKey manifoldCoordinateKey;
 
    private ConceptSpecification childOfSpecification;
    private ManifoldCoordinate manifoldCoordinate;
@@ -100,15 +103,19 @@ public class ConceptIsChildOf
     *
     * @param enclosingQuery the enclosing query
     * @param kindOfSpecKey the kind of spec key
-    * @param viewCoordinateKey the view coordinate key
+    * @param manifoldCoordinateKey the manifold coordinate key
     */
-   public ConceptIsChildOf(Query enclosingQuery, String kindOfSpecKey, String viewCoordinateKey) {
+   public ConceptIsChildOf(Query enclosingQuery, LetItemKey kindOfSpecKey, LetItemKey manifoldCoordinateKey) {
       super(enclosingQuery);
       this.childOfSpecKey    = kindOfSpecKey;
-      this.viewCoordinateKey = viewCoordinateKey;
+      this.manifoldCoordinateKey = manifoldCoordinateKey;
    }
 
    //~--- methods -------------------------------------------------------------
+    @Override
+    public void resetResults() {
+        // no cached data in task. 
+    }
 
    /**
     * Compute possible components.
@@ -117,13 +124,15 @@ public class ConceptIsChildOf
     * @return the nid set
     */
    @Override
-   public NidSet computePossibleComponents(NidSet incomingPossibleComponents) {
+   public Map<ConceptSpecification, NidSet> computePossibleComponents(Map<ConceptSpecification, NidSet> incomingPossibleComponents) {
       final int parentNid = this.childOfSpecification.getNid();
       final NidSet childrenOfNidSet =
               NidSet.of(
                       Get.taxonomyService().getSnapshot(this.manifoldCoordinate).getTaxonomyChildConceptNids(parentNid));
       getResultsCache().or(childrenOfNidSet);
-      return getResultsCache();
+      HashMap<ConceptSpecification, NidSet> resultsMap = new HashMap<>(incomingPossibleComponents);
+      resultsMap.put(this.getAssemblageForIteration(), getResultsCache());
+      return resultsMap;
    }
 
    //~--- get methods ---------------------------------------------------------
@@ -156,6 +165,11 @@ public class ConceptIsChildOf
    public void getQueryMatches(ConceptVersion conceptVersion) {
       // Nothing to do...
    }
+    @Override
+    public ClauseSemantic getClauseSemantic() {
+        return ClauseSemantic.CONCEPT_IS_CHILD_OF;
+    }
+   
 
    /**
     * Gets the where clause.
@@ -170,7 +184,7 @@ public class ConceptIsChildOf
       whereClause.getLetKeys()
                  .add(this.childOfSpecKey);
       whereClause.getLetKeys()
-                 .add(this.viewCoordinateKey);
+                 .add(this.manifoldCoordinateKey);
       return whereClause;
    }
    

@@ -48,6 +48,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 //~--- non-JDK imports --------------------------------------------------------
 
+import java.util.HashMap;
+import java.util.Map;
 import sh.isaac.api.Get;
 import sh.isaac.api.bootstrap.TermAux;
 import sh.isaac.api.chronicle.LatestVersion;
@@ -61,6 +63,7 @@ import sh.isaac.api.query.ParentClause;
 import sh.isaac.api.query.Query;
 import sh.isaac.api.query.WhereClause;
 import sh.isaac.api.component.semantic.version.DescriptionVersion;
+import sh.isaac.api.query.LetItemKey;
 
 //~--- classes ----------------------------------------------------------------
 
@@ -73,6 +76,9 @@ import sh.isaac.api.component.semantic.version.DescriptionVersion;
 @XmlAccessorType(value = XmlAccessType.NONE)
 public class FullyQualifiedNameForConcept
         extends ParentClause {
+
+    private LetItemKey languageCoordinateKey;
+    private LetItemKey stampCoordinateKey;
    /**
     * Instantiates a new fully specified name for concept.
     */
@@ -83,46 +89,72 @@ public class FullyQualifiedNameForConcept
     *
     * @param enclosingQuery the enclosing query
     * @param child the child
+     * @param stampCoordinateKey
+     * @param languageCoordinateKey
     */
-   public FullyQualifiedNameForConcept(Query enclosingQuery, Clause child) {
+   public FullyQualifiedNameForConcept(Query enclosingQuery, Clause child, LetItemKey stampCoordinateKey, LetItemKey languageCoordinateKey) {
       super(enclosingQuery, child);
+        this.languageCoordinateKey = languageCoordinateKey;
+        this.stampCoordinateKey = stampCoordinateKey;
    }
 
-   //~--- methods -------------------------------------------------------------
+    @Override
+    public void resetResults() {
+        // no cached data in task. 
+    }
 
-   /**
-    * Compute components.
-    *
-    * @param incomingComponents the incoming components
-    * @return the nid set
-    */
-   @Override
-   public NidSet computeComponents(NidSet incomingComponents) {
-      final LanguageCoordinate languageCoordinate         = getEnclosingQuery().getLanguageCoordinate();
-      final StampCoordinate    stampCoordinate            = getEnclosingQuery().getStampCoordinate();
-      final NidSet             outgoingFullySpecifiedNids = new NidSet();
+    public LetItemKey getLanguageCoordinateKey() {
+      return languageCoordinateKey;
+   }
 
-      for (final Clause childClause: getChildren()) {
-         final NidSet             childPossibleComponentNids =
-            childClause.computePossibleComponents(incomingComponents);
-         final NidSet conceptNidSet         = NidSet.of(childPossibleComponentNids);
+    public void setLanguageCoordinateKey(LetItemKey languageCoordinateKey) {
+        this.languageCoordinateKey = languageCoordinateKey;
+    }
 
-         Get.conceptService()
-            .getConceptChronologyStream(conceptNidSet)
-            .forEach((conceptChronology) -> {
+    public LetItemKey getStampCoordinateKey() {
+        return stampCoordinateKey;
+    }
+
+    //~--- methods -------------------------------------------------------------
+    public void setStampCoordinateKey(LetItemKey stampCoordinateKey) {
+        this.stampCoordinateKey = stampCoordinateKey;
+    }
+
+    /**
+     * Compute components.
+     *
+     * @param incomingComponents the incoming components
+     * @return the nid set
+     */
+    @Override
+    public Map<ConceptSpecification, NidSet> computeComponents(Map<ConceptSpecification, NidSet> incomingComponents) {
+        final LanguageCoordinate languageCoordinate         = getLetItem(this.languageCoordinateKey);
+        final StampCoordinate    stampCoordinate            = getLetItem(this.stampCoordinateKey);
+        final NidSet             outgoingFullySpecifiedNids = new NidSet();
+        
+        for (final Clause childClause: getChildren()) {
+            final NidSet             childPossibleComponentNids =
+                    childClause.computePossibleComponents(incomingComponents).get(this.getAssemblageForIteration());
+            final NidSet conceptNidSet         = NidSet.of(childPossibleComponentNids);
+            
+            Get.conceptService()
+                    .getConceptChronologyStream(conceptNidSet)
+                    .forEach((conceptChronology) -> {
                         final LatestVersion<? extends DescriptionVersion> desc =
-                           conceptChronology.getFullyQualifiedNameDescription(languageCoordinate, stampCoordinate);
-
+                                conceptChronology.getFullyQualifiedNameDescription(languageCoordinate, stampCoordinate);
+                        
                         if (desc.isPresent()) {
-                           outgoingFullySpecifiedNids.add(desc
-                                 .get()
-                                 .getNid());
+                            outgoingFullySpecifiedNids.add(desc
+                                    .get()
+                                    .getNid());
                         }
-                     });
-      }
-
-      return outgoingFullySpecifiedNids;
-   }
+                    });
+        }
+        
+      HashMap<ConceptSpecification, NidSet> resultsMap = new HashMap<>(incomingComponents);
+      resultsMap.put(this.getAssemblageForIteration(), outgoingFullySpecifiedNids);
+      return resultsMap;
+    }
 
    /**
     * Compute possible components.
@@ -131,11 +163,16 @@ public class FullyQualifiedNameForConcept
     * @return the nid set
     */
    @Override
-   public NidSet computePossibleComponents(NidSet incomingPossibleComponents) {
+   public Map<ConceptSpecification, NidSet> computePossibleComponents(Map<ConceptSpecification, NidSet> incomingPossibleComponents) {
       return incomingPossibleComponents;
    }
 
    //~--- get methods ---------------------------------------------------------
+    @Override
+    public ClauseSemantic getClauseSemantic() {
+        return ClauseSemantic.FULLY_QUALIFIED_NAME_FOR_CONCEPT;
+    }
+   
 
    /**
     * Gets the where clause.

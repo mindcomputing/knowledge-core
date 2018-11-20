@@ -102,7 +102,6 @@ public class MainApp
     private static Stage primaryStage;
     public IsaacPreferences configurationPreferences;
     public boolean firstRun = true;
-    public boolean resetUserPreferences = true;
 
     //~--- methods -------------------------------------------------------------
     /**
@@ -138,9 +137,6 @@ public class MainApp
             firstRun = false;
         }
         
-        if (firstRun && resetUserPreferences) {
-                FxGet.kometPreferences().resetUserPreferences();
-        }
         Get.configurationService().setSingleUserMode(true);  //TODO eventually, this needs to be replaced with a proper user identifier
         Get.configurationService().setDatabaseInitializationMode(DatabaseInitialization.LOAD_METADATA);
         Get.configurationService().getGlobalDatastoreConfiguration().setMemoryConfiguration(MemoryConfiguration.ALL_CHRONICLES_IN_MEMORY);
@@ -152,7 +148,7 @@ public class MainApp
         if (FxGet.fxConfiguration().isShowBetaFeaturesEnabled()) {
             System.out.println("Beta features enabled");
         }
-        FxGet.kometPreferences().loadPreferences(configurationPreferences, Manifold.make(ManifoldGroup.TAXONOMY));
+        FxGet.kometPreferences().loadPreferences(Manifold.make(ManifoldGroup.TAXONOMY));
 
         if (Get.metadataService()
                 .wasMetadataImported()) {
@@ -260,13 +256,13 @@ public class MainApp
             switch (ap) {
                 case APP:
                     if (tk != null) {
-                        MenuItem aboutItem = new MenuItem("About...");
+                        MenuItem aboutItem = new MenuItem("About KOMET...");
                         aboutItem.setOnAction(this::handleAbout);
                         ap.getMenu().getItems().add(aboutItem);
                         ap.getMenu().getItems().add(new SeparatorMenuItem());
                     }
                     if (FxGet.fxConfiguration().isShowBetaFeaturesEnabled()) {
-                        MenuItem prefsItem = new MenuItem("Preferences...");
+                        MenuItem prefsItem = new MenuItem("KOMET Preferences...");
                         //TODO TEMP to do  something. Need to make it do something better. 
                         prefsItem.setOnAction(this::handlePrefs);
                         ap.getMenu().getItems().add(prefsItem);
@@ -428,7 +424,7 @@ public class MainApp
     }
 
     private void handlePrefs(ActionEvent event) {
-        FxGet.kometPreferences().showPreferences(configurationPreferences, Manifold.make(ManifoldGroup.TAXONOMY));
+        FxGet.kometPreferences().showPreferences(Manifold.make(ManifoldGroup.TAXONOMY));
     }
 
     private void handleAbout(ActionEvent event) {

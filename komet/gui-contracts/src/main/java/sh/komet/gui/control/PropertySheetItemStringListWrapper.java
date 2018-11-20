@@ -43,7 +43,7 @@ public class PropertySheetItemStringListWrapper implements PropertySheet.Item {
    }
 
    public PropertySheetItemStringListWrapper(Manifold manifold, StringProperty stringSelectionProperty, List<String> allowedValues) {
-      this.name = manifold.getPreferredDescriptionText(new ConceptProxy(stringSelectionProperty.getName()));
+      this.name = manifold.getPreferredDescriptionText(new ConceptProxy(stringSelectionProperty.getName()), stringSelectionProperty.getName());
       this.stringSelectionProperty = stringSelectionProperty;
       this.allowedValues = allowedValues;
    }
@@ -54,7 +54,7 @@ public class PropertySheetItemStringListWrapper implements PropertySheet.Item {
 
    @Override
    public Class<?> getType() {
-      return Status.class;
+      return String.class;
    }
 
    @Override

@@ -42,6 +42,7 @@ package sh.isaac.model.concept;
 //~--- JDK imports ------------------------------------------------------------
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -54,6 +55,7 @@ import sh.isaac.api.Status;
 import sh.isaac.api.chronicle.LatestVersion;
 import sh.isaac.api.commit.CommitStates;
 import sh.isaac.api.component.concept.ConceptSnapshot;
+import sh.isaac.api.component.concept.ConceptSpecification;
 import sh.isaac.api.component.concept.ConceptVersion;
 import sh.isaac.api.component.semantic.SemanticChronology;
 import sh.isaac.api.coordinate.LanguageCoordinate;
@@ -322,7 +324,7 @@ public class ConceptSnapshotImpl
    }
 
    @Override
-   public StampCoordinate makeModuleAnalog(int[] modules, boolean add) {
+   public StampCoordinate makeModuleAnalog(Collection<ConceptSpecification> modules, boolean add) {
       return this.manifoldCoordinate.makeModuleAnalog(modules, add);
    }
 
@@ -390,9 +392,33 @@ public class ConceptSnapshotImpl
     }
 
     @Override
-    public int[] getModulePreferenceListForVersions() {
-        return this.manifoldCoordinate.getModulePreferenceListForVersions();
+    public List<ConceptSpecification> getModulePreferenceOrderForVersions() {
+        return this.manifoldCoordinate.getModulePreferenceOrderForVersions();
+    }
+
+    @Override
+    public Set<ConceptSpecification> getModuleSpecifications() {
+        return this.manifoldCoordinate.getModuleSpecifications();
+    }
+
+    @Override
+    public ConceptSpecification getLanguageConcept() {
+        return this.manifoldCoordinate.getLanguageConcept();
     }
     
+    @Override
+    public ConceptSpecification[] getDialectAssemblageSpecPreferenceList() {
+        return manifoldCoordinate.getDialectAssemblageSpecPreferenceList();
+    }
+
+    @Override
+    public ConceptSpecification[] getDescriptionTypeSpecPreferenceList() {
+        return manifoldCoordinate.getDescriptionTypeSpecPreferenceList();
+    }
+
+    @Override
+    public ConceptSpecification[] getModuleSpecPreferenceListForLanguage() {
+        return manifoldCoordinate.getModuleSpecPreferenceListForLanguage();
+    }
 }
 

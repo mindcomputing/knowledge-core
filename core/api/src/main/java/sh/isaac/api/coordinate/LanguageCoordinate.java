@@ -49,6 +49,8 @@ import sh.isaac.api.Get;
 import sh.isaac.api.bootstrap.TermAux;
 import sh.isaac.api.chronicle.LatestVersion;
 import sh.isaac.api.collections.NidSet;
+import sh.isaac.api.component.concept.ConceptChronology;
+import sh.isaac.api.component.concept.ConceptSpecification;
 import sh.isaac.api.component.semantic.version.DescriptionVersion;
 import sh.isaac.api.component.semantic.SemanticChronology;
 import sh.isaac.api.component.semantic.version.ComponentNidVersion;
@@ -98,9 +100,10 @@ public interface LanguageCoordinate extends Coordinate {
     * Return the best description text according to language and dialect preferences of this {@code LanguageCoordinate}, 
     * but ignoring the type preferences of the coordinate, rather, using the supplied type preference order
     *
-    * @param conceptId the concept id. 
+    * @param conceptNid the concept id. 
     * @param descriptionTypePreference the order of the description types to try to match, overriding and ignoring the 
     * {@link LanguageCoordinate#getDescriptionTypePreferenceList()} present in this manifold.
+     * @param stampCoordinate
     * @return the best matching description to the {@link LanguageCoordinate} constraints within this ManifoldCoordinate and 
     * the supplied description type preference list, or empty if none available that match the {@link ManifoldCoordinate}.
     */
@@ -113,6 +116,7 @@ public interface LanguageCoordinate extends Coordinate {
     * @param descriptionList the descriptions to evaluate
     * @param descriptionTypePreference the order of the description types to try to match, overriding and ignoring the 
     * {@link LanguageCoordinate#getDescriptionTypePreferenceList()} present in this manifold.
+     * @param stampCoordinate
     * @return the best matching description to the {@link LanguageCoordinate} constraints within this ManifoldCoordinate and 
     * the supplied description type preference list, or empty if none available that match the {@link ManifoldCoordinate}.
     */
@@ -137,6 +141,7 @@ public interface LanguageCoordinate extends Coordinate {
     * @return the latestDescription type preference list
     */
    int[] getDescriptionTypePreferenceList();
+   ConceptSpecification[] getDescriptionTypeSpecPreferenceList();
 
    /**
     * Gets the dialect assemblage preference list.
@@ -144,6 +149,7 @@ public interface LanguageCoordinate extends Coordinate {
     * @return the dialect assemblage preference list
     */
    int[] getDialectAssemblagePreferenceList();
+   ConceptSpecification[] getDialectAssemblageSpecPreferenceList();
    
    /**
     * Gets the module preference list. Used to adjudicate which component to 
@@ -154,6 +160,7 @@ public interface LanguageCoordinate extends Coordinate {
     */
 
    int[] getModulePreferenceListForLanguage();
+   ConceptSpecification[] getModuleSpecPreferenceListForLanguage();
    /**
     * Convenience method - returns true if FQN is at the top of the latestDescription list.
     *
@@ -207,6 +214,12 @@ public interface LanguageCoordinate extends Coordinate {
    int getLanguageConceptNid();
 
    /**
+    * 
+    * @return 
+    */
+    ConceptSpecification getLanguageConcept();
+
+   /**
     * Gets the latestDescription of type {@link TermAux#REGULAR_NAME_DESCRIPTION_TYPE}.  Will return empty, if 
     * no matching description type is found in this or any nested language coordinates
     * 
@@ -233,14 +246,18 @@ public interface LanguageCoordinate extends Coordinate {
     * Gets the latestDescription of type {@link TermAux#REGULAR_NAME_DESCRIPTION_TYPE}.  Will return empty, if 
     * no matching description type is found in this or any nested language coordinates
     *
-    * @param conceptId the conceptId to get the fully specified latestDescription for
+    * @param conceptNid the conceptId to get the fully specified latestDescription for
     * @param stampCoordinate the stamp coordinate
     * @return the regular name latestDescription
     */
    default LatestVersion<DescriptionVersion> getPreferredDescription(
-           int conceptId,
+           int conceptNid,
            StampCoordinate stampCoordinate) {
-      return getPreferredDescription(Get.conceptService().getConceptDescriptions(conceptId), stampCoordinate);
+       Optional<? extends ConceptChronology> optionalConcept = Get.conceptService().getOptionalConcept(conceptNid);
+       if (optionalConcept.isPresent()) {
+           return getPreferredDescription(optionalConcept.get().getConceptDescriptionList(), stampCoordinate);
+       }
+       return LatestVersion.empty();
    }
 
    /**

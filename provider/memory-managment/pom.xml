@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>sh.isaac.uts-core</groupId>
 		<artifactId>provider</artifactId>
-		<version>uts-5.08</version>
+		<version>uts-5.09</version>
 	</parent>
 	<groupId>sh.isaac.uts-core.provider</groupId>
 	<artifactId>memory-managment</artifactId>
@@ -19,6 +19,11 @@
 		<dependency>
 			<groupId>sh.isaac.uts-core.provider</groupId>
 			<artifactId>chronology</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>sh.isaac.uts-core.provider</groupId>
+			<artifactId>identifier</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

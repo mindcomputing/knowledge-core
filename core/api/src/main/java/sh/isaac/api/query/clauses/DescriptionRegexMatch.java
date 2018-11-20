@@ -42,6 +42,8 @@ package sh.isaac.api.query.clauses;
 //~--- JDK imports ------------------------------------------------------------
 
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -60,6 +62,7 @@ import sh.isaac.api.coordinate.ManifoldCoordinate;
 import sh.isaac.api.query.ClauseComputeType;
 import sh.isaac.api.query.ClauseSemantic;
 import sh.isaac.api.query.LeafClause;
+import sh.isaac.api.query.LetItemKey;
 import sh.isaac.api.query.Query;
 import sh.isaac.api.query.WhereClause;
 
@@ -80,11 +83,11 @@ public class DescriptionRegexMatch
 
    /** The regex key. */
    @XmlElement
-   String regexKey;
+   LetItemKey regexKey;
 
-   /** The view coordinate key. */
+   /** the manifold coordinate key. */
    @XmlElement
-   String viewCoordinateKey;
+   LetItemKey manifoldCoordinateKey;
 
    private String parameterString;
    private ManifoldCoordinate manifoldCoordinate;
@@ -101,11 +104,11 @@ public class DescriptionRegexMatch
     *
     * @param enclosingQuery the enclosing query
     * @param regexKey the regex key
-    * @param viewCoordinateKey the view coordinate key
+    * @param manifoldCoordinateKey the manifold coordinate key
     */
-   public DescriptionRegexMatch(Query enclosingQuery, String regexKey, String viewCoordinateKey) {
+   public DescriptionRegexMatch(Query enclosingQuery, LetItemKey regexKey, LetItemKey manifoldCoordinateKey) {
       super(enclosingQuery);
-      this.viewCoordinateKey = viewCoordinateKey;
+      this.manifoldCoordinateKey = manifoldCoordinateKey;
       this.regexKey          = regexKey;
    }
 
@@ -118,13 +121,19 @@ public class DescriptionRegexMatch
     * @return the nid set
     */
    @Override
-   public NidSet computePossibleComponents(NidSet incomingPossibleComponents) {
-      this.cache = incomingPossibleComponents;
-      return incomingPossibleComponents;
+   public Map<ConceptSpecification, NidSet> computePossibleComponents(Map<ConceptSpecification, NidSet> incomingPossibleComponents) {
+      this.cache = incomingPossibleComponents.get(this.getAssemblageForIteration());
+      HashMap<ConceptSpecification, NidSet> resultsMap = new HashMap<>(incomingPossibleComponents);
+      resultsMap.put(this.getAssemblageForIteration(), this.cache);
+      return resultsMap;
    }
 
    //~--- get methods ---------------------------------------------------------
 
+    @Override
+    public void resetResults() {
+        this.cache = null;
+    }
 
    public void setParameterString(String parameterString) {
       this.parameterString = parameterString;
@@ -174,6 +183,11 @@ public class DescriptionRegexMatch
                               }
                            });
    }
+    @Override
+    public ClauseSemantic getClauseSemantic() {
+        return ClauseSemantic.DESCRIPTION_REGEX_MATCH;
+    }
+   
 
    /**
     * Gets the where clause.
@@ -188,7 +202,7 @@ public class DescriptionRegexMatch
       whereClause.getLetKeys()
                  .add(this.regexKey);
       whereClause.getLetKeys()
-                 .add(this.viewCoordinateKey);
+                 .add(this.manifoldCoordinateKey);
       return whereClause;
    }
 }

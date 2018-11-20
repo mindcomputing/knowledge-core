@@ -41,12 +41,13 @@ package sh.isaac.api.observable.coordinate;
 
 //~--- non-JDK imports --------------------------------------------------------
 
+import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SetProperty;
 
-import javafx.collections.ObservableIntegerArray;
 
 import sh.isaac.api.Status;
+import sh.isaac.api.component.concept.ConceptSpecification;
 import sh.isaac.api.coordinate.StampCoordinate;
 import sh.isaac.api.coordinate.StampPrecedence;
 
@@ -59,26 +60,32 @@ import sh.isaac.api.coordinate.StampPrecedence;
  */
 public interface ObservableStampCoordinate
         extends StampCoordinate, ObservableCoordinate {
+   
+    /**
+     * 
+     * @return the stamp coordinate that this observable wraps. 
+     */
+   StampCoordinate getStampCoordinate();
+   
    /**
     * Allowed states property.
     *
     * @return the set property
     */
    SetProperty<Status> allowedStatesProperty();
-
+   
    /**
-    * Module nids property.
-    *
-    * @return the object property
+    * 
+    * @return the specified modules property
     */
-   ObjectProperty<ObservableIntegerArray> moduleNidsProperty();
+   SetProperty<ConceptSpecification> moduleSpecificationsProperty();
+   
    /**
     * Module preference list property.
     *
     * @return the object property
     */
-   ObjectProperty<ObservableIntegerArray> modulePreferenceListForVersionsProperty();
-
+   ListProperty<ConceptSpecification> modulePreferenceListForVersionsProperty();
    /**
     * Stamp position property.
     *

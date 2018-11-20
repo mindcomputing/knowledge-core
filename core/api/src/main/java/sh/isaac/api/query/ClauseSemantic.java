@@ -175,5 +175,12 @@ public enum ClauseSemantic {
     * string.
     */
    ASSEMBLAGE_CONTAINS_STRING,
+   
+   /**
+    * Join two assemblages in the result set when criterion are met 
+    */
+   JOIN,
+   
+   COMPONENT_IS_ACTIVE
 }
 

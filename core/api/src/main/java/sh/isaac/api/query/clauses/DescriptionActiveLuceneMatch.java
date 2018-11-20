@@ -42,6 +42,8 @@ package sh.isaac.api.query.clauses;
 //~--- JDK imports ------------------------------------------------------------
 
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -56,8 +58,11 @@ import sh.isaac.api.query.ClauseComputeType;
 import sh.isaac.api.query.ClauseSemantic;
 import sh.isaac.api.query.Query;
 import sh.isaac.api.query.WhereClause;
-import sh.isaac.api.coordinate.ManifoldCoordinate;
 import sh.isaac.api.chronicle.Chronology;
+import sh.isaac.api.component.concept.ConceptSpecification;
+import sh.isaac.api.coordinate.StampCoordinate;
+import sh.isaac.api.query.LetItemKey;
+import static sh.isaac.api.query.Query.DEFAULT_MANIFOLD_COORDINATE_KEY;
 
 //~--- classes ----------------------------------------------------------------
 
@@ -71,8 +76,10 @@ import sh.isaac.api.chronicle.Chronology;
 public class DescriptionActiveLuceneMatch
         extends DescriptionLuceneMatch {
 
-   private String parameterString;
-   private ManifoldCoordinate manifoldCoordinate;
+    /**
+     * The key for the view coordinated used to determine if a description is active.
+     */
+    LetItemKey stampCoordinateKey = DEFAULT_MANIFOLD_COORDINATE_KEY;
 
    /**
     * Instantiates a new description active lucene match.
@@ -83,25 +90,16 @@ public class DescriptionActiveLuceneMatch
     * Instantiates a new description active lucene match.
     *
     * @param enclosingQuery the enclosing query
-    * @param luceneMatchKey the lucene match key
-    * @param viewCoordinateKey the view coordinate key
+    * @param queryStringKey the lucene match key
+    * @param stampCoordinateKey the manifold coordinate key
     */
-   public DescriptionActiveLuceneMatch(Query enclosingQuery, String luceneMatchKey, String viewCoordinateKey) {
-      super(enclosingQuery, luceneMatchKey, viewCoordinateKey);
+   public DescriptionActiveLuceneMatch(Query enclosingQuery, LetItemKey queryStringKey, LetItemKey stampCoordinateKey) {
+      super(enclosingQuery, queryStringKey);
+      this.stampCoordinateKey = stampCoordinateKey;
    }
 
    //~--- methods -------------------------------------------------------------
 
-
-   @Override
-   public void setParameterString(String parameterString) {
-      this.parameterString = parameterString;
-   }
-
-   @Override
-   public void setManifoldCoordinate(ManifoldCoordinate manifoldCoordinate) {
-      this.manifoldCoordinate = manifoldCoordinate;
-   }
 
    /**
     * Compute components.
@@ -110,24 +108,26 @@ public class DescriptionActiveLuceneMatch
     * @return the nid set
     */
    @Override
-   public final NidSet computeComponents(NidSet incomingComponents) {
-
-      getResultsCache().and(incomingComponents);
-      incomingComponents.stream().forEach((nid) -> {
+   public final Map<ConceptSpecification, NidSet> computeComponents(Map<ConceptSpecification, NidSet> incomingComponents) {
+      StampCoordinate stampCoordinate = getLetItem(stampCoordinateKey);
+      getResultsCache().and(incomingComponents.get(this.getAssemblageForIteration()));
+      incomingComponents.get(this.getAssemblageForIteration()).stream().forEach((nid) -> {
                                     final Optional<? extends Chronology> chronology =
                                        Get.identifiedObjectService()
                                           .getChronology(nid);
 
                                     if (chronology.isPresent()) {
                                        if (!chronology.get()
-                                             .isLatestVersionActive(this.manifoldCoordinate.getStampCoordinate())) {
+                                             .isLatestVersionActive(stampCoordinate)) {
                                           getResultsCache().remove(nid);
                                        }
                                     } else {
                                        getResultsCache().remove(nid);
                                     }
                                  });
-      return getResultsCache();
+      HashMap<ConceptSpecification, NidSet> resultsMap = new HashMap<>(incomingComponents);
+      resultsMap.put(this.getAssemblageForIteration(), getResultsCache());
+      return resultsMap;
    }
 
    //~--- get methods ---------------------------------------------------------
@@ -141,6 +141,11 @@ public class DescriptionActiveLuceneMatch
    public EnumSet<ClauseComputeType> getComputePhases() {
       return PRE_AND_POST_ITERATION;
    }
+    @Override
+    public ClauseSemantic getClauseSemantic() {
+        return ClauseSemantic.DESCRIPTION_ACTIVE_LUCENE_MATCH;
+    }
+   
 
    /**
     * Gets the where clause.
@@ -153,10 +158,18 @@ public class DescriptionActiveLuceneMatch
 
       whereClause.setSemantic(ClauseSemantic.DESCRIPTION_ACTIVE_LUCENE_MATCH);
       whereClause.getLetKeys()
-                 .add(this.luceneMatchKey);
+                 .add(this.getQueryStringKey());
       whereClause.getLetKeys()
-                 .add(this.viewCoordinateKey);
+                 .add(this.stampCoordinateKey);
       return whereClause;
    }
+
+    public LetItemKey getStampCoordinateKey() {
+        return stampCoordinateKey;
+    }
+
+    public void setStampCoordinateKey(LetItemKey stampCoordinateKey) {
+        this.stampCoordinateKey = stampCoordinateKey;
+    }
 }
 

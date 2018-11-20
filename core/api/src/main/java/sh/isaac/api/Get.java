@@ -57,8 +57,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jvnet.hk2.annotations.Service;
 import com.lmax.disruptor.dsl.Disruptor;
+import java.util.Collection;
+import java.util.concurrent.CountDownLatch;
 import javafx.concurrent.Task;
+import org.apache.mahout.math.map.OpenIntObjectHashMap;
 import sh.isaac.api.alert.AlertEvent;
+import sh.isaac.api.bootstrap.TermAux;
 import sh.isaac.api.chronicle.LatestVersion;
 import sh.isaac.api.collections.IntSet;
 import sh.isaac.api.commit.ChangeSetWriterService;
@@ -75,6 +79,7 @@ import sh.isaac.api.component.semantic.SemanticChronology;
 import sh.isaac.api.component.semantic.version.DescriptionVersion;
 import sh.isaac.api.coordinate.CoordinateFactory;
 import sh.isaac.api.coordinate.ManifoldCoordinate;
+import sh.isaac.api.coordinate.StampCoordinate;
 import sh.isaac.api.datastore.DataStore;
 import sh.isaac.api.externalizable.BinaryDataReaderService;
 import sh.isaac.api.externalizable.BinaryDataServiceFactory;
@@ -90,6 +95,7 @@ import sh.isaac.api.logic.LogicalExpressionBuilderService;
 import sh.isaac.api.metacontent.MetaContentService;
 import sh.isaac.api.observable.ObservableChronologyService;
 import sh.isaac.api.observable.ObservableSnapshotService;
+import sh.isaac.api.preferences.PreferencesService;
 import sh.isaac.api.progress.ActiveTasks;
 import sh.isaac.api.progress.CompletedTasks;
 import sh.isaac.api.util.NamedThreadFactory;
@@ -193,11 +199,16 @@ public class Get
    
    private static DataStore dataStore;
    
+   private static PreferencesService preferencesService;
+   
+   private static final OpenIntObjectHashMap<ConceptSpecification> TERM_AUX_CACHE = new OpenIntObjectHashMap<>();
+    private static CountDownLatch termAuxCacheLatch = new CountDownLatch(1);
+
    
    //~--- constructors --------------------------------------------------------
 
    /**
-    * Instantiates a new gets the.
+    * Instantiates a new Get.
     */
    public Get() {}
 
@@ -238,6 +249,13 @@ public class Get
       }
 
       return assemblageService;
+   }
+   
+   public static PreferencesService preferencesService() {
+      if (preferencesService == null) {
+         preferencesService = getService(PreferencesService.class);
+      }
+      return preferencesService;
    }
 
    /**
@@ -383,6 +401,9 @@ public class Get
    }
    
    public static String conceptDescriptionText(ConceptSpecification conceptSpec) {
+       if (conceptSpec == null) {
+           throw new NullPointerException("conceptSpec cannot be null.");
+       }
        return conceptDescriptionText(conceptSpec.getNid());
    }
 
@@ -420,6 +441,24 @@ public class Get
 
       return "[]";
    }
+   public static String conceptDescriptionTextList(ConceptSpecification[] conceptSpecs) {
+      if ((conceptSpecs != null) && (conceptSpecs.length > 0)) {
+         final StringBuilder builder = new StringBuilder();
+
+         builder.append("[");
+         Arrays.stream(conceptSpecs)
+               .forEach(
+                   (conceptSpec) -> {
+                      builder.append(conceptDescriptionText(conceptSpec));
+                      builder.append(", ");
+                   });
+         builder.delete(builder.length() - 2, builder.length());
+         builder.append("]");
+         return builder.toString();
+      }
+
+      return "[]";
+   }
 
    /**
     * Concept description text list.
@@ -427,9 +466,15 @@ public class Get
     * @param conceptIds the concept ids
     * @return the string
     */
-   public static String conceptDescriptionTextList(List<Integer> conceptIds) {
+   public static String conceptDescriptionTextList(Collection<Integer> conceptIds) {
       return conceptDescriptionTextList(conceptIds.stream()
             .mapToInt((boxedInt) -> (int) boxedInt)
+            .toArray());
+   }
+
+   public static String conceptDescriptionTextListFromSpecList(Collection<ConceptSpecification> conceptSpecifications) {
+      return conceptDescriptionTextList(conceptSpecifications.stream()
+            .mapToInt((spec) -> (int) spec.getNid())
             .toArray());
    }
 
@@ -447,17 +492,33 @@ public class Get
    }
 
    /**
-    * Note, this method may fail during bootstrap, if concept being requested is not already loaded
+    * Note, this method may fail/lock during bootstrap, if concept being requested is not already loaded
     * into the concept service.
     * @param nid a concept nid
     * @return A concept specification for the corresponding identifier
     */
    public static ConceptSpecification conceptSpecification(int nid) {
-      if (nid >= 0) {
-         throw new IllegalStateException("Nids must be < 0: " + nid);
-      }
-      return new ConceptProxy(conceptDescriptionText(nid), identifierService().getUuidArrayForNid(nid));
+       try {
+           if (nid >= 0) {
+               throw new IllegalStateException("Nids must be < 0: " + nid);
+           }
+           if (TERM_AUX_CACHE.isEmpty()) {
+               for (ConceptSpecification conceptSpecification: TermAux.getAllSpecs()) {
+                   TERM_AUX_CACHE.put(conceptSpecification.getNid(), conceptSpecification);
+               }
+               termAuxCacheLatch.countDown();
+           }
+           termAuxCacheLatch.await();
+           if (TERM_AUX_CACHE.containsKey(nid)) {
+               return TERM_AUX_CACHE.get(nid);
+           }
+           return new ConceptProxy(nid);
+       } catch (InterruptedException ex) {
+           throw new RuntimeException();
+       }
    }
+   
+   
 
    /**
     * Note, this method may fail during bootstrap, if concept being requested is not already loaded
@@ -467,7 +528,7 @@ public class Get
     */
    public static ConceptSpecification conceptSpecification(UUID uuid) {
        int nid = Get.identifierService().getNidForUuids(uuid);
-      return new ConceptProxy(nid);
+      return conceptSpecification(nid);
    }
 
    public static ConceptSpecification conceptSpecification(String uuidString) {
@@ -644,8 +705,8 @@ public class Get
       return observableChronologyService;
    }
 
-   public static ObservableSnapshotService observableSnapshotService(ManifoldCoordinate manifoldCoordinate) {
-      return observableChronologyService().getObservableSnapshotService(manifoldCoordinate);
+   public static ObservableSnapshotService observableSnapshotService(StampCoordinate stampCoordinate) {
+      return observableChronologyService().getObservableSnapshotService(stampCoordinate);
    }
    
 
@@ -744,6 +805,9 @@ public class Get
       descriptionIndexer              = null;
       semanticIndexer                 = null;
       dataStore                       = null;
+      preferencesService              = null;
+      TERM_AUX_CACHE.clear();
+      termAuxCacheLatch = new CountDownLatch(1);
    }
 
    public static ScheduledExecutorService scheduledExecutor() {

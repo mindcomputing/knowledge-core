@@ -42,7 +42,8 @@ package sh.isaac.api.query.clauses;
 //~--- JDK imports ------------------------------------------------------------
 
 import java.util.EnumSet;
-import java.util.concurrent.ExecutionException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -60,7 +61,7 @@ import sh.isaac.api.query.ClauseSemantic;
 import sh.isaac.api.query.LeafClause;
 import sh.isaac.api.query.Query;
 import sh.isaac.api.query.WhereClause;
-import sh.isaac.api.coordinate.ManifoldCoordinate;
+import sh.isaac.api.query.LetItemKey;
 
 //~--- classes ----------------------------------------------------------------
 
@@ -76,14 +77,11 @@ public class ConceptIsKindOf
         extends LeafClause {
    /** The kind of spec key. */
    @XmlElement
-   String kindOfSpecKey;
+   LetItemKey kindOfSpecKey;
 
-   /** The view coordinate key. */
+   /** the manifold coordinate key. */
    @XmlElement
-   String viewCoordinateKey;
-
-   private ConceptSpecification kindOfSpecification;
-   private ManifoldCoordinate manifoldCoordinate;
+   LetItemKey manifoldCoordinateKey;
 
    //~--- constructors --------------------------------------------------------
 
@@ -99,24 +97,20 @@ public class ConceptIsKindOf
     *
     * @param enclosingQuery the enclosing query
     * @param kindOfSpecKey the kind of spec key
-    * @param viewCoordinateKey the view coordinate key
+    * @param manifoldCoordinateKey the manifold coordinate key
     */
-   public ConceptIsKindOf(Query enclosingQuery, String kindOfSpecKey, String viewCoordinateKey) {
+   public ConceptIsKindOf(Query enclosingQuery, LetItemKey kindOfSpecKey, LetItemKey manifoldCoordinateKey) {
       super(enclosingQuery);
       this.kindOfSpecKey     = kindOfSpecKey;
-      this.viewCoordinateKey = viewCoordinateKey;
+      this.manifoldCoordinateKey = manifoldCoordinateKey;
    }
 
    //~--- methods -------------------------------------------------------------
+    @Override
+    public void resetResults() {
+        // no cached data in task. 
+    }
 
-
-   public void setKindOfSpecification(ConceptSpecification kindOfSpecification) {
-      this.kindOfSpecification = kindOfSpecification;
-   }
-
-   public void setManifoldCoordinate(ManifoldCoordinate manifoldCoordinate) {
-      this.manifoldCoordinate = manifoldCoordinate;
-   }
 
    /**
     * Compute possible components.
@@ -125,11 +119,13 @@ public class ConceptIsKindOf
     * @return the nid set
     */
    @Override
-   public NidSet computePossibleComponents(NidSet incomingPossibleComponents) {
-      final int                parentNid         = this.kindOfSpecification.getNid();
-      final NidSet kindOfNidSet = Get.taxonomyService().getSnapshot(this.manifoldCoordinate).getKindOfConceptNidSet(parentNid);
+   public Map<ConceptSpecification, NidSet> computePossibleComponents(Map<ConceptSpecification, NidSet> incomingPossibleComponents) {
+      final int                parentNid         = ((ConceptSpecification) getLetItem(kindOfSpecKey)).getNid();
+      final NidSet kindOfNidSet = Get.taxonomyService().getSnapshot(getLetItem(manifoldCoordinateKey)).getKindOfConceptNidSet(parentNid);
       getResultsCache().or(kindOfNidSet);
-      return getResultsCache();
+      HashMap<ConceptSpecification, NidSet> resultsMap = new HashMap<>(incomingPossibleComponents);
+      resultsMap.put(this.getAssemblageForIteration(), getResultsCache());
+      return resultsMap;
    }
 
    //~--- get methods ---------------------------------------------------------
@@ -153,6 +149,11 @@ public class ConceptIsKindOf
    public void getQueryMatches(ConceptVersion conceptVersion) {
       // Nothing to do...
    }
+    @Override
+    public ClauseSemantic getClauseSemantic() {
+        return ClauseSemantic.CONCEPT_IS_KIND_OF;
+    }
+   
 
    /**
     * Gets the where clause.
@@ -167,7 +168,7 @@ public class ConceptIsKindOf
       whereClause.getLetKeys()
                  .add(this.kindOfSpecKey);
       whereClause.getLetKeys()
-                 .add(this.viewCoordinateKey);
+                 .add(this.manifoldCoordinateKey);
       return whereClause;
    }
    

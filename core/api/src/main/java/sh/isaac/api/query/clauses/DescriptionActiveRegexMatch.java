@@ -52,6 +52,7 @@ import sh.isaac.api.component.concept.ConceptChronology;
 import sh.isaac.api.component.concept.ConceptVersion;
 import sh.isaac.api.component.semantic.version.DescriptionVersion;
 import sh.isaac.api.query.ClauseSemantic;
+import sh.isaac.api.query.LetItemKey;
 import sh.isaac.api.query.Query;
 import sh.isaac.api.query.WhereClause;
 
@@ -77,10 +78,10 @@ public class DescriptionActiveRegexMatch
     *
     * @param enclosingQuery the enclosing query
     * @param regexKey the regex key
-    * @param viewCoordinateKey the view coordinate key
+    * @param manifoldCoordinateKey the manifold coordinate key
     */
-   public DescriptionActiveRegexMatch(Query enclosingQuery, String regexKey, String viewCoordinateKey) {
-      super(enclosingQuery, regexKey, viewCoordinateKey);
+   public DescriptionActiveRegexMatch(Query enclosingQuery, LetItemKey regexKey, LetItemKey manifoldCoordinateKey) {
+      super(enclosingQuery, regexKey, manifoldCoordinateKey);
    }
 
    //~--- get methods ---------------------------------------------------------
@@ -105,6 +106,11 @@ public class DescriptionActiveRegexMatch
                });
                                 });
    }
+    @Override
+    public ClauseSemantic getClauseSemantic() {
+        return ClauseSemantic.DESCRIPTION_ACTIVE_REGEX_MATCH;
+    }
+   
 
    /**
     * Gets the where clause.
@@ -119,7 +125,7 @@ public class DescriptionActiveRegexMatch
       whereClause.getLetKeys()
                  .add(this.regexKey);
       whereClause.getLetKeys()
-                 .add(this.viewCoordinateKey);
+                 .add(this.manifoldCoordinateKey);
       return whereClause;
    }
 }

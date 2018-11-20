@@ -41,23 +41,28 @@ package sh.isaac.model.coordinate;
 
 //~--- non-JDK imports --------------------------------------------------------
 
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.LongProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.beans.value.WeakChangeListener;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 //~--- JDK imports ------------------------------------------------------------
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
 
 //~--- non-JDK imports --------------------------------------------------------
 
 import sh.isaac.api.Get;
+import sh.isaac.api.component.concept.ConceptSpecification;
 import sh.isaac.api.coordinate.StampPath;
 import sh.isaac.api.coordinate.StampPosition;
+import sh.isaac.model.xml.StampPathAdaptor;
+import sh.isaac.model.xml.StampTimeAdaptor;
 
 //~--- classes ----------------------------------------------------------------
 
@@ -66,15 +71,15 @@ import sh.isaac.api.coordinate.StampPosition;
  *
  * @author kec
  */
-@XmlRootElement(name = "stampPosition")
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement(name = "StampPosition")
+@XmlAccessorType(XmlAccessType.NONE)
 public class StampPositionImpl
          implements StampPosition, Comparable<StampPosition> {
    /** The time. */
    long time;
 
    /** The stamp path nid. */
-   int stampPathNid;
+   ConceptSpecification stampPathConceptSpecification;
 
    //~--- constructors --------------------------------------------------------
 
@@ -93,7 +98,12 @@ public class StampPositionImpl
     */
    public StampPositionImpl(long time, int stampPathNid) {
       this.time              = time;
-      this.stampPathNid = stampPathNid;
+      this.stampPathConceptSpecification = Get.conceptSpecification(stampPathNid);
+   }
+
+   public StampPositionImpl(long time, ConceptSpecification stampPathConceptSpecification) {
+      this.time              = time;
+      this.stampPathConceptSpecification = stampPathConceptSpecification;
    }
 
    //~--- methods -------------------------------------------------------------
@@ -106,8 +116,10 @@ public class StampPositionImpl
     */
    @Override
    public int compareTo(StampPosition o) {
-      if (this.stampPathNid != o.getStampPathNid()) {
-         return Integer.compare(this.stampPathNid, o.getStampPathNid());
+       int diff = Integer.compare(this.stampPathConceptSpecification.getNid(), 
+               o.getStampPathSpecification().getNid());
+      if (diff != 0) {
+         return diff;
       }
 
       return Long.compare(this.time, o.getTime());
@@ -135,7 +147,7 @@ public class StampPositionImpl
          return false;
       }
 
-      return this.stampPathNid == other.stampPathNid;
+      return this.stampPathConceptSpecification.getNid() == other.stampPathConceptSpecification.getNid();
    }
 
    /**
@@ -148,7 +160,7 @@ public class StampPositionImpl
       int hash = 7;
 
       hash = 83 * hash + (int) (this.time ^ (this.time >>> 32));
-      hash = 83 * hash + this.stampPathNid;
+      hash = 83 * hash + this.stampPathConceptSpecification.getPrimordialUuid().hashCode();
       return hash;
    }
 
@@ -172,7 +184,7 @@ public class StampPositionImpl
       }
 
       sb.append(" on '")
-        .append(Get.conceptDescriptionText(this.stampPathNid))
+        .append(Get.conceptDescriptionText(this.stampPathConceptSpecification))
         .append("' path}");
       return sb.toString();
    }
@@ -184,17 +196,22 @@ public class StampPositionImpl
     *
     * @return the stamp path
     */
-   @Override
-   public StampPath getStampPath() {
-      return new StampPathImpl(this.stampPathNid);
+    @Override
+    public StampPath getStampPath() {
+      return new StampPathImpl(this.stampPathConceptSpecification);
    }
 
    /**
     * {@inheritDoc}
     */
    @Override
-   public int getStampPathNid() {
-      return this.stampPathNid;
+   @XmlElement(name = "path")
+   public ConceptSpecification getStampPathSpecification() {
+      return this.stampPathConceptSpecification;
+   }
+
+   public void setStampPathSpecification(ConceptSpecification stampPathConceptSpecification) {
+      this.stampPathConceptSpecification = stampPathConceptSpecification;
    }
 
    //~--- set methods ---------------------------------------------------------
@@ -202,17 +219,18 @@ public class StampPositionImpl
    /**
     * Set stamp path nid property.
     *
-    * @param stampPathSequenceProperty the stamp path nid property
+     * @param stampPathConceptSpecificationProperty
     * @return the change listener
     */
-   public ChangeListener<Number> setStampPathSequenceProperty(IntegerProperty stampPathSequenceProperty) {
-      final ChangeListener<Number> listener = (ObservableValue<? extends Number> observable,
-                                               Number oldValue,
-                                               Number newValue) -> {
-               this.stampPathNid = newValue.intValue();
+   public ChangeListener<ConceptSpecification> setStampPathConceptSpecificationProperty(
+           SimpleObjectProperty<ConceptSpecification> stampPathConceptSpecificationProperty) {
+      final ChangeListener<ConceptSpecification> listener = (ObservableValue<? extends ConceptSpecification> observable,
+                                               ConceptSpecification oldValue,
+                                               ConceptSpecification newValue) -> {
+               this.stampPathConceptSpecification = newValue;
             };
 
-      stampPathSequenceProperty.addListener(new WeakChangeListener<>(listener));
+      stampPathConceptSpecificationProperty.addListener(new WeakChangeListener<>(listener));
       return listener;
    }
 
@@ -226,6 +244,16 @@ public class StampPositionImpl
    @Override
    public long getTime() {
       return this.time;
+   }
+
+   @XmlElement(name = "time")
+   @XmlJavaTypeAdapter(StampTimeAdaptor.class)
+   public Long getLongTime() {
+      return this.time;
+   }
+
+   public void setLongTime(Long time) {
+      this.time = time;
    }
 
    //~--- set methods ---------------------------------------------------------
@@ -249,7 +277,7 @@ public class StampPositionImpl
 
    @Override
    public StampPosition deepClone() {
-      return new StampPositionImpl(time, stampPathNid);
+      return new StampPositionImpl(time, stampPathConceptSpecification);
    }
    
    

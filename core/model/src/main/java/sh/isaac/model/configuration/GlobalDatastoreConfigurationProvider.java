@@ -46,6 +46,7 @@ import org.apache.logging.log4j.Logger;
 import org.glassfish.hk2.api.Rank;
 import org.glassfish.hk2.runlevel.RunLevel;
 import org.jvnet.hk2.annotations.Service;
+import sh.isaac.api.ConceptProxy;
 import sh.isaac.api.Get;
 import sh.isaac.api.GlobalDatastoreConfiguration;
 import sh.isaac.api.LookupService;
@@ -267,9 +268,9 @@ public class GlobalDatastoreConfigurationProvider implements GlobalDatastoreConf
 	}
 
 	@Override
-	public void setDefaultPath(int conceptId)
+	public void setDefaultPath(int pathConceptId)
 	{
-		write(ConfigurationOption.EDIT_PATH, conceptId);
+		write(ConfigurationOption.EDIT_PATH, pathConceptId);
 	}
 
 	@Override
@@ -332,7 +333,7 @@ public class GlobalDatastoreConfigurationProvider implements GlobalDatastoreConf
 					defaultCoordinateProvider.setDefaultModule(dcp.getDefaultEditCoordinate().getModuleNid());
 					break;
 				case EDIT_PATH:
-					defaultCoordinateProvider.setDefaultPath(dcp.getDefaultEditCoordinate().getPathNid());
+					defaultCoordinateProvider.setDefaultPath(dcp.getDefaultEditCoordinate().getPath());
 					break;
 				case STATED_ASSEMBLAGE:
 					defaultCoordinateProvider.setDefaultStatedAssemblage(dcp.getDefaultLogicCoordinate().getStatedAssemblageNid());
@@ -381,7 +382,7 @@ public class GlobalDatastoreConfigurationProvider implements GlobalDatastoreConf
 					defaultCoordinateProvider.setDefaultModule((int)data);
 					break;
 				case EDIT_PATH:
-					defaultCoordinateProvider.setDefaultPath((int)data);
+					defaultCoordinateProvider.setDefaultPath(new ConceptProxy((int)data));
 					break;
 				case STATED_ASSEMBLAGE:
 					defaultCoordinateProvider.setDefaultStatedAssemblage((int)data);
@@ -444,7 +445,7 @@ public class GlobalDatastoreConfigurationProvider implements GlobalDatastoreConf
 					defaultCoordinateProvider.setDefaultModule((int)dataStore.get(option.name()));
 					break;
 				case EDIT_PATH:
-					defaultCoordinateProvider.setDefaultPath((int)dataStore.get(option.name()));
+					defaultCoordinateProvider.setDefaultPath(new ConceptProxy((int) dataStore.get(option.name())));
 					break;
 				case STATED_ASSEMBLAGE:
 					defaultCoordinateProvider.setDefaultStatedAssemblage((int)dataStore.get(option.name()));

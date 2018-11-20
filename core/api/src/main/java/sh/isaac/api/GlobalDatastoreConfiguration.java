@@ -200,9 +200,9 @@ public interface GlobalDatastoreConfiguration extends UserConfigurationInternalI
 	 * objects that reference this object will be updated accordingly. Default:
 	 * The value to use if another value is not provided.
 	 *
-	 * @param conceptId the nid of a concept
+	 * @param pathConceptId
 	 */
-	public default void setDefaultPath(int conceptId)
+	public default void setDefaultPath(int pathConceptId)
 	{
 		throw new UnsupportedOperationException();
 	}

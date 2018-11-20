@@ -63,7 +63,6 @@ import sh.isaac.MetaData;
 import sh.isaac.api.Get;
 import sh.isaac.api.LookupService;
 import sh.isaac.api.Status;
-import sh.isaac.api.TaxonomySnapshotService;
 import sh.isaac.api.chronicle.Chronology;
 import sh.isaac.api.chronicle.LatestVersion;
 import sh.isaac.api.chronicle.Version;
@@ -99,6 +98,7 @@ import sh.isaac.model.coordinate.ManifoldCoordinateImpl;
 import sh.isaac.model.coordinate.StampCoordinateImpl;
 import sh.isaac.model.coordinate.StampPositionImpl;
 import sh.isaac.utility.Frills;
+import sh.isaac.api.TaxonomySnapshot;
 
 
 
@@ -116,7 +116,7 @@ public class VetsExporter {
 
    private StampCoordinate STAMP_COORDINATES = null;
 
-   TaxonomySnapshotService tss;
+   TaxonomySnapshot tss;
    
    boolean fullExportMode = false;
 
@@ -137,7 +137,7 @@ public class VetsExporter {
       this.fullExportMode = fullExportMode;
 
       STAMP_COORDINATES = new StampCoordinateImpl(StampPrecedence.PATH, new StampPositionImpl(endDate, MetaData.DEVELOPMENT_PATH____SOLOR.getNid()),
-            NidSet.EMPTY, new int[0], Status.ANY_STATUS_SET);
+            new HashSet(), new ArrayList(), Status.ANY_STATUS_SET);
       
       tss = Get.taxonomyService().getSnapshot(new ManifoldCoordinateImpl(STAMP_COORDINATES, null));
 

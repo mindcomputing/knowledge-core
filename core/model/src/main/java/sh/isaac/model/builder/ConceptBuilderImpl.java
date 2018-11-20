@@ -54,6 +54,7 @@ import sh.isaac.api.IdentifiedComponentBuilder;
 import sh.isaac.api.LookupService;
 import sh.isaac.api.bootstrap.TermAux;
 import sh.isaac.api.commit.ChangeCheckerMode;
+import sh.isaac.api.commit.Stamp;
 import sh.isaac.api.component.concept.ConceptBuilder;
 import sh.isaac.api.component.concept.ConceptChronology;
 import sh.isaac.api.component.concept.ConceptSpecification;
@@ -286,10 +287,17 @@ public class ConceptBuilderImpl
          conceptChronology.addAdditionalUuids(uuids[i]);
       }
 
+      if (getModule().isPresent()) {
+         Stamp requested = Get.stampService().getStamp(stampCoordinate);
+         stampCoordinate = Get.stampService().getStampSequence(requested.getStatus(), requested.getTime(), requested.getAuthorNid(), getModule().get().getNid(), requested.getPathNid());
+      }
+      
+      final int finalStamp = stampCoordinate;
+      
       conceptChronology.createMutableVersion(stampCoordinate);
       builtObjects.add(conceptChronology);
-      getDescriptionBuilders().forEach((builder) -> builder.build(stampCoordinate, builtObjects));
-      getSemanticBuilders().forEach((builder) -> builder.build(stampCoordinate, builtObjects));
+      getDescriptionBuilders().forEach((builder) -> builder.build(finalStamp, builtObjects));
+      getSemanticBuilders().forEach((builder) -> builder.build(finalStamp, builtObjects));
       return conceptChronology;
    }
 
@@ -313,8 +321,11 @@ public class ConceptBuilderImpl
       for (int i = 1; i < uuids.length; i++) {
          conceptChronology.addAdditionalUuids(uuids[i]);
       }
-
-      conceptChronology.createMutableVersion(this.state, editCoordinate);
+      if (getModule().isPresent()) {
+        conceptChronology.createMutableVersion(this.state, editCoordinate, getModule().get());
+      } else {
+        conceptChronology.createMutableVersion(this.state, editCoordinate);
+      }
       builtObjects.add(conceptChronology);
 
       getDescriptionBuilders().forEach((builder) -> nestedBuilders.add(builder.build(editCoordinate, changeCheckerMode, builtObjects)));
@@ -524,8 +535,25 @@ public class ConceptBuilderImpl
    }
 
     @Override
-    public ConceptBuilder addComponentIntSemantic(UUID componentUuid, int fieldIndex, UUID assemblageUuid) {
-        addSemantic(Get.semanticBuilderService().getComponentIntSemanticBuilder(Get.nidForUuids(componentUuid), fieldIndex, this, Get.nidForUuids(assemblageUuid)));
+    public ConceptBuilder addComponentIntSemantic(ConceptSpecification component, int fieldIndex, ConceptSpecification assemblage) {
+        addSemantic(Get.semanticBuilderService().getComponentIntSemanticBuilder(component.getNid(), fieldIndex, this, assemblage.getNid()));
+        return this;
+    }
+
+    @Override
+    public ConceptBuilder addComponentSemantic(ConceptSpecification component, ConceptSpecification assemblage) {
+        addSemantic(Get.semanticBuilderService().getComponentSemanticBuilder(component.getNid(), this, assemblage.getNid()));
+        return this;
+    }
+
+    @Override
+    public ConceptBuilder addFieldSemanticConcept(String fieldName, int fieldIndex) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ConceptBuilder addFieldSemanticConcept(UUID conceptUuid, int fieldIndex) {
+        addSemantic(Get.semanticBuilderService().getComponentIntSemanticBuilder(Get.nidForUuids(conceptUuid), fieldIndex, this, TermAux.SEMANTIC_TYPE.getNid()));
         return this;
     }
    

@@ -1,5 +1,7 @@
 package sh.komet.gui.search.simple;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import javafx.beans.property.SimpleListProperty;
@@ -12,7 +14,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import sh.isaac.api.Get;
-import sh.isaac.api.TaxonomySnapshotService;
 import sh.isaac.api.chronicle.Chronology;
 import sh.isaac.api.chronicle.LatestVersion;
 import sh.isaac.api.collections.NidSet;
@@ -25,6 +26,10 @@ import sh.isaac.provider.query.search.SearchHandle;
 import sh.isaac.provider.query.search.SearchHandler;
 
 import sh.komet.gui.manifold.Manifold;
+import sh.isaac.api.TaxonomySnapshot;
+import sh.isaac.api.bootstrap.TermAux;
+import sh.isaac.api.component.concept.ConceptSpecification;
+import sh.isaac.api.query.Query;
 
 /**
  * @author aks8m
@@ -35,11 +40,18 @@ public class SimpleSearchService extends Service<NidSet> {
 
     private final SimpleStringProperty luceneQuery = new SimpleStringProperty();
     private final SimpleListProperty<Integer> parentNids = new SimpleListProperty<>();
-    private final DescriptionLuceneMatch descriptionLuceneMatch = new DescriptionLuceneMatch();
+    private final Query query;
+    private final DescriptionLuceneMatch descriptionLuceneMatch;
     private Manifold manifold;
     private final double PROGRESS_MAX_VALUE = 100;
     private final double PROGRESS_INCREMENT_VALUE = 33.333; //Hard Coded based on Current Filter Algorithm (3 parts)
     private double PROGRESS_CURRENT = 0;
+
+    public SimpleSearchService() {
+        this.query = new Query(TermAux.ENGLISH_LANGUAGE);
+        this.descriptionLuceneMatch = new DescriptionLuceneMatch(this.query);
+        query.setRoot(descriptionLuceneMatch);
+    }
 
     @Override
     protected Task<NidSet> createTask() {
@@ -53,7 +65,7 @@ public class SimpleSearchService extends Service<NidSet> {
                 if (!getLuceneQuery().isEmpty()) {
 
                     final NidSet filteredValues = new NidSet();
-                    TaxonomySnapshotService taxonomySnapshot = Get.taxonomyService().getSnapshot(getManifold());
+                    TaxonomySnapshot taxonomySnapshot = Get.taxonomyService().getSnapshot(getManifold());
 
                     runLuceneDescriptionQuery(results);
                     NidSet allowedConceptNids = findAllKindOfConcepts(results, taxonomySnapshot);
@@ -68,18 +80,21 @@ public class SimpleSearchService extends Service<NidSet> {
 
             private void runLuceneDescriptionQuery(NidSet results) {
                 updateProgress(computeProgress(PROGRESS_INCREMENT_VALUE), PROGRESS_MAX_VALUE);
-                descriptionLuceneMatch.setManifoldCoordinate(getManifold());
                 String queryString = getLuceneQuery();
                 // Special handling to remove check digit from LOINC code query. 
                 if (queryString.charAt(queryString.length() -2) == '-') {
                     queryString = queryString.substring(0, queryString.length() -2);
                 }
                 
+                descriptionLuceneMatch.let(descriptionLuceneMatch.getQueryStringKey(), queryString);
                 
-                descriptionLuceneMatch.setParameterString(queryString);
-                results.addAll(descriptionLuceneMatch.computePossibleComponents(null));
-//                if (results.isEmpty()) {
-                if (true) {
+                Map<ConceptSpecification, NidSet> incomingPossibleComponents = new HashMap<>();
+                incomingPossibleComponents.put(TermAux.ENGLISH_LANGUAGE, NidSet.of(Get.identifierService().getNidsForAssemblage(TermAux.ENGLISH_LANGUAGE)));
+                descriptionLuceneMatch.setAssemblageForIteration(TermAux.ENGLISH_LANGUAGE);
+                
+                Map<ConceptSpecification, NidSet> resultsMap = descriptionLuceneMatch.computePossibleComponents(incomingPossibleComponents);
+                results.addAll(resultsMap.get(TermAux.ENGLISH_LANGUAGE));
+                if (results.isEmpty()) {
                     
                     try {
                         CountDownLatch searchComplete = new CountDownLatch(1);
@@ -110,7 +125,7 @@ public class SimpleSearchService extends Service<NidSet> {
 
             }
 
-            private NidSet findAllKindOfConcepts(NidSet results, TaxonomySnapshotService taxonomySnapshot) {
+            private NidSet findAllKindOfConcepts(NidSet results, TaxonomySnapshot taxonomySnapshot) {
                 NidSet allowedConceptNids = new NidSet();
 
                 try {
@@ -140,7 +155,7 @@ public class SimpleSearchService extends Service<NidSet> {
             }
 
             private void filterAllSemanticsBasedOnReferencedConcepts(NidSet results, NidSet allowedConceptNids,
-                    NidSet filteredValues, TaxonomySnapshotService taxonomySnapshot) {
+                    NidSet filteredValues, TaxonomySnapshot taxonomySnapshot) {
 
                 if (results.isEmpty()) {
                     updateProgress(computeProgress(PROGRESS_INCREMENT_VALUE), PROGRESS_MAX_VALUE);
@@ -192,7 +207,7 @@ public class SimpleSearchService extends Service<NidSet> {
 
             }
 
-            protected void handleDescription(SemanticChronology semanticChronology, NidSet allowedConceptNids, TaxonomySnapshotService taxonomySnapshot, NidSet filteredValues) {
+            protected void handleDescription(SemanticChronology semanticChronology, NidSet allowedConceptNids, TaxonomySnapshot taxonomySnapshot, NidSet filteredValues) {
                 LatestVersion<DescriptionVersion> description = semanticChronology.getLatestVersion(getManifold());
                 if (!description.isPresent()) {
                     return;

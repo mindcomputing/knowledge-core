@@ -42,7 +42,10 @@ package sh.isaac.api.component.concept;
 //~--- non-JDK imports --------------------------------------------------------
 
 import java.util.Optional;
+import javax.xml.bind.annotation.XmlSeeAlso;
+import sh.isaac.api.ConceptProxy;
 import sh.isaac.api.identity.IdentifiedObject;
+import sh.isaac.api.util.StringUtils;
 
 //~--- interfaces -------------------------------------------------------------
 
@@ -51,6 +54,7 @@ import sh.isaac.api.identity.IdentifiedObject;
  *
  * @author kec
  */
+@XmlSeeAlso({ConceptProxy.class})
 public interface ConceptSpecification
         extends IdentifiedObject {
    /** The Constant FIELD_SEPARATOR.  '◽' */
@@ -79,6 +83,13 @@ public interface ConceptSpecification
       return sb.toString();
    }
 
+   static String getNameFromExternalString(String externalString) {
+        String[] parts = StringUtils.split(externalString, FIELD_SEPARATOR);
+        if (parts.length > 2) {
+            return parts[1];
+        }
+        return parts[0];
+   }
    //~--- get methods ---------------------------------------------------------
 
    /**

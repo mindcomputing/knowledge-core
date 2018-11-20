@@ -95,6 +95,10 @@ public class PreferencesProvider
 
    //~--- get methods ---------------------------------------------------------
 
+   @Override
+   public void reloadConfigurationPreferences() {
+       IsaacPreferencesImpl.reloadConfigurationPreferences();
+   }
    /**
     * {@inheritDoc}
     */

@@ -42,6 +42,7 @@ package sh.isaac.api.query.clauses;
 //~--- JDK imports ------------------------------------------------------------
 
 import java.util.EnumSet;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -57,6 +58,7 @@ import sh.isaac.api.component.concept.ConceptVersion;
 import sh.isaac.api.query.ClauseComputeType;
 import sh.isaac.api.query.ClauseSemantic;
 import sh.isaac.api.query.LeafClause;
+import sh.isaac.api.query.LetItemKey;
 import sh.isaac.api.query.Query;
 import sh.isaac.api.query.WhereClause;
 
@@ -78,16 +80,16 @@ public class AssemblageContainsConcept
 
    /** The concept spec key. */
    @XmlElement
-   String conceptSpecKey;
+   LetItemKey conceptSpecKey;
 
-   /** The view coordinate key. */
+   /** the manifold coordinate key. */
    @XmlElement
-   String viewCoordinateKey;
+   LetItemKey stampCoordinateKey;
 
-   /** The refset spec key. */
+   /** The assemblage spec key. */
    //
    @XmlElement
-   String refsetSpecKey;
+   LetItemKey assemblageSpecKey;
 
    //~--- constructors --------------------------------------------------------
 
@@ -100,18 +102,18 @@ public class AssemblageContainsConcept
     * Instantiates a new refset contains concept.
     *
     * @param enclosingQuery the enclosing query
-    * @param refsetSpecKey the refset spec key
+    * @param assemblageSpecKey the refset spec key
     * @param conceptSpecKey the concept spec key
-    * @param viewCoordinateKey the view coordinate key
+    * @param stampCoordinateKey the manifold coordinate key
     */
    public AssemblageContainsConcept(Query enclosingQuery,
-                                String refsetSpecKey,
-                                String conceptSpecKey,
-                                String viewCoordinateKey) {
+                                LetItemKey assemblageSpecKey,
+                                LetItemKey conceptSpecKey,
+                                LetItemKey stampCoordinateKey) {
       super(enclosingQuery);
-      this.refsetSpecKey     = refsetSpecKey;
+      this.assemblageSpecKey     = assemblageSpecKey;
       this.conceptSpecKey    = conceptSpecKey;
-      this.viewCoordinateKey = viewCoordinateKey;
+      this.stampCoordinateKey = stampCoordinateKey;
    }
 
    //~--- methods -------------------------------------------------------------
@@ -123,12 +125,12 @@ public class AssemblageContainsConcept
     * @return the nid set
     */
    @Override
-   public NidSet computePossibleComponents(NidSet incomingPossibleComponents) {
+   public Map<ConceptSpecification, NidSet> computePossibleComponents(Map<ConceptSpecification, NidSet> incomingPossibleComponents) {
       throw new UnsupportedOperationException();
 
       // TODO FIX BACK UP
-//    ViewCoordinate viewCoordinate = (ViewCoordinate) this.enclosingQuery.getLetDeclarations().get(viewCoordinateKey);
-//    ConceptSpec refsetSpec = (ConceptSpec) this.enclosingQuery.getLetDeclarations().get(refsetSpecKey);
+//    ViewCoordinate viewCoordinate = (ViewCoordinate) this.enclosingQuery.getLetDeclarations().get(stampCoordinateKey);
+//    ConceptSpec refsetSpec = (ConceptSpec) this.enclosingQuery.getLetDeclarations().get(assemblageSpecKey);
 //    ConceptSpec conceptSpec = (ConceptSpec) this.enclosingQuery.getLetDeclarations().get(conceptSpecKey);
 //
 //    int conceptNid = conceptSpec.getNid();
@@ -144,6 +146,10 @@ public class AssemblageContainsConcept
    }
 
    //~--- get methods ---------------------------------------------------------
+    @Override
+    public void resetResults() {
+        this.cache = null;
+    }
 
    /**
     * Gets the compute phases.
@@ -155,6 +161,30 @@ public class AssemblageContainsConcept
       return PRE_ITERATION;
    }
 
+    public LetItemKey getConceptSpecKey() {
+        return conceptSpecKey;
+    }
+
+    public void setConceptSpecKey(LetItemKey conceptSpecKey) {
+        this.conceptSpecKey = conceptSpecKey;
+    }
+
+    public LetItemKey getStampCoordinateKey() {
+        return stampCoordinateKey;
+    }
+
+    public void setStampCoordinateKey(LetItemKey stampCoordinateKey) {
+        this.stampCoordinateKey = stampCoordinateKey;
+    }
+
+    public LetItemKey getAssemblageSpecKey() {
+        return assemblageSpecKey;
+    }
+
+    public void setAssemblageSpecKey(LetItemKey assemblageSpecKey) {
+        this.assemblageSpecKey = assemblageSpecKey;
+    }
+
    /**
     * Gets the query matches.
     *
@@ -164,6 +194,11 @@ public class AssemblageContainsConcept
    public void getQueryMatches(ConceptVersion conceptVersion) {
       // Nothing to do here...
    }
+    @Override
+    public ClauseSemantic getClauseSemantic() {
+        return ClauseSemantic.ASSEMBLAGE_CONTAINS_CONCEPT;
+    }
+   
 
    /**
     * Gets the where clause.
@@ -176,11 +211,11 @@ public class AssemblageContainsConcept
 
       whereClause.setSemantic(ClauseSemantic.ASSEMBLAGE_CONTAINS_CONCEPT);
       whereClause.getLetKeys()
-                 .add(this.refsetSpecKey);
+                 .add(this.assemblageSpecKey);
       whereClause.getLetKeys()
                  .add(this.conceptSpecKey);
       whereClause.getLetKeys()
-                 .add(this.viewCoordinateKey);
+                 .add(this.stampCoordinateKey);
       return whereClause;
    }
    

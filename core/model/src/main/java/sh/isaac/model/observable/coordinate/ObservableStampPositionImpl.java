@@ -46,10 +46,11 @@ import javafx.beans.InvalidationListener;
 
 //~--- non-JDK imports --------------------------------------------------------
 
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.LongProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import sh.isaac.api.component.concept.ConceptSpecification;
 
 import sh.isaac.api.coordinate.StampPath;
 import sh.isaac.api.coordinate.StampPosition;
@@ -74,7 +75,7 @@ public class ObservableStampPositionImpl
    LongProperty timeProperty;
 
    /** The stamp path nid property. */
-   IntegerProperty stampPathSequenceProperty;
+    SimpleObjectProperty<ConceptSpecification> stampPathConceptSpecificationProperty;
 
    //~--- constructors --------------------------------------------------------
 
@@ -93,23 +94,27 @@ public class ObservableStampPositionImpl
 
    //~--- methods -------------------------------------------------------------
 
-   /**
-    * Stamp path nid property.
-    *
-    * @return the integer property
-    */
-   @Override
-   public IntegerProperty stampPathNidProperty() {
-      if (this.stampPathSequenceProperty == null) {
-         this.stampPathSequenceProperty = new SimpleIntegerProperty(this,
-               ObservableFields.PATH_NID_FOR_STAMP_POSITION.toExternalString(),
-               getStampPathNid());
-         addListenerReference(this.stampPosition.setStampPathSequenceProperty(this.stampPathSequenceProperty));
-         this.stampPathSequenceProperty.addListener((InvalidationListener)(invalidation) -> fireValueChangedEvent());
-      }
-
-      return this.stampPathSequenceProperty;
+   public StampPositionImpl getStampPosition() {
+      return stampPosition;
    }
+
+    /**
+     * Stamp path nid property.
+     *
+     * @return the integer property
+     */
+    @Override
+    public ObjectProperty<ConceptSpecification> stampPathConceptSpecificationProperty() {
+        if (this.stampPathConceptSpecificationProperty == null) {
+            this.stampPathConceptSpecificationProperty = new SimpleObjectProperty<>(this,
+                    ObservableFields.PATH_NID_FOR_STAMP_POSITION.toExternalString(),
+                    getStampPathSpecification());
+            addListenerReference(this.stampPosition.setStampPathConceptSpecificationProperty(this.stampPathConceptSpecificationProperty));
+            this.stampPathConceptSpecificationProperty.addListener((InvalidationListener)(invalidation) -> fireValueChangedEvent());
+        }
+        
+        return this.stampPathConceptSpecificationProperty;
+    }
 
    /**
     * Time property.
@@ -157,12 +162,12 @@ public class ObservableStampPositionImpl
     * @return the stamp path nid
     */
    @Override
-   public int getStampPathNid() {
-      if (this.stampPathSequenceProperty != null) {
-         return this.stampPathSequenceProperty.get();
+   public ConceptSpecification getStampPathSpecification() {
+      if (this.stampPathConceptSpecificationProperty != null) {
+         return this.stampPathConceptSpecificationProperty.get();
       }
 
-      return this.stampPosition.getStampPathNid();
+      return this.stampPosition.getStampPathSpecification();
    }
 
    /**

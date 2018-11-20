@@ -42,6 +42,8 @@ package sh.isaac.api.query.clauses;
 //~--- JDK imports ------------------------------------------------------------
 
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -57,6 +59,7 @@ import sh.isaac.api.component.concept.ConceptVersion;
 import sh.isaac.api.query.ClauseComputeType;
 import sh.isaac.api.query.ClauseSemantic;
 import sh.isaac.api.query.LeafClause;
+import sh.isaac.api.query.LetItemKey;
 import sh.isaac.api.query.Query;
 import sh.isaac.api.query.WhereClause;
 
@@ -74,11 +77,11 @@ public class ConceptIs
         extends LeafClause {
    /** The concept spec string. */
    @XmlElement
-   String conceptSpecString;
+   LetItemKey conceptSpecString;
 
-   /** The view coordinate key. */
+   /** the manifold coordinate key. */
    @XmlElement
-   String viewCoordinateKey;
+   LetItemKey manifoldCoordinateKey;
 
    //~--- constructors --------------------------------------------------------
 
@@ -92,15 +95,19 @@ public class ConceptIs
     *
     * @param enclosingQuery the enclosing query
     * @param conceptSpec the concept spec
-    * @param viewCoordinateKey the view coordinate key
+    * @param manifoldCoordinateKey the manifold coordinate key
     */
-   public ConceptIs(Query enclosingQuery, String conceptSpec, String viewCoordinateKey) {
+   public ConceptIs(Query enclosingQuery, LetItemKey conceptSpec, LetItemKey manifoldCoordinateKey) {
       super(enclosingQuery);
       this.conceptSpecString = conceptSpec;
-      this.viewCoordinateKey = viewCoordinateKey;
+      this.manifoldCoordinateKey = manifoldCoordinateKey;
    }
 
    //~--- methods -------------------------------------------------------------
+    @Override
+    public void resetResults() {
+        // no cached data in task. 
+    }
 
    /**
     * Compute possible components.
@@ -109,10 +116,12 @@ public class ConceptIs
     * @return the nid set
     */
    @Override
-   public NidSet computePossibleComponents(NidSet incomingPossibleComponents) {
+   public Map<ConceptSpecification, NidSet> computePossibleComponents(Map<ConceptSpecification, NidSet> incomingPossibleComponents) {
       getResultsCache().add(((ConceptSpecification) this.enclosingQuery.getLetDeclarations()
             .get(this.conceptSpecString)).getNid());
-      return getResultsCache();
+      HashMap<ConceptSpecification, NidSet> resultsMap = new HashMap<>(incomingPossibleComponents);
+      resultsMap.put(this.getAssemblageForIteration(), getResultsCache());
+      return resultsMap;
    }
 
    //~--- get methods ---------------------------------------------------------
@@ -136,6 +145,11 @@ public class ConceptIs
    public void getQueryMatches(ConceptVersion conceptVersion) {
       // Nothing to do here...
    }
+    @Override
+    public ClauseSemantic getClauseSemantic() {
+        return ClauseSemantic.CONCEPT_IS;
+    }
+   
 
    /**
     * Gets the where clause.
@@ -150,7 +164,7 @@ public class ConceptIs
       whereClause.getLetKeys()
                  .add(this.conceptSpecString);
       whereClause.getLetKeys()
-                 .add(this.viewCoordinateKey);
+                 .add(this.manifoldCoordinateKey);
       return whereClause;
    }
    

@@ -27,7 +27,6 @@ import sh.isaac.api.Get;
 import sh.isaac.api.UserConfigurationPerOSUser;
 import sh.isaac.api.coordinate.PremiseType;
 import sh.isaac.api.preferences.IsaacPreferences;
-import sh.isaac.api.preferences.PreferencesService;
 
 /**
  * A hatchet job to utilize the {@link IsaacPreferences} API as a backing store 
@@ -188,7 +187,7 @@ public class UserConfigurationPerOSProvider implements UserConfigurationPerOSUse
 		{
 			throw new RuntimeException("User has already been set!");
 		}
-		IsaacPreferences mainDataStore = Get.service(PreferencesService.class).getUserPreferences();
+		IsaacPreferences mainDataStore = Get.preferencesService().getUserPreferences();
 		dataStore = mainDataStore.node(nodeName).node(userId.toString());
 		this.userId = userId;
 	}

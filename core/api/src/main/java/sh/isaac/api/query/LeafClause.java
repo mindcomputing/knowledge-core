@@ -42,7 +42,9 @@ package sh.isaac.api.query;
 //~--- JDK imports ------------------------------------------------------------
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -51,6 +53,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 //~--- non-JDK imports --------------------------------------------------------
 
 import sh.isaac.api.collections.NidSet;
+import sh.isaac.api.component.concept.ConceptSpecification;
 
 //~--- classes ----------------------------------------------------------------
 
@@ -109,9 +112,11 @@ public abstract class LeafClause
     * @return the nid set
     */
    @Override
-   public NidSet computeComponents(NidSet incomingComponents) {
-      this.resultsCache.and(incomingComponents);
-      return this.resultsCache;
+   public Map<ConceptSpecification, NidSet> computeComponents(Map<ConceptSpecification, NidSet> incomingComponents) {
+      this.resultsCache.and(incomingComponents.get(this.getAssemblageForIteration()));
+      HashMap<ConceptSpecification, NidSet> resultsMap = new HashMap<>(incomingComponents);
+      resultsMap.put(this.getAssemblageForIteration(), resultsCache);
+      return resultsMap;
    }
 
    //~--- get methods ---------------------------------------------------------
@@ -129,7 +134,7 @@ public abstract class LeafClause
    /**
     * Gets the <code>NidSet</code> of components that match the criterion specified in the LeafClause.
     *
-    * @return <code>NativeIdSetBI</code> of components in the resultsCache,
+    * @return <code>NidSet</code> of components in the resultsCache,
     * which is the components that match the criterion
     * specified in the LeafClause.
     */

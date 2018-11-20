@@ -211,8 +211,8 @@ public class IsaacTaxonomy {
             addDescription(definition, cb, TermAux.DEFINITION_DESCRIPTION_TYPE, false);
          });
 
-         cc.getSynonyms().forEach((definition) -> {
-            addDescription(definition, cb, TermAux.REGULAR_NAME_DESCRIPTION_TYPE, false);
+         cc.getSynonyms().forEach((synonym) -> {
+            addDescription(synonym, cb, TermAux.REGULAR_NAME_DESCRIPTION_TYPE, false);
          });
 
          if (cc instanceof MetadataConceptConstantGroup) {
@@ -415,6 +415,7 @@ public class IsaacTaxonomy {
     * @param out the out
     * @param packageName the package name
     * @param className the class name
+     * @param additionalConstants
     * @throws IOException Signals that an I/O exception has occurred.
     */
    public void exportYamlBinding(Writer out, String packageName, String className, Map<String, MetadataConceptConstant> additionalConstants)
@@ -427,13 +428,15 @@ public class IsaacTaxonomy {
       HashSet<String> genConstants = new HashSet<>();
 
       for (final ConceptBuilder concept : this.conceptBuildersInInsertionOrder) {
-         String regularName = concept.getRegularName().orElse(SemanticTags.stripSemanticTagIfPresent(concept.getFullyQualifiedName()));
-         
-         if (regularName.contains("↳"))  //This oddball causes problems all over
-         {
-             regularName = SemanticTags.stripSemanticTagIfPresent(concept.getFullyQualifiedName());
+         if (concept.getModule().isPresent() && concept.getModule().get().equals(TermAux.KOMET_MODULE)) {
+            continue;
          }
-         
+         String conceptName = concept.getRegularName().orElse(SemanticTags.stripSemanticTagIfPresent(concept.getFullyQualifiedName()));
+           
+         if (conceptName.contains("↳"))  //This oddball causes problems all over
+         {
+             conceptName = SemanticTags.stripSemanticTagIfPresent(concept.getFullyQualifiedName());
+         }
          String constantName = SemanticTags.stripSemanticTagIfPresent(concept.getFullyQualifiedName()).toUpperCase();
          
          if (constantName.indexOf("(") > 0 || constantName.indexOf(")") > 0) {
@@ -446,7 +449,7 @@ public class IsaacTaxonomy {
          }
          out.append("\n" + constantName + ":\n");
          out.append("    fqn: " + concept.getFullyQualifiedName() + "\n");
-         out.append("    regular: " + regularName + "\n");
+         out.append("    regular: " + conceptName + "\n");
          out.append("    uuids:\n");
 
          for (final UUID uuid : concept.getUuidList()) {
@@ -542,7 +545,7 @@ public class IsaacTaxonomy {
       return builder;
    }
    
-   private final static <T extends CommittableComponent> IdentifiedComponentBuilder<T> addIdentifierAssemblageMembership(IdentifiedComponentBuilder<T> builder) {
+   private static <T extends CommittableComponent> IdentifiedComponentBuilder<T> addIdentifierAssemblageMembership(IdentifiedComponentBuilder<T> builder) {
       // add static member semantic
       return builder.addSemantic(Get.semanticBuilderService().getMembershipSemanticBuilder(builder, TermAux.IDENTIFIER_SOURCE.getNid()));
    }

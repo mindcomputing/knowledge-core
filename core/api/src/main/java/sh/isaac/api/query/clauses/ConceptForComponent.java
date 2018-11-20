@@ -42,6 +42,8 @@ package sh.isaac.api.query.clauses;
 //~--- JDK imports ------------------------------------------------------------
 
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -87,6 +89,10 @@ public class ConceptForComponent
    }
 
    //~--- methods -------------------------------------------------------------
+    @Override
+    public void resetResults() {
+        // no cached data in task. 
+    }
 
    /**
     * Compute components.
@@ -95,17 +101,17 @@ public class ConceptForComponent
     * @return the nid set
     */
    @Override
-   public NidSet computeComponents(NidSet incomingComponents) {
-      final NidSet incomingPossibleComponentNids = NidSet.of(incomingComponents.stream());
-      final NidSet outgoingPossibleConceptNids   = new NidSet();
+   public Map<ConceptSpecification, NidSet> computeComponents(Map<ConceptSpecification, NidSet> incomingComponents) {
+      final NidSet outgoingConceptNids   = new NidSet();
 
       for (final Clause childClause: getChildren()) {
-         final NidSet childPossibleComponentNids = childClause.computeComponents(incomingPossibleComponentNids);
+         final NidSet childPossibleComponentNids = childClause.computeComponents(incomingComponents).get(this.getAssemblageForIteration());
 
-         outgoingPossibleConceptNids.or(childPossibleComponentNids);
+         outgoingConceptNids.or(childPossibleComponentNids);
       }
-
-      return outgoingPossibleConceptNids;
+      HashMap<ConceptSpecification, NidSet> resultsMap = new HashMap<>(incomingComponents);
+      resultsMap.put(this.getAssemblageForIteration(), outgoingConceptNids);
+      return resultsMap;
    }
 
    /**
@@ -115,17 +121,17 @@ public class ConceptForComponent
     * @return the nid set
     */
    @Override
-   public NidSet computePossibleComponents(NidSet incomingPossibleConceptNids) {
-      final NidSet incomingPossibleComponentNids = NidSet.of(incomingPossibleConceptNids.stream());
+   public Map<ConceptSpecification, NidSet> computePossibleComponents(Map<ConceptSpecification, NidSet> incomingPossibleConceptNids) {
       final NidSet outgoingPossibleConceptNids   = new NidSet();
 
       for (final Clause childClause: getChildren()) {
-         final NidSet childPossibleComponentNids = childClause.computePossibleComponents(incomingPossibleComponentNids);
+         final NidSet childPossibleComponentNids = childClause.computePossibleComponents(incomingPossibleConceptNids).get(this.getAssemblageForIteration());
 
          outgoingPossibleConceptNids.or(childPossibleComponentNids);
       }
-
-      return outgoingPossibleConceptNids;
+      HashMap<ConceptSpecification, NidSet> resultsMap = new HashMap<>(incomingPossibleConceptNids);
+      resultsMap.put(this.getAssemblageForIteration(), outgoingPossibleConceptNids);
+      return resultsMap;
    }
 
    //~--- get methods ---------------------------------------------------------
@@ -139,6 +145,11 @@ public class ConceptForComponent
    public EnumSet<ClauseComputeType> getComputePhases() {
       return POST_ITERATION;
    }
+    @Override
+    public ClauseSemantic getClauseSemantic() {
+        return ClauseSemantic.CONCEPT_FOR_COMPONENT;
+    }
+   
 
    /**
     * Gets the where clause.

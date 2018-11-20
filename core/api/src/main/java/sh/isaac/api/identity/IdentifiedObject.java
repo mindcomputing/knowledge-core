@@ -75,7 +75,7 @@ public interface IdentifiedObject {
     */
    default int getNid() throws NoSuchElementException{
       return Get.identifierService()
-                .getNidForUuids(getUuidList());
+               .getNidForUuids(getUuidList());
    }
 
    /**
@@ -92,7 +92,6 @@ public interface IdentifiedObject {
     * a randomly generated UUID will be created and returned.
     * 
     * Otherwise, return already set value.
-    * @param uuid
     * @return the builder for chaining of operations in a fluent pattern.
     */
    default UUID getPrimordialUuid() {

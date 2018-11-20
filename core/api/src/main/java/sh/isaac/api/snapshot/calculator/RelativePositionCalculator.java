@@ -72,6 +72,7 @@ import sh.isaac.api.commit.StampService;
 import sh.isaac.api.coordinate.StampCoordinate;
 import sh.isaac.api.coordinate.StampPosition;
 import sh.isaac.api.coordinate.StampPrecedence;
+import sh.isaac.api.identity.IdentifiedObject;
 import sh.isaac.api.identity.StampedVersion;
 import sh.isaac.api.observable.ObservableChronology;
 import sh.isaac.api.observable.ObservableVersion;
@@ -395,13 +396,13 @@ public class RelativePositionCalculator implements StaticIsaacCache {
          ConcurrentSkipListSet<Integer> precedingSegments) {
       final Segment segment = new Segment(
                                   segmentSequence.getAndIncrement(),
-                                  destination.getStampPathNid(),
+                                  destination.getStampPathSpecification().getNid(),
                                   destination.getTime(),
                                   precedingSegments);
 
       // precedingSegments is cumulative, each recursive call adds another
       precedingSegments.add(segment.segmentSequence);
-      pathNidSegmentMap.put(destination.getStampPathNid(), segment);
+      pathNidSegmentMap.put(destination.getStampPathSpecification().getNid(), segment);
       destination.getStampPath()
                  .getPathOrigins()
                  .stream()
@@ -457,8 +458,9 @@ public class RelativePositionCalculator implements StaticIsaacCache {
 
             if (this.errorCount < 5) {
                LOG.warn(
-                   "{} should never happen. " + "Data is malformed. stampSequence: {} Part:\n{} \n  Part to test: \n{}",
-                   new Object[] { RelativePosition.EQUAL, part.getStampSequence(), part, prevPartToTest });
+                   "{} should never happen. " + "Data is malformed. StampSequence: {} Part:\n{} \n  Part to test: \n{}\n",
+                   new Object[] { RelativePosition.EQUAL, part.getStampSequence(), part, prevPartToTest,  
+                       ((IdentifiedObject)part).getPrimordialUuid()});
             }
 
             break;
@@ -532,7 +534,7 @@ public class RelativePositionCalculator implements StaticIsaacCache {
                        "{} should never happen. " + "\n  Data is malformed. \n   stamp: {}  \n   Part to test: {}",
                        new Object[] { RelativePosition.EQUAL, 
                            Get.stampService().describeStampSequence(stampSequence), 
-                           Get.stampService().describeStampSequence(prevStamp) });
+                           Get.stampService().describeStampSequence(prevStamp)});
                 }
 
                 break;
