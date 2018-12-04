@@ -587,6 +587,12 @@
 					<version>${project.parent.version}</version>
 					<scope>provided</scope>
 				</dependency>
+				<dependency>
+					<groupId>sh.isaac.uts-core.provider</groupId>
+					<artifactId>identifier</artifactId>
+					<version>${project.parent.version}</version>
+					<scope>provided</scope>
+				</dependency>
 			</dependencies>
 		</profile>
 	</profiles>
