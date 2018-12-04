@@ -51,6 +51,7 @@ import sh.isaac.api.collections.NidSet;
 import sh.isaac.api.constants.DatabaseImplementation;
 import sh.isaac.api.datastore.ChronologySerializeable;
 import sh.isaac.api.externalizable.ByteArrayDataBuffer;
+import static sh.isaac.api.externalizable.ByteArrayDataBuffer.getInt;
 import sh.isaac.api.externalizable.DataWriteListener;
 import sh.isaac.api.externalizable.IsaacObjectType;
 import sh.isaac.model.ChronologyImpl;
@@ -396,10 +397,7 @@ public class PostgresProvider
         dataArray.add(chronicleBytes);
 
         int versionStart = versionStartPosition;
-        int versionSize = (((dataToSplit[versionStart]) << 24)
-            | ((dataToSplit[versionStart + 1] & 0xff) << 16)
-            | ((dataToSplit[versionStart + 2] & 0xff) << 8)
-            | ((dataToSplit[versionStart + 3] & 0xff)));
+        int versionSize = getInt(dataToSplit, versionStart);
 
         while (versionSize != 0) {
             int versionTo = versionStart + versionSize;
@@ -412,10 +410,7 @@ public class PostgresProvider
             }
             dataArray.add(Arrays.copyOfRange(dataToSplit, versionStart, versionTo));
             versionStart = versionStart + versionSize;
-            versionSize = (((dataToSplit[versionStart]) << 24)
-                | ((dataToSplit[versionStart + 1] & 0xff) << 16)
-                | ((dataToSplit[versionStart + 2] & 0xff) << 8)
-                | ((dataToSplit[versionStart + 3] & 0xff)));
+            versionSize = getInt(dataToSplit, versionStart);
         }
 
         return dataArray;
