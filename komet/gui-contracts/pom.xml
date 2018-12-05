@@ -13,7 +13,7 @@
 	<name>ISAAC’s KOMET: GUI contracts &amp; capabilities</name>
 	<description>
         Contracts for ISAAC's KOMET plugins.
-    </description>
+	</description>
 	<dependencies>
 		<dependency>
 			<groupId>eu.hansolo</groupId>
@@ -71,11 +71,6 @@
 		<dependency>
 			<groupId>sh.isaac.uts-core.misc</groupId>
 			<artifactId>util</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>sh.isaac.uts-core.provider</groupId>
-			<artifactId>query</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

@@ -45,22 +45,12 @@
 		</dependency>
 		<dependency>
 			<groupId>sh.isaac.uts-core.provider</groupId>
-			<artifactId>stamp</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>sh.isaac.uts-core.provider</groupId>
 			<artifactId>chronology</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>sh.isaac.uts-core.provider</groupId>
 			<artifactId>identifier</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>sh.isaac.uts-core.provider</groupId>
-			<artifactId>query</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
