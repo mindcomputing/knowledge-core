@@ -499,6 +499,11 @@ public class PostgresIdentifierProvider
             return false;
         }
 
+        @Override
+        public void enableInverseCache() {
+            // not supported
+        }
+
         private boolean putUuidNid(UUID uuidKey, int nid) {
             try (Connection conn = this.ds.getConnection()) {
                 try (PreparedStatement stmt = conn.prepareStatement(sqlCreateUuidPrimordial())) {
@@ -660,4 +665,11 @@ public class PostgresIdentifierProvider
 
     }
 
+    /**
+     * @see sh.isaac.api.IdentifierService#optimizeForOutOfOrderLoading()
+     */
+    @Override
+    public void optimizeForOutOfOrderLoading() {
+        uuidIntMapMap.enableInverseCache();
+    }
 }

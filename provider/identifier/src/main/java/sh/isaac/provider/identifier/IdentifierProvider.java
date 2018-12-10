@@ -364,4 +364,9 @@ public class IdentifierProvider
     public long getSizeOnDisk() {
         return uuidIntMapMap.getDiskSpaceUsed();
     }
+
+    @Override
+    public void optimizeForOutOfOrderLoading() {
+        uuidIntMapMap.enableInverseCache();
+    }
 }
