@@ -47,6 +47,6 @@
 		<module>identifier</module>
 		<module>datastore-postgres</module>
 		<module>postgress</module>
-		<module>bdb-datastore</module>
+		<!--module>bdb-datastore</module-->
 	</modules>
 </project>
