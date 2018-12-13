@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>sh.isaac.uts-core</groupId>
 		<artifactId>misc</artifactId>
-		<version>uts-5.09</version>
+		<version>uts-5.10</version>
 	</parent>
 	<groupId>sh.isaac.uts-core.misc</groupId>
 	<artifactId>vhat-util</artifactId>

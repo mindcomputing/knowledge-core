@@ -3,6 +3,8 @@
 <a id="toc"></a>
 [Setup](#Setup) •
 [Run KOMET Application](#RunApp) •
+[Command Line Launch](#CliLaunch) •
+[SQL Trace Logging](#SqlLogging) •
 [Resources](#Resources)
 
 > The example below are based on a macOS High Sierra computer which has [Java SE JDK 1.8](https://www.oracle.com/technetwork/java/javase/downloads/index.html), [Apache Maven 3.5.4](https://maven.apache.org/download.cgi) and [Netbeans IDE 8.2](https://netbeans.org/downloads/) installed.  The [Postgres.app](https://postgresapp.com/) is shown as the PostgreSQL installation.
@@ -17,7 +19,8 @@ Configure `$PATH` in a terminal window:
 
 ``` sh
 sudo mkdir -p /etc/paths.d &&
-echo /Applications/Postgres.app/Contents/Versions/latest/bin | sudo tee /etc/paths.d/postgresapp
+echo /Applications/Postgres.app/Contents/Versions/latest/bin | \
+sudo tee /etc/paths.d/postgresapp
 ```
 
 Close and reopen the terminal window for the `$PATH` change to take effect. Verify `$PATH` to `psql` in the new terminal window.
@@ -151,21 +154,37 @@ Run ISAAC KOMET application.
 
 ![](README_files/images/Netbeans.03.png)
 
-If launch from the command line or script the PostgreSQL database name, username and user password can be passed in a properties.  The database URL has the format "jdbc:postgresql://host:port/database".
+## Command Line Launch <a id="CliLaunch">[▴](#toc)</a>
+
+If launched from the command line or script the PostgreSQL database name, username and user password can be provided as properties.  
+
+* `ISAAC_PSQL_URL` Database URL in the format **`jdbc:postgresql://host:port/database`**. Default: `jdbc:postgresql://localhost/isaac_db`
+* `ISAAC_PSQL_UNAME` User name with PostgreSQL privileges. Default: **`isaac_user `**
+* `ISAAC_PSQL_UPWD`  User password. Default: **`isaac_pwd`**
+
+The properties can be provided on the command line.
 
 ``` ini
--DISAAC_PSQL_URL="jdbc:postgresql://localhost/isaac_db"
--DISAAC_PSQL_UNAME="isaac_user"
--DISAAC_PSQL_UPWD="isaac_pwd"
+-DISAAC_PSQL_URL='jdbc:postgresql://localhost/isaac_db'
+-DISAAC_PSQL_UNAME='isaac_user'
+-DISAAC_PSQL_UPWD='isaac_pwd'
 ```
 
+If the properties are not found, then defaults will be used.
 
-> Note: For full logging of java generated SQL statements, find and set `LOG_SQL_FLAG` to true and rebuild.
->
-> ``` java
-> private static final boolean LOG_SQL_FLAG = false;
-> ```
+``` java
+String isaacDbUrl    = System.getProperty("ISAAC_PSQL_URL", "jdbc:postgresql://localhost/isaac_db");
+String isaacUsername = System.getProperty("ISAAC_PSQL_UNAME", "isaac_user");
+String isaacUserpwd  = System.getProperty("ISAAC_PSQL_UPWD", "isaac_pwd");
+```
 
+## SQL Trace Logging <a id="SqlLogging">[▴](#toc)</a>
+
+Note: For full logging of java generated SQL statements, find and set `LOG_SQL_FLAG` to true and rebuild the project.
+
+``` java
+private static final boolean LOG_SQL_FLAG = false;
+```
 
 ## Resources <a id="Resources">[▴](#toc)</a>
 

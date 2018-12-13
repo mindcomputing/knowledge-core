@@ -53,8 +53,6 @@ import javax.xml.bind.annotation.XmlType;
 
 //~--- non-JDK imports --------------------------------------------------------
 import sh.isaac.api.component.concept.ConceptSpecification;
-import sh.isaac.api.component.semantic.version.DescriptionVersion;
-import sh.isaac.api.coordinate.StampCoordinate;
 import sh.isaac.api.util.SemanticTags;
 import sh.isaac.api.util.StringUtils;
 import sh.isaac.api.util.UUIDUtil;
@@ -131,6 +129,9 @@ public class ConceptProxy
       final List<UUID> uuidList = new ArrayList<>(parts.length - partIndex);
 
       for (int i = partIndex; i < parts.length; i++) {
+//         if (parts[i].equals("601fc2f5-ae70-42ed-a47c-d7264cb3404a")) {
+//             parts[i] = "33737357-0218-4b19-8fd4-cbfca60c9a5e";
+//         }
          uuidList.add(UUID.fromString(parts[i]));
       }
 

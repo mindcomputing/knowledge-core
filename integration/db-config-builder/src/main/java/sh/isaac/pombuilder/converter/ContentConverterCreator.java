@@ -183,13 +183,6 @@ public class ContentConverterCreator
 					unpackArtifacts.append(",");
 				}
 
-				temp = FileUtil.readFile("converterProjectTemplate/pomSnippits/ibdfDependency.xml");
-				temp = temp.replace("#GROUPID#", "sh.isaac.uts-core.core");
-				temp = temp.replace("#ARTIFACTID#", "metadata");
-				temp = temp.replace("#CLASSIFIER#", "all");
-				temp = temp.replace("#VERSION#", converterVersion);
-				dependencies.append(temp);
-				unpackArtifacts.append("metadata");
 				unpackDependencies = unpackDependencies.replace("#UNPACK_ARTIFACTS#", unpackArtifacts.toString());
 			}
 
@@ -249,7 +242,7 @@ public class ContentConverterCreator
 						{
 							if (option.getKey().isAllowMultiSelectInPomMode())
 							{
-								userOptions.append(optionIndent + "<" + option.getKey().getInternalName() + "s>\n");
+								userOptions.append(optionIndent + "<" + option.getKey().getInternalName() + ">\n");
 
 								for (final String value : option.getValue())
 								{
@@ -270,7 +263,7 @@ public class ContentConverterCreator
 									userOptions.append("</" + option.getKey().getInternalName() + ">\n");
 								}
 
-								userOptions.append(optionIndent + "</" + option.getKey().getInternalName() + "s>");
+								userOptions.append(optionIndent + "</" + option.getKey().getInternalName() + ">");
 							}
 							else
 							{

@@ -42,7 +42,7 @@ import sh.isaac.api.xml.ConceptSpecificationAdaptor;
  */
 @XmlRootElement(name = "AttributeSpecification")
 @XmlAccessorType(value = XmlAccessType.NONE)
-public class AttributeSpecification {
+public class AttributeSpecification implements QueryFieldSpecification {
      /**
      * The index of the property on the version of the chronology to 
      * process for this function. The property index is based on the ordered 
@@ -60,7 +60,7 @@ public class AttributeSpecification {
      * chronology to process. The nid is obtained by finding the nid in the nid array 
      * which is a member of the specified assemblage. 
      */
-    private final SimpleObjectProperty<LetItemKey> stampCoordinateKeyProperty  = new SimpleObjectProperty();
+    private final SimpleObjectProperty<LetItemKey> stampCoordinateKeyProperty;
 
     /**
      * The assemblage from which the nid to process must be an element of. 
@@ -88,6 +88,7 @@ public class AttributeSpecification {
         this.assemblageNidProperty = new SimpleIntegerProperty();
         this.propertySpecificationProperty = new SimpleObjectProperty();
         this.propertyIndexProperty = new SimpleIntegerProperty();
+        this.stampCoordinateKeyProperty  = new SimpleObjectProperty();
     }
     
     public AttributeSpecification(AttributeSpecification another) {
@@ -100,106 +101,130 @@ public class AttributeSpecification {
         this.assemblageNidProperty = new SimpleIntegerProperty(another.assemblageNidProperty.get());
         this.propertySpecificationProperty = new SimpleObjectProperty(another.propertySpecificationProperty.get());
         this.propertyIndexProperty = new SimpleIntegerProperty(another.propertyIndexProperty.get());
+        this.stampCoordinateKeyProperty  = new SimpleObjectProperty(another.getStampCoordinateKey());
     }
     
     public AttributeSpecification(
             AttributeFunction attributeFunction, String columnName, int assemblageNid,
-            ConceptSpecification propertySpecification, int propertyIndex) {
+            ConceptSpecification propertySpecification, 
+            LetItemKey stampCoordinateKey, int propertyIndex) {
         this.attributeFunctionProperty = new SimpleObjectProperty(attributeFunction);
         this.columnNameProperty = new SimpleStringProperty(columnName);
         this.assemblageNidProperty = new SimpleIntegerProperty(assemblageNid);
         this.propertySpecificationProperty = new SimpleObjectProperty(propertySpecification);
         this.propertyIndexProperty = new SimpleIntegerProperty(propertyIndex);
+        this.stampCoordinateKeyProperty = new SimpleObjectProperty(stampCoordinateKey);
     }
     
     @XmlElement
+    @Override
     public LetItemKey getStampCoordinateKey() {
         return stampCoordinateKeyProperty.get();
     }
 
+    @Override
     public void setStampCoordinateKey(LetItemKey stampCoordinateKey) {
         this.stampCoordinateKeyProperty.set(stampCoordinateKey);
     }
 
+    @Override
     public SimpleObjectProperty<LetItemKey> stampCoordinateKeyProperty() {
         return stampCoordinateKeyProperty;
     }
 
     @XmlElement
     @XmlJavaTypeAdapter(ConceptSpecificationAdaptor.class)
+    @Override
     public ConceptSpecification getPropertySpecification() {
         return this.propertySpecificationProperty.get();
     }
+    @Override
     public void setPropertySpecification(ConceptSpecification propertySpecification) {
         this.propertySpecificationProperty.set(propertySpecification);
     }
     
+    @Override
     public SimpleObjectProperty<ConceptSpecification> propertySpecificationProperty() {
         return this.propertySpecificationProperty;
     }
 
     @XmlAttribute
+    @Override
     public Integer getPropertyIndex() {
         return this.propertyIndexProperty.get();
     }
+    @Override
     public void setPropertyIndex(Integer propertyIndex) {
         this.propertyIndexProperty.set(propertyIndex);
     }
     
+    @Override
     public SimpleIntegerProperty propertyIndexProperty() {
         return this.propertyIndexProperty;
     }
 
+    @Override
     public int getAssemblageNid() {
         return this.assemblageNidProperty.get();
     }
+    @Override
     public void setAssemblageNid(int assemblageNid) {
         this.assemblageNidProperty.set(assemblageNid);
     }
     
+    @Override
     public SimpleIntegerProperty assemblageNidProperty() {
         return this.assemblageNidProperty;
     }
     
     @XmlElement
     @XmlJavaTypeAdapter(ConceptSpecificationAdaptor.class)
+    @Override
      public ConceptSpecification getAssemblage() {
          if (this.assemblageNidProperty.get() == 0) {
              return null;
          }
         return new ConceptProxy(this.assemblageNidProperty.get());
     }
+    @Override
      public void setAssemblage(ConceptSpecification specification) {
          this.assemblageNidProperty.set(specification.getNid());
         
     }
 
+    @Override
     public void setAssemblageUuid(ConceptSpecification assemblageConceptSpecification) {
         setAssemblageNid(assemblageConceptSpecification.getNid());
     }
 
     @XmlElement(name = "attributeFunction")
+    @Override
     public AttributeFunction getAttributeFunction() {
         return attributeFunctionProperty.get();
     }
 
+    @Override
     public SimpleObjectProperty<AttributeFunction> attributeFunctionProperty() {
         return attributeFunctionProperty;
     }
 
+    @Override
     public void setAttributeFunction(AttributeFunction attributeFunction) {
         this.attributeFunctionProperty.set(attributeFunction);
     }
 
     @XmlAttribute(name = "columnName")
+    @Override
     public String getColumnName() {
         return columnNameProperty.get();
     }
 
+    @Override
     public SimpleStringProperty columnNameProperty() {
         return columnNameProperty;
     }
 
+    @Override
     public void setColumnName(String columnName) {
         this.columnNameProperty.set(columnName);
     }
