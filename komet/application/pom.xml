@@ -582,14 +582,8 @@
 					<version>${project.version}</version>
 				</dependency>
 				<dependency>
-					<groupId>sh.isaac.uts-core.provider</groupId>
-					<artifactId>stamp</artifactId>
-					<version>${project.parent.version}</version>
-					<scope>provided</scope>
-				</dependency>
-				<dependency>
-					<groupId>sh.isaac.uts-core.provider</groupId>
-					<artifactId>identifier</artifactId>
+					<groupId>sh.isaac.provider</groupId>
+					<artifactId>query</artifactId>
 					<version>${project.parent.version}</version>
 					<scope>provided</scope>
 				</dependency>
