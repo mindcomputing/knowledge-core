@@ -116,7 +116,7 @@ REPO_PASSWORD
 
 Make sure that offline is set to false in your settings.xml file. 
 ```
-mvn jgitflow:release-start jgitflow:release-finish -DreleaseVersion=uts-5.12 -DdevelopmentVersion=uts-5.13-SNAPSHOT -DaltDeploymentRepository=awsnexus::default::http://52.61.167.217:9092/nexus/content/repositories/releases
+mvn jgitflow:release-start jgitflow:release-finish -DreleaseVersion=uts-5.14 -DdevelopmentVersion=uts-5.15-SNAPSHOT -DaltDeploymentRepository=awsnexus::default::http://52.61.167.217:9092/nexus/content/repositories/releases
 
 $ mvn jgitflow:release-start jgitflow:release-finish -Prelease-deploy
 ```
