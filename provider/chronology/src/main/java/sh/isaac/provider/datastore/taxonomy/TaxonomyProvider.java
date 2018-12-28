@@ -795,7 +795,9 @@ public class TaxonomyProvider
         NidSet childOfTypeNidSet = new NidSet();
         NidSet isaTypeNidSet = new NidSet();
         
-        ConcurrentHashMap<String, Boolean> childOfCache = new ConcurrentHashMap<>(25);
+        //These caches are for specific performance issues in some rest API usage patterns.  These help make up for not having a fully computed tree.
+        ConcurrentHashMap<String, Boolean> childOfCache = new ConcurrentHashMap<>(250);
+        ConcurrentHashMap<Integer, int[]> parentsCache = new ConcurrentHashMap<>(250);
 
         final ManifoldCoordinate tc;
         //init code
@@ -891,8 +893,10 @@ public class TaxonomyProvider
 
         @Override
         public int[] getTaxonomyParentConceptNids(int childId) {
-            TaxonomyRecordPrimitive taxonomyRecordPrimitive = getTaxonomyRecord(childId);
-            return taxonomyRecordPrimitive.getDestinationNidsOfType(isaTypeNidSet, tc);
+            return parentsCache.computeIfAbsent(childId, childIdAgain -> {
+                TaxonomyRecordPrimitive taxonomyRecordPrimitive = getTaxonomyRecord(childId);
+                return taxonomyRecordPrimitive.getDestinationNidsOfType(isaTypeNidSet, tc);
+            });
         }
 
         @Override
