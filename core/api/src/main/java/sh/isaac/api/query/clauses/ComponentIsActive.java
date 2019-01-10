@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import sh.isaac.api.Get;
-import sh.isaac.api.bootstrap.TermAux;
 import sh.isaac.api.chronicle.Chronology;
 import sh.isaac.api.collections.NidSet;
 import sh.isaac.api.component.concept.ConceptSpecification;
@@ -35,6 +34,7 @@ import sh.isaac.api.query.LeafClause;
 import sh.isaac.api.query.LetItemKey;
 import sh.isaac.api.query.Query;
 import sh.isaac.api.query.WhereClause;
+import sh.isaac.api.query.properties.StampCoordinateClause;
 
 /**
  *
@@ -42,7 +42,7 @@ import sh.isaac.api.query.WhereClause;
  */
 @XmlRootElement
 @XmlAccessorType(value = XmlAccessType.NONE)
-public class ComponentIsActive extends LeafClause {
+public class ComponentIsActive extends LeafClause implements StampCoordinateClause {
 
     /**
      * the manifold coordinate key.
@@ -72,7 +72,6 @@ public class ComponentIsActive extends LeafClause {
     public final Map<ConceptSpecification, NidSet> computeComponents(Map<ConceptSpecification, NidSet> incomingComponents) {
         StampCoordinate stampCoordinate = getLetItem(stampCoordinateKey);
         NidSet possibleComponents = incomingComponents.get(getAssemblageForIteration());
-        
         for (int nid: possibleComponents.asArray()) {
             final Optional<? extends Chronology> chronology
                     = Get.identifiedObjectService()

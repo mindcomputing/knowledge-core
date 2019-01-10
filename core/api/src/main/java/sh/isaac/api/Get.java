@@ -64,6 +64,7 @@ import org.apache.mahout.math.map.OpenIntObjectHashMap;
 import sh.isaac.api.alert.AlertEvent;
 import sh.isaac.api.bootstrap.TermAux;
 import sh.isaac.api.chronicle.LatestVersion;
+import sh.isaac.api.chronicle.VersionType;
 import sh.isaac.api.collections.IntSet;
 import sh.isaac.api.commit.ChangeSetWriterService;
 import sh.isaac.api.commit.CommitService;
@@ -86,6 +87,7 @@ import sh.isaac.api.externalizable.BinaryDataServiceFactory;
 import sh.isaac.api.externalizable.DataWriterService;
 import sh.isaac.api.externalizable.IsaacExternalizable;
 import sh.isaac.api.externalizable.IsaacExternalizableSpliterator;
+import sh.isaac.api.externalizable.IsaacObjectType;
 import sh.isaac.api.index.GenerateIndexes;
 import sh.isaac.api.index.IndexBuilderService;
 import sh.isaac.api.index.IndexDescriptionQueryService;
@@ -98,6 +100,7 @@ import sh.isaac.api.observable.ObservableSnapshotService;
 import sh.isaac.api.preferences.PreferencesService;
 import sh.isaac.api.progress.ActiveTasks;
 import sh.isaac.api.progress.CompletedTasks;
+import sh.isaac.api.query.QueryHandler;
 import sh.isaac.api.util.NamedThreadFactory;
 import sh.isaac.api.util.WorkExecutors;
 
@@ -251,6 +254,10 @@ public class Get
       return assemblageService;
    }
    
+   public static QueryHandler queryHandler() {
+       return getService(QueryHandler.class);
+   }
+   
    public static PreferencesService preferencesService() {
       if (preferencesService == null) {
          preferencesService = getService(PreferencesService.class);
@@ -389,6 +396,15 @@ public class Get
      if (conceptNid >= 0) {
          throw new IndexOutOfBoundsException("Component identifiers must be negative. Found: " + conceptNid);
       }
+     if (Get.identifierService().getObjectTypeForComponent(conceptNid) == IsaacObjectType.SEMANTIC) {
+         SemanticChronology sc = Get.assemblageService().getSemanticChronology(conceptNid);
+         if (sc.getVersionType() == VersionType.DESCRIPTION) {
+             LatestVersion<DescriptionVersion> latestDescription = sc.getLatestVersion(defaultCoordinate());
+             if (latestDescription.isPresent()) {
+                 return "Desc: " + latestDescription.get().getText();
+             }
+         }
+     }
       final LatestVersion<DescriptionVersion> descriptionOptional =
          defaultConceptSnapshotService().getDescriptionOptional(conceptNid);
 

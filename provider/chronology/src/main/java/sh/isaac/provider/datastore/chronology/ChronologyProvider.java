@@ -589,8 +589,6 @@ public class ChronologyProvider
     public int getSemanticCount() {
         return (int) ModelGet.identifierService()
                 .getNidStreamOfType(IsaacObjectType.SEMANTIC)
-                // TODO is this filter really necessary? It has significant performance overhead.
-                .filter(nid -> hasSemantic(nid))
                 .count();
     }
 
@@ -598,7 +596,6 @@ public class ChronologyProvider
     public int getSemanticCount(int assemblageNid) {
         return (int) ModelGet.identifierService()
                 .getNidsForAssemblage(assemblageNid)
-                .filter(nid -> hasSemantic(nid))
                 .count();
     }
 

@@ -37,18 +37,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.function.BinaryOperator;
 import java.util.stream.IntStream;
-import javax.inject.Singleton;
 import javax.xml.bind.DatatypeConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.mahout.math.list.IntArrayList;
-import org.glassfish.hk2.api.Rank;
-import org.jvnet.hk2.annotations.Service;
 import sh.isaac.api.IdentifierService;
 import sh.isaac.api.LookupService;
 import sh.isaac.api.chronicle.VersionType;
 import sh.isaac.api.collections.NidSet;
-import sh.isaac.api.constants.DatabaseImplementation;
 import sh.isaac.api.datastore.ChronologySerializeable;
 import sh.isaac.api.externalizable.ByteArrayDataBuffer;
 import static sh.isaac.api.externalizable.ByteArrayDataBuffer.getInt;
@@ -65,10 +61,6 @@ import sh.isaac.model.semantic.version.SemanticVersionImpl;
  *
  * @author kec
  */
-/** Align this with {@link DatabaseImplementation#POSTGRESQL} */
-@Service (name="POSTGRESQL")
-@Singleton
-@Rank(value=-50)
 public class PostgresProvider
     implements DataStoreSubService, IdentifierService { // ExtendedStore
 
@@ -205,9 +197,37 @@ public class PostgresProvider
                 }
 
                 try (Statement stmt = conn.createStatement()) {
+                    String sqlCreate = "CREATE UNIQUE INDEX IF NOT EXISTS concepts_table_pkey "
+                        + "ON concepts_table  USING btree (o_nid, version_stamp); ";
+                    logSqlString(sqlCreate);
+                    stmt.execute(sqlCreate);
+                }
+
+                try (Statement stmt = conn.createStatement()) {
                     String sqlCreate = "CREATE TABLE IF NOT EXISTS semantics_table "
                         + "(referenced_component_nid INTEGER) "
                         + "INHERITS (identified_objects_table); ";
+                    logSqlString(sqlCreate);
+                    stmt.execute(sqlCreate);
+                }
+
+                try (Statement stmt = conn.createStatement()) {
+                    String sqlCreate = "CREATE UNIQUE INDEX IF NOT EXISTS semantics_table_pkey "
+                        + "ON semantics_table USING btree (o_nid, version_stamp); ";
+                    logSqlString(sqlCreate);
+                    stmt.execute(sqlCreate);
+                }
+
+                try (Statement stmt = conn.createStatement()) {
+                    String sqlCreate = "CREATE INDEX IF NOT EXISTS semantics_table_assemblage_idx "
+                        + "ON semantics_table USING btree (assemblage_nid); ";
+                    logSqlString(sqlCreate);
+                    stmt.execute(sqlCreate);
+                }
+
+                try (Statement stmt = conn.createStatement()) {
+                    String sqlCreate = "CREATE INDEX IF NOT EXISTS semantics_table_referenced_component_idx "
+                        + "ON semantics_table USING btree (referenced_component_nid); ";
                     logSqlString(sqlCreate);
                     stmt.execute(sqlCreate);
                 }
@@ -710,7 +730,8 @@ public class PostgresProvider
             stmt.setInt(1, conceptNid); // t_nid
             stmt.setInt(2, assemblageNid); // assemblage_nid
 
-            ByteArrayDataBuffer byteBuffer = new ByteArrayDataBuffer((taxonomyData.length * 4) + 4); // 4 bytes per element + 4 bytes for length of array. 
+            // 4 bytes inbound taxonomyData int[] length + 4 bytes per element
+            ByteArrayDataBuffer byteBuffer = new ByteArrayDataBuffer((taxonomyData.length * 4) + 4);
             byteBuffer.putIntArray(taxonomyData);
 
             byte[] taxonomyBytes = byteBuffer.getData();

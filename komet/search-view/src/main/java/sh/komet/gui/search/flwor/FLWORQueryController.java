@@ -62,6 +62,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 import java.util.*;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -131,8 +133,6 @@ import sh.komet.gui.drag.drop.DragDetectedCellEventHandler;
 import sh.komet.gui.drag.drop.DragDoneEventHandler;
 import sh.komet.gui.interfaces.ExplorationNode;
 import sh.komet.gui.manifold.Manifold;
-import sh.komet.gui.search.control.LetPropertySheet;
-import sh.komet.gui.search.control.WhereParameterCell;
 import sh.komet.gui.style.StyleClasses;
 import sh.komet.gui.util.FxGet;
 
@@ -308,12 +308,12 @@ public class FLWORQueryController
 
     
      */
-    void displayResults(int[][] resultArray, Map<ConceptSpecification, Integer> assembalgeToIndexMap) {
+    void displayResults(int[][] resultArray, Map<ConceptSpecification, Integer> assemblageToIndexMap) {
         ObservableList<List<String>> tableItems = resultTable.getItems();
         int columnCount = resultTable.getColumns().size();
         tableItems.clear();
         OpenIntIntHashMap fastAssemblageNidToIndexMap = new OpenIntIntHashMap();
-        for (Map.Entry<ConceptSpecification, Integer> entry : assembalgeToIndexMap.entrySet()) {
+        for (Map.Entry<ConceptSpecification, Integer> entry : assemblageToIndexMap.entrySet()) {
             fastAssemblageNidToIndexMap.put(entry.getKey().getNid(), entry.getValue());
         }
         //ObservableSnapshotService snapshot = Get.observableSnapshotService(this.manifold);
@@ -472,7 +472,16 @@ public class FLWORQueryController
     }
 
     @FXML
+    void cancelQuery(ActionEvent event) {
+        FxGet.statusMessageService()
+                .reportSceneStatus(anchorPane.getScene(), "FLWOR query canceled. (Cancel not completely implemented)");
+        resultTable.getItems().clear();
+    }
+    @FXML
     void executeQuery(ActionEvent event) {
+        FxGet.statusMessageService()
+                .reportSceneStatus(anchorPane.getScene(), "Starting FLWOR query...");
+        long msStart = System.currentTimeMillis();
         this.query.reset();
         this.query.getLetDeclarations().putAll(this.letPropertySheet.getLetItemObjectMap());
         ClauseTreeItem itemToProcess = this.root;
@@ -485,8 +494,11 @@ public class FLWORQueryController
         int[][] resultArray = query.reify();
         ForSet forSet = query.getForSetSpecification();
 
+        NumberFormat formatter = new DecimalFormat("#0.000");
         FxGet.statusMessageService()
-                .reportSceneStatus(anchorPane.getScene(), "Query result count: " + resultArray.length);
+                .reportSceneStatus(anchorPane.getScene(), "Query result count: " + 
+                        resultArray.length + " in " + 
+                        formatter.format((System.currentTimeMillis() - msStart)/1000.0) + " seconds");
         displayResults(resultArray, forSet.getAssembalgeToIndexMap());
     }
 
@@ -602,6 +614,7 @@ public class FLWORQueryController
         ConceptAction conceptAction = (ConceptAction) ((MenuItem) event.getSource()).getOnAction();
         Clause clause = (Clause) conceptAction.getProperties()
                 .get(CLAUSE);
+        clause.setEnclosingQuery(query);
 
         treeItem.getChildren()
                 .add(new ClauseTreeItem(new QueryClause(clause, manifold, this.forPropertySheet,
@@ -615,6 +628,7 @@ public class FLWORQueryController
         ConceptAction conceptAction = (ConceptAction) ((MenuItem) event.getSource()).getOnAction();
         Clause clause = (Clause) conceptAction.getProperties()
                 .get(CLAUSE);
+        clause.setEnclosingQuery(query);
 
         treeItem.getParent()
                 .getChildren()
@@ -633,6 +647,7 @@ public class FLWORQueryController
         ConceptAction conceptAction = (ConceptAction) ((MenuItem) event.getSource()).getOnAction();
         Clause clause = (Clause) conceptAction.getProperties()
                 .get(CLAUSE);
+        clause.setEnclosingQuery(query);
 
         treeItem.setValue(new QueryClause(clause, manifold, this.forPropertySheet,
                 joinProperties, letPropertySheet));
