@@ -131,6 +131,16 @@
 		</dependency>
 		<dependency>
 			<groupId>sh.isaac.uts-core.provider</groupId>
+			<artifactId>stamp</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>sh.isaac.uts-core.provider</groupId>
+			<artifactId>query</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>sh.isaac.uts-core.provider</groupId>
 			<artifactId>path</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
