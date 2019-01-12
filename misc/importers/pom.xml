@@ -12,9 +12,6 @@
 
 	<name>ISAAC misc: Importers</name>
 
-	<properties>
-	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>sh.isaac.uts-core.misc</groupId>
@@ -51,6 +48,21 @@
 			<groupId>sh.isaac.uts-core.solor</groupId>
 			<artifactId>direct-import</artifactId>
 			<version>${project.parent.version}</version>
+		</dependency>
+ 		<dependency>
+			<groupId>sh.isaac.uts-core.provider</groupId>
+			<artifactId>datastore-locator</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>sh.isaac.uts-core.provider</groupId>
+			<artifactId>stamp</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>sh.isaac.uts-core.provider</groupId>
+			<artifactId>query</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.opencsv</groupId>
