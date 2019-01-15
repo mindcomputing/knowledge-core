@@ -43,6 +43,8 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import javax.xml.bind.annotation.XmlElement;
+
 import sh.isaac.api.ConfigurationService;
 import sh.isaac.api.Get;
 import sh.isaac.api.Status;
@@ -72,9 +74,6 @@ public class ManifoldCoordinateImpl
 
    /** The logic coordinate. */
    LogicCoordinate logicCoordinate;
-
-   /** The uuid. */
-   UUID uuid = null;
 
    /**
     * Instantiates a new taxonomy coordinate impl.
@@ -120,31 +119,47 @@ public class ManifoldCoordinateImpl
     * {@inheritDoc}
     */
    @Override
-   public boolean equals(Object obj) {
-      if (obj == null) {
-         return false;
-      }
-
-      if (getClass() != obj.getClass()) {
-         return false;
-      }
-
-      final ManifoldCoordinateImpl other = (ManifoldCoordinateImpl) obj;
-
-      if (this.taxonomyPremiseType != other.taxonomyPremiseType) {
-         return false;
-      }
-
-      if (!Objects.equals(this.stampCoordinate, other.stampCoordinate)) {
-         return false;
-      }
-
-      if (!Objects.equals(this.logicCoordinate, other.logicCoordinate)) {
-         return false;
-      }
-
-      return Objects.equals(this.languageCoordinate, other.languageCoordinate);
+   @XmlElement
+   public UUID getManifoldCoordinateUuid() {
+      return ManifoldCoordinate.super.getManifoldCoordinateUuid(); 
    }
+   
+   private void setManifoldCoordinateUuid(UUID uuid) {
+        // noop for jaxb
+   }
+
+    /**
+     * Equals.
+     *
+     * @param obj the obj
+     * @return true, if successful
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        
+        final ManifoldCoordinateImpl other = (ManifoldCoordinateImpl) obj;
+        
+        if (this.taxonomyPremiseType != other.taxonomyPremiseType) {
+            return false;
+        }
+        
+        if (!Objects.equals(this.stampCoordinate, other.stampCoordinate)) {
+            return false;
+        }
+        
+        if (!Objects.equals(this.logicCoordinate, other.logicCoordinate)) {
+            return false;
+        }
+        
+        return Objects.equals(this.languageCoordinate, other.languageCoordinate);
+    }
 
    /**
     * {@inheritDoc}
@@ -246,17 +261,6 @@ public class ManifoldCoordinateImpl
    }
    public void setTaxonomyPremiseType(PremiseType taxonomyPremiseType) {
        this.taxonomyPremiseType = taxonomyPremiseType;
-   }
-   
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public UUID getCoordinateUuid() {
-      if (this.uuid == null) {
-         uuid = UUID.randomUUID();
-      }
-      return this.uuid;
    }
 
    /**
