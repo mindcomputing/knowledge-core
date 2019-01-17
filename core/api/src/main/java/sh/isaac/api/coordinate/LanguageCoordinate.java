@@ -46,7 +46,6 @@ import org.apache.logging.log4j.Logger;
 
 //~--- non-JDK imports --------------------------------------------------------
 import sh.isaac.api.Get;
-import static sh.isaac.api.Get.defaultCoordinate;
 import sh.isaac.api.bootstrap.TermAux;
 import sh.isaac.api.chronicle.LatestVersion;
 import sh.isaac.api.chronicle.VersionType;
@@ -74,6 +73,7 @@ public interface LanguageCoordinate extends Coordinate {
     * @return 
     */
    Optional<LanguageCoordinate> getNextProrityLanguageCoordinate();
+
     
    /**
     * Return the latestDescription according to the type and dialect preferences of this {@code LanguageCoordinate}.

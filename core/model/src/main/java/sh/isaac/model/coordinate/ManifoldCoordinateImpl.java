@@ -39,27 +39,19 @@
 
 package sh.isaac.model.coordinate;
 
-//~--- JDK imports ------------------------------------------------------------
-
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-
 import sh.isaac.api.ConfigurationService;
 import sh.isaac.api.Get;
-
-//~--- non-JDK imports --------------------------------------------------------
-
 import sh.isaac.api.Status;
 import sh.isaac.api.component.concept.ConceptSpecification;
 import sh.isaac.api.coordinate.LanguageCoordinate;
 import sh.isaac.api.coordinate.LogicCoordinate;
+import sh.isaac.api.coordinate.ManifoldCoordinate;
 import sh.isaac.api.coordinate.PremiseType;
 import sh.isaac.api.coordinate.StampCoordinate;
-import sh.isaac.api.coordinate.ManifoldCoordinate;
-
-//~--- classes ----------------------------------------------------------------
 
 /**
  * The Class ManifoldCoordinateImpl.
@@ -83,8 +75,6 @@ public class ManifoldCoordinateImpl
 
    /** The uuid. */
    UUID uuid = null;
-
-   //~--- constructors --------------------------------------------------------
 
    /**
     * Instantiates a new taxonomy coordinate impl.
@@ -126,13 +116,8 @@ public class ManifoldCoordinateImpl
           Get.configurationService().getUserConfiguration(Optional.empty()).getLogicCoordinate());
    }
 
-   //~--- methods -------------------------------------------------------------
-
    /**
-    * Equals.
-    *
-    * @param obj the obj
-    * @return true, if successful
+    * {@inheritDoc}
     */
    @Override
    public boolean equals(Object obj) {
@@ -162,9 +147,7 @@ public class ManifoldCoordinateImpl
    }
 
    /**
-    * Hash code.
-    *
-    * @return the int
+    * {@inheritDoc}
     */
    @Override
    public int hashCode() {
@@ -177,10 +160,7 @@ public class ManifoldCoordinateImpl
    }
 
    /**
-    * Make analog.
-    *
-    * @param stampPositionTime the stamp position time
-    * @return the taxonomy coordinate impl
+    * {@inheritDoc}
     */
    @Override
    public ManifoldCoordinateImpl makeCoordinateAnalog(long stampPositionTime) {
@@ -191,10 +171,7 @@ public class ManifoldCoordinateImpl
    }
 
    /**
-    * Make analog.
-    *
-    * @param taxonomyType the taxonomy type
-    * @return the taxonomy coordinate impl
+    * {@inheritDoc}
     */
    @Override
    public ManifoldCoordinateImpl makeCoordinateAnalog(PremiseType taxonomyType) {
@@ -205,10 +182,7 @@ public class ManifoldCoordinateImpl
    }
 
    /**
-    * Make analog.
-    *
-    * @param state the state
-    * @return the taxonomy coordinate impl
+    * {@inheritDoc}
     */
    @Override
    public ManifoldCoordinateImpl makeCoordinateAnalog(Status... state) {
@@ -219,9 +193,7 @@ public class ManifoldCoordinateImpl
    }
 
    /**
-     * @param modules
-     * @param add
-     * @return 
+    * {@inheritDoc}
     * @see sh.isaac.api.coordinate.StampCoordinate#makeModuleAnalog(int[], boolean)
     */
    @Override
@@ -233,9 +205,7 @@ public class ManifoldCoordinateImpl
    }
 
    /**
-    * To string.
-    *
-    * @return the string
+    * {@inheritDoc}
     */
    @Override
    public String toString() {
@@ -243,12 +213,8 @@ public class ManifoldCoordinateImpl
              this.languageCoordinate + ", \n" + this.logicCoordinate + ", uuid=" + getCoordinateUuid() + '}';
    }
 
-   //~--- get methods ---------------------------------------------------------
-
    /**
-    * Gets the language coordinate.
-    *
-    * @return the language coordinate
+    * {@inheritDoc}
     */
    @Override
    public LanguageCoordinate getLanguageCoordinate() {
@@ -256,9 +222,7 @@ public class ManifoldCoordinateImpl
    }
 
    /**
-    * Gets the logic coordinate.
-    *
-    * @return the logic coordinate
+    * {@inheritDoc}
     */
    @Override
    public LogicCoordinate getLogicCoordinate() {
@@ -266,9 +230,7 @@ public class ManifoldCoordinateImpl
    }
 
    /**
-    * Gets the stamp coordinate.
-    *
-    * @return the stamp coordinate
+    * {@inheritDoc}
     */
    @Override
    public StampCoordinate getStampCoordinate() {
@@ -276,9 +238,7 @@ public class ManifoldCoordinateImpl
    }
 
    /**
-    * Gets the taxonomy type.
-    *
-    * @return the taxonomy type
+    * {@inheritDoc}
     */
    @Override
    public PremiseType getTaxonomyPremiseType() {
@@ -287,10 +247,9 @@ public class ManifoldCoordinateImpl
    public void setTaxonomyPremiseType(PremiseType taxonomyPremiseType) {
        this.taxonomyPremiseType = taxonomyPremiseType;
    }
+   
    /**
-    * Gets the uuid.
-    *
-    * @return the uuid
+    * {@inheritDoc}
     */
    @Override
    public UUID getCoordinateUuid() {
@@ -300,8 +259,9 @@ public class ManifoldCoordinateImpl
       return this.uuid;
    }
 
-   //~--- inner classes -------------------------------------------------------
-
+   /**
+    * {@inheritDoc}
+    */
    @Override
    public ManifoldCoordinateImpl deepClone() {
       ManifoldCoordinateImpl newCoordinate = new ManifoldCoordinateImpl(taxonomyPremiseType,
@@ -310,6 +270,4 @@ public class ManifoldCoordinateImpl
                                  logicCoordinate.deepClone());
       return newCoordinate;
    }
-
 }
-
