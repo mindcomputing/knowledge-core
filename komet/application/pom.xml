@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>sh.isaac.uts-core</groupId>
 		<artifactId>komet</artifactId>
-		<version>uts-5.14</version>
+		<version>uts-5.15</version>
 	</parent>
 	<groupId>sh.isaac.uts-core.komet</groupId>
 	<artifactId>application</artifactId>
@@ -127,6 +127,16 @@
 		<dependency>
 			<groupId>sh.isaac.uts-core.provider</groupId>
 			<artifactId>coordinate</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>sh.isaac.uts-core.provider</groupId>
+			<artifactId>stamp</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>sh.isaac.uts-core.provider</groupId>
+			<artifactId>query</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
