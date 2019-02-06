@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>sh.isaac.uts-core</groupId>
 		<artifactId>komet</artifactId>
-		<version>uts-5.20-SNAPSHOT</version>
+		<version>uts-5.21-SNAPSHOT</version>
 	</parent>
 	<groupId>sh.isaac.uts-core.komet</groupId>
 	<artifactId>drag-tab</artifactId>
