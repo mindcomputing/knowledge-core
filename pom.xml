@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>sh.isaac</groupId>
 	<artifactId>uts-core</artifactId>
-	<version>uts-5.19</version>
+	<version>uts-5.20</version>
 
 	<name>UTS Core: Universal Terminology Suite</name>
 
@@ -133,7 +133,7 @@
 		<testng.version>6.13.1</testng.version>
 		<tilesfx.version>1.5.2</tilesfx.version>
 		<wagon-provider-api.version>3.0.0</wagon-provider-api.version>
-		<jackson-databind.version>2.9.6</jackson-databind.version>
+		<jackson-databind.version>2.9.8</jackson-databind.version>
 	</properties>
 
 	<developers>
