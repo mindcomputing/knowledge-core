@@ -48,6 +48,5 @@
 		<module>datastore-postgres</module>
 		<module>postgress</module>
 		<module>datastore-cache</module>
-		<!--module>bdb-datastore</module-->
 	</modules>
 </project>
