@@ -43,6 +43,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
 import javax.xml.bind.annotation.XmlElement;
 
 import sh.isaac.api.ConfigurationService;
@@ -76,6 +77,8 @@ public class ManifoldCoordinateImpl
 
    /** The logic coordinate. */
    LogicCoordinate logicCoordinate;
+   
+   private Function<int[], int[]> customSorter = null;
 
    /**
     * Instantiates a new taxonomy coordinate impl.
@@ -190,6 +193,10 @@ public class ManifoldCoordinateImpl
             return false;
         }
         
+        if (this.getCustomTaxonomySortHashCode() != other.getCustomTaxonomySortHashCode() ) {
+            return false;
+        }
+        
         return Objects.equals(this.languageCoordinate, other.languageCoordinate);
     }
 
@@ -204,6 +211,7 @@ public class ManifoldCoordinateImpl
       hash = 53 * hash + Objects.hashCode(this.stampCoordinate);
       hash = 53 * hash + Objects.hashCode(this.destinationStampCoordinate);
       hash = 53 * hash + Objects.hashCode(this.languageCoordinate);
+      hash = 53 * hash + getCustomTaxonomySortHashCode();
       return hash;
    }
 
@@ -213,11 +221,13 @@ public class ManifoldCoordinateImpl
     */
    @Override
    public ManifoldCoordinateImpl makeCoordinateAnalog(long stampPositionTime) {
-      return new ManifoldCoordinateImpl(this.taxonomyPremiseType,
+      ManifoldCoordinateImpl mc = new ManifoldCoordinateImpl(this.taxonomyPremiseType,
                                         this.stampCoordinate.makeCoordinateAnalog(stampPositionTime),
                                         this.destinationStampCoordinate.makeCoordinateAnalog(stampPositionTime),
                                         this.languageCoordinate,
                                         this.logicCoordinate);
+      mc.setCustomSorter(this.customSorter);
+      return mc;
    }
 
    /**
@@ -225,11 +235,13 @@ public class ManifoldCoordinateImpl
     */
    @Override
    public ManifoldCoordinateImpl makeCoordinateAnalog(PremiseType taxonomyType) {
-      return new ManifoldCoordinateImpl(taxonomyType,
+       ManifoldCoordinateImpl mc = new ManifoldCoordinateImpl(taxonomyType,
                                         this.stampCoordinate,
                                         this.destinationStampCoordinate,
                                         this.languageCoordinate,
                                         this.logicCoordinate);
+       mc.setCustomSorter(this.customSorter);
+       return mc;
    }
 
    /**
@@ -237,11 +249,13 @@ public class ManifoldCoordinateImpl
     */
    @Override
    public ManifoldCoordinateImpl makeCoordinateAnalog(Status... state) {
-      return new ManifoldCoordinateImpl(this.taxonomyPremiseType,
+       ManifoldCoordinateImpl mc = new ManifoldCoordinateImpl(this.taxonomyPremiseType,
                                         this.stampCoordinate.makeCoordinateAnalog(state),
                                         this.destinationStampCoordinate,
                                         this.languageCoordinate,
                                         this.logicCoordinate);
+      mc.setCustomSorter(this.customSorter);
+      return mc;
    }
 
    /**
@@ -250,11 +264,13 @@ public class ManifoldCoordinateImpl
     */
    @Override
    public ManifoldCoordinateImpl makeModuleAnalog(Collection<ConceptSpecification> modules, boolean add) {
-      return new ManifoldCoordinateImpl(this.taxonomyPremiseType, 
+       ManifoldCoordinateImpl mc = new ManifoldCoordinateImpl(this.taxonomyPremiseType, 
             this.stampCoordinate.makeModuleAnalog(modules, add), 
             this.destinationStampCoordinate,
             this.languageCoordinate, 
             this.logicCoordinate);
+       mc.setCustomSorter(this.customSorter);
+       return mc;
    }
 
    /**
@@ -320,6 +336,48 @@ public class ManifoldCoordinateImpl
                                  destinationStampCoordinate.deepClone(),
                                  languageCoordinate.deepClone(),
                                  logicCoordinate.deepClone());
+      newCoordinate.customSorter = this.customSorter;
       return newCoordinate;
+   }
+
+   /**
+    * @see sh.isaac.api.coordinate.ManifoldCoordinate#hasCustomTaxonomySort()
+    */
+   @Override
+   public boolean hasCustomTaxonomySort() {
+      return customSorter != null;
+   }
+   
+   /**
+    * @see sh.isaac.api.coordinate.ManifoldCoordinate#getCustomTaxonomySortHashCode()
+    */
+   @Override
+   public int getCustomTaxonomySortHashCode()
+   {
+      return hasCustomTaxonomySort() ? customSorter.hashCode() : 
+         ManifoldCoordinate.super.getCustomTaxonomySortHashCode();
+   }
+
+   /**
+    * Add a customSorter to this coordinate.  The provided sorter should expect to be passed an array of nids representing concepts, 
+    * and should return them sorted.
+    * @param customSorter
+    */
+   public void setCustomSorter(Function<int[], int[]> customSorter) {
+      this.customSorter = customSorter;
+   }
+   
+   /**
+    * @see sh.isaac.api.coordinate.ManifoldCoordinate#sortConcepts(int[])
+    */
+   @Override
+   public int[] sortConcepts(int[] concepts)
+   {
+      if (customSorter != null) {
+         return customSorter.apply(concepts);
+      }
+      else {
+         return ManifoldCoordinate.super.sortConcepts(concepts);
+      }
    }
 }
