@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>sh.isaac.uts-core</groupId>
 		<artifactId>integration</artifactId>
-		<version>uts-5.21</version>
+		<version>uts-5.22</version>
 	</parent>
 	<groupId>sh.isaac.uts-core.integration</groupId>
 	<artifactId>db-builder</artifactId>

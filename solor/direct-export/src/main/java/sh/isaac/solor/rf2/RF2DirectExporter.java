@@ -2,18 +2,24 @@ package sh.isaac.solor.rf2;
 
 import sh.isaac.MetaData;
 import sh.isaac.api.Get;
+import sh.isaac.api.TaxonomySnapshot;
+import sh.isaac.api.chronicle.VersionType;
 import sh.isaac.api.progress.PersistTaskResult;
 import sh.isaac.api.task.TimedTaskWithProgressTracker;
-import sh.isaac.solor.rf2.config.RF2ConfigType;
+import sh.isaac.api.util.UuidT3Generator;
+import sh.isaac.solor.rf2.config.RF2FileType;
 import sh.isaac.solor.rf2.config.RF2Configuration;
+import sh.isaac.solor.rf2.config.RF2ReleaseType;
 import sh.isaac.solor.rf2.exporters.core.*;
 import sh.isaac.solor.rf2.exporters.refsets.RF2LanguageRefsetExporter;
 import sh.isaac.solor.rf2.exporters.refsets.RF2RefsetExporter;
 import sh.isaac.solor.rf2.utility.PreExportUtility;
 import sh.isaac.solor.rf2.utility.RF2ExportHelper;
+import sh.isaac.solor.rf2.utility.ZipExportDirectory;
 import sh.komet.gui.manifold.Manifold;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,6 +39,7 @@ public class RF2DirectExporter extends TimedTaskWithProgressTracker<Void> implem
     private final Semaphore readSemaphore = new Semaphore(READ_PERMITS);
     private final RF2ExportHelper rf2ExportHelper;
     private final PreExportUtility preExportUtility;
+    private boolean isDescriptorAssemblagePresent;
 
     public RF2DirectExporter(Manifold manifold, File exportDirectory, String exportMessage){
         this.manifold = manifold;
@@ -43,92 +50,144 @@ public class RF2DirectExporter extends TimedTaskWithProgressTracker<Void> implem
         this.exportConfigurations = new ArrayList<>();
         this.preExportUtility = new PreExportUtility(this.manifold);
 
+        isDescriptorAssemblagePresent = Get.identifierService().hasUuid(UuidT3Generator.fromSNOMED("900000000000456007"));
+
         Get.activeTasks().add(this);
     }
 
     @Override
     protected Void call() {
 
-        this.exportConfigurations.add(new RF2Configuration(RF2ConfigType.CONCEPT, this.localDateTimeNow, this.exportDirectory, this.manifold));
-        this.exportConfigurations.add(new RF2Configuration(RF2ConfigType.DESCRIPTION, this.localDateTimeNow, this.exportDirectory, this.manifold));
-        this.exportConfigurations.add(new RF2Configuration(RF2ConfigType.RELATIONSHIP, this.localDateTimeNow, this.exportDirectory, this.manifold));
-        this.exportConfigurations.add(new RF2Configuration(RF2ConfigType.STATED_RELATIONSHIP, this.localDateTimeNow, this.exportDirectory, this.manifold));
-        this.exportConfigurations.add(new RF2Configuration(RF2ConfigType.IDENTIFIER, this.localDateTimeNow, this.exportDirectory, this.manifold));
-        this.exportConfigurations.add(new RF2Configuration(RF2ConfigType.TRANSITIVE_CLOSURE, this.localDateTimeNow, this.exportDirectory, this.manifold));
-        this.exportConfigurations.add(new RF2Configuration(RF2ConfigType.VERSIONED_TRANSITIVE_CLOSURE, this.localDateTimeNow, this.exportDirectory, this.manifold));
-
+        TaxonomySnapshot noTreeTaxonomy = Get.taxonomyService().getSnapshotNoTree(this.manifold);
         List<Integer> currentAssemblageNids = Arrays.stream(Get.assemblageService().getAssemblageConceptNids()).boxed().collect(Collectors.toList());
+        int descriptorAssemblageNid = isDescriptorAssemblagePresent? Get.concept(UuidT3Generator.fromSNOMED("900000000000456007")).getNid() : 0;
+        final ArrayList<VersionType> versionTypeIgnoreList = new ArrayList<>();
+        versionTypeIgnoreList.add(VersionType.CONCEPT);
+        versionTypeIgnoreList.add(VersionType.DESCRIPTION);
+        versionTypeIgnoreList.add(VersionType.DYNAMIC);
+        versionTypeIgnoreList.add(VersionType.LOGIC_GRAPH);
+        versionTypeIgnoreList.add(VersionType.RF2_RELATIONSHIP);
 
-        //Add all languages TODO- Create a Factory and account for user specific selections
-        Arrays.stream(
-                Get.taxonomyService().getSnapshot(manifold)
-                        .getTaxonomyChildConceptNids(MetaData.LANGUAGE____SOLOR.getNid()))
-                .filter(langAssemblageNid -> currentAssemblageNids.contains(langAssemblageNid))
-                .forEach(languageNid ->
+        for(RF2ReleaseType rf2ReleaseType : RF2ReleaseType.values()){
+
+            this.exportConfigurations.add(new RF2Configuration(RF2FileType.CONCEPT, rf2ReleaseType, this.localDateTimeNow, this.exportDirectory, noTreeTaxonomy, this.rf2ExportHelper));
+            this.exportConfigurations.add(new RF2Configuration(RF2FileType.DESCRIPTION, rf2ReleaseType, this.localDateTimeNow, this.exportDirectory, noTreeTaxonomy, this.rf2ExportHelper));
+            this.exportConfigurations.add(new RF2Configuration(RF2FileType.RELATIONSHIP, rf2ReleaseType, this.localDateTimeNow, this.exportDirectory, noTreeTaxonomy, this.rf2ExportHelper));
+            this.exportConfigurations.add(new RF2Configuration(RF2FileType.STATED_RELATIONSHIP, rf2ReleaseType, this.localDateTimeNow, this.exportDirectory, noTreeTaxonomy, this.rf2ExportHelper));
+            this.exportConfigurations.add(new RF2Configuration(RF2FileType.IDENTIFIER, rf2ReleaseType, this.localDateTimeNow, this.exportDirectory, noTreeTaxonomy, this.rf2ExportHelper));
+
+            Arrays.stream(
+                    noTreeTaxonomy
+                            .getTaxonomyChildConceptNids(MetaData.LANGUAGE____SOLOR.getNid()))
+                    .filter(langAssemblageNid -> currentAssemblageNids.contains(langAssemblageNid))
+                    .forEach(languageNid ->{
                         exportConfigurations.add(
-                                new RF2Configuration(RF2ConfigType.LANGUAGE_REFSET,
-                                        this.localDateTimeNow, languageNid, this.exportDirectory, this.manifold, this.preExportUtility)));
-//
-//        //Add all refsets TODO- Create a Factory and account for user specific selections
-        Arrays.stream(Get.assemblageService().getAssemblageConceptNids())
-                .forEach(assemblageNid -> exportConfigurations.add(
-                        new RF2Configuration(RF2ConfigType.REFSET, this.localDateTimeNow, assemblageNid,
-                                Get.concept(assemblageNid).getFullyQualifiedName(),
-                                Get.assemblageService().getVersionTypeForAssemblage(assemblageNid),
-                                this.exportDirectory, this.manifold, this.preExportUtility)));
+                                new RF2Configuration(RF2FileType.LANGUAGE_REFSET, rf2ReleaseType,
+                                        this.localDateTimeNow, languageNid, this.exportDirectory,
+                                        this.preExportUtility, this.isDescriptorAssemblagePresent, noTreeTaxonomy, this.rf2ExportHelper));
+                    });
+
+            Arrays.stream(
+                    Get.assemblageService().getAssemblageConceptNids())
+                    .filter(nid -> !versionTypeIgnoreList.contains(Get.assemblageService().getVersionTypeForAssemblage(nid)))
+                    .filter(nid -> descriptorAssemblageNid != nid)
+                    .forEach(assemblageNid -> {
+                        exportConfigurations.add(
+                                new RF2Configuration(RF2FileType.REFSET, rf2ReleaseType, this.localDateTimeNow, assemblageNid,
+                                        Get.concept(assemblageNid).getFullyQualifiedName(),
+                                        Get.assemblageService().getVersionTypeForAssemblage(assemblageNid),
+                                        this.exportDirectory, this.preExportUtility, this.isDescriptorAssemblagePresent, noTreeTaxonomy, this.rf2ExportHelper));
+                    });
+        }
 
         updateTitle("Export " + this.exportMessage);
-        addToTotalWork(this.exportConfigurations.size() + 2);
+        addToTotalWork(exportConfigurations.size() + 2);
 
         try {
-            completedUnitOfWork();
+
+            RF2Configuration fullDescriptorAssemblageConfiguration = null;
+            RF2Configuration snapshotDescriptorAssemblageConfiguration = null;
+
+            if (isDescriptorAssemblagePresent) {
+                fullDescriptorAssemblageConfiguration = new RF2Configuration(RF2FileType.REFSET, RF2ReleaseType.FULL, this.localDateTimeNow,
+                        descriptorAssemblageNid, Get.concept(descriptorAssemblageNid).getFullyQualifiedName(),
+                        Get.assemblageService().getVersionTypeForAssemblage(descriptorAssemblageNid),
+                        this.exportDirectory, this.preExportUtility, this.isDescriptorAssemblagePresent, noTreeTaxonomy, this.rf2ExportHelper);
+
+                snapshotDescriptorAssemblageConfiguration = new RF2Configuration(RF2FileType.REFSET, RF2ReleaseType.SNAPSHOT, this.localDateTimeNow,
+                        descriptorAssemblageNid, Get.concept(descriptorAssemblageNid).getFullyQualifiedName(),
+                        Get.assemblageService().getVersionTypeForAssemblage(descriptorAssemblageNid),
+                        this.exportDirectory, this.preExportUtility, this.isDescriptorAssemblagePresent, noTreeTaxonomy, this.rf2ExportHelper);
+
+            }
 
             for (RF2Configuration rf2Configuration : this.exportConfigurations) {
 
-                switch (rf2Configuration.getRf2ConfigType()){
+                switch (rf2Configuration.getRf2FileType()){
                     case CONCEPT:
+
                         Get.executor().submit(
                                 new RF2ConceptExporter(rf2Configuration, rf2ExportHelper, rf2Configuration.getIntStream(), readSemaphore));
                         break;
                     case DESCRIPTION:
+
                         Get.executor().submit(
                                 new RF2DescriptionExporter(rf2Configuration, rf2ExportHelper, rf2Configuration.getIntStream(), readSemaphore));
                         break;
                     case RELATIONSHIP:
                     case STATED_RELATIONSHIP:
+
                         Get.executor().submit(
                                 new RF2RelationshipExporter(rf2Configuration, rf2ExportHelper, rf2Configuration.getIntStream(), readSemaphore));
                         break;
                     case IDENTIFIER:
+
                         Get.executor().submit(
                                 new RF2IdentifierExporter(rf2Configuration, rf2ExportHelper, rf2Configuration.getIntStream(), readSemaphore));
                         break;
-                    case TRANSITIVE_CLOSURE:
-                        Get.executor().submit(
-                                new RF2TransitiveClosureExporter(rf2Configuration, rf2ExportHelper, rf2Configuration.getIntStream(), readSemaphore));
-                        break;
-                    case VERSIONED_TRANSITIVE_CLOSURE:
-                        Get.executor().submit(
-                                new RF2VersionedTransitiveClosureExporter(rf2Configuration, rf2ExportHelper, rf2Configuration.getIntStream(), readSemaphore));
-                        break;
                     case LANGUAGE_REFSET:
+
                         Get.executor().submit(
                                 new RF2LanguageRefsetExporter(rf2Configuration, rf2ExportHelper, rf2Configuration.getIntStream(), readSemaphore));
                         break;
                     case REFSET:
+
                         Get.executor().submit(
                                 new RF2RefsetExporter(rf2Configuration, rf2ExportHelper, rf2Configuration.getIntStream(), readSemaphore));
                         break;
+                }
+                if(isDescriptorAssemblagePresent && rf2Configuration.getRefsetDescriptorDefinitions().size() > 0) {
+                    fullDescriptorAssemblageConfiguration.getRefsetDescriptorDefinitions().addAll(rf2Configuration.getRefsetDescriptorDefinitions());
+                    snapshotDescriptorAssemblageConfiguration.getRefsetDescriptorDefinitions().addAll(rf2Configuration.getRefsetDescriptorDefinitions());
+
                 }
 
                 completedUnitOfWork();
             }
 
+            if(isDescriptorAssemblagePresent) {
+                Get.executor().submit(
+                        new RF2RefsetExporter(fullDescriptorAssemblageConfiguration, rf2ExportHelper,
+                                fullDescriptorAssemblageConfiguration.getIntStream(), readSemaphore));
+                Get.executor().submit(
+                        new RF2RefsetExporter(snapshotDescriptorAssemblageConfiguration, rf2ExportHelper,
+                                fullDescriptorAssemblageConfiguration.getIntStream(), readSemaphore));
+            }
+
+            completedUnitOfWork();
+
+            readSemaphore.acquireUninterruptibly(READ_PERMITS);
+            readSemaphore.release(READ_PERMITS);
+
+            Get.executor().submit(new ZipExportDirectory(Paths.get(this.exportConfigurations.get(0).getZipDirectory()), this.readSemaphore, READ_PERMITS, this.exportConfigurations.size()));
+            completedUnitOfWork();
+
             readSemaphore.acquireUninterruptibly(READ_PERMITS);
 
         }finally {
-            readSemaphore.release(READ_PERMITS);
             Get.activeTasks().remove(this);
+            readSemaphore.release(READ_PERMITS);
+
         }
 
         return null;

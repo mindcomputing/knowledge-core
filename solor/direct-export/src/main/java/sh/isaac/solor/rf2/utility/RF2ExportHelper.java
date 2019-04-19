@@ -6,20 +6,25 @@ package sh.isaac.solor.rf2.utility;
  * aks8m - 9/6/18
  */
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import sh.isaac.MetaData;
 import sh.isaac.api.Get;
 import sh.isaac.api.bootstrap.TermAux;
 import sh.isaac.api.chronicle.LatestVersion;
+import sh.isaac.api.chronicle.Version;
+import sh.isaac.api.chronicle.VersionType;
 import sh.isaac.api.collections.NidSet;
-import sh.isaac.api.component.concept.ConceptChronology;
+import sh.isaac.api.component.concept.ConceptVersion;
+import sh.isaac.api.component.semantic.version.ComponentNidVersion;
+import sh.isaac.api.component.semantic.version.DescriptionVersion;
+import sh.isaac.api.component.semantic.version.StringVersion;
 import sh.isaac.api.coordinate.PremiseType;
-import sh.isaac.api.externalizable.IsaacObjectType;
+import sh.isaac.api.coordinate.StampCoordinate;
 import sh.isaac.api.logic.LogicalExpression;
 import sh.isaac.api.logic.NodeSemantic;
-import sh.isaac.api.observable.ObservableSnapshotService;
+import sh.isaac.api.observable.concept.ObservableConceptVersion;
 import sh.isaac.api.observable.semantic.version.ObservableDescriptionVersion;
-import sh.isaac.api.observable.semantic.version.ObservableStringVersion;
-import sh.isaac.api.util.UuidT3Generator;
 import sh.isaac.api.util.UuidT5Generator;
 import sh.komet.gui.manifold.Manifold;
 
@@ -29,182 +34,198 @@ import java.util.Optional;
 
 public class RF2ExportHelper {
 
+    protected static final Logger LOG = LogManager.getLogger();
     private Manifold manifold;
-    private ObservableSnapshotService snapshotService;
+    private static StampCoordinate stampCoordinate;
+
+    private final static int[] identifierNidPriority = new int[]{ //order of priority
+            TermAux.SNOMED_IDENTIFIER.getNid(),
+            MetaData.LOINC_ID_ASSEMBLAGE____SOLOR.getNid(),
+            MetaData.RXNORM_CUI____SOLOR.getNid()
+    };
 
     public RF2ExportHelper(Manifold manifold) {
         this.manifold = manifold;
-        snapshotService = Get.observableSnapshotService(manifold);
+        stampCoordinate = this.manifold.getStampCoordinate().getStampCoordinate();
     }
 
-    public ObservableSnapshotService getSnapshotService() {
-        return snapshotService;
-    }
+    public Version getChronologySnapshotVersion(int nid){
 
-    public StringBuilder getRF2CommonElements(int nid){
+        LatestVersion<Version> latestVersion;
 
-        int stampNid = 0;
-        IsaacObjectType chronologyType = IsaacObjectType.UNKNOWN;
         switch (Get.identifierService().getObjectTypeForComponent(nid)){
             case CONCEPT:
-                stampNid = snapshotService.getObservableConceptVersion(nid).getStamps().findFirst().getAsInt();
-                chronologyType = IsaacObjectType.CONCEPT;
+
+                latestVersion = Get.concept(nid).getLatestVersion(stampCoordinate);
+                if(latestVersion != null && latestVersion.isPresent()){
+                    return latestVersion.get();
+                }else {
+                    LOG.warn("Can't find latest version for concept chronology " + nid + "\t" + Get.concept(nid).getFullyQualifiedName());
+                }
+
                 break;
             case SEMANTIC:
-                stampNid = snapshotService.getObservableSemanticVersion(nid).getStamps().findFirst().getAsInt();
-                chronologyType = IsaacObjectType.SEMANTIC;
+
+                latestVersion = Get.assemblageService().getSemanticChronology(nid).getLatestVersion(stampCoordinate);
+                if(latestVersion != null &&  latestVersion.isPresent()){
+                    return latestVersion.get();
+                }else {
+                    LOG.warn("Can't find latest version for semantic chronology " + nid + "\t" + Get.assemblageService().getSemanticChronology(nid).toUserString());
+                }
                 break;
         }
 
-        return new StringBuilder()
-                .append(getIdString(nid, chronologyType) + "\t")                //id
-                .append(getTimeString(stampNid) + "\t")         //time
-                .append(getActiveString(stampNid) + "\t")       //active
-                .append(getModuleString(stampNid) + "\t");      //moduleId
+        return null;
     }
 
     public String getIdString(int nid){
-
-        IsaacObjectType chronologyType = IsaacObjectType.UNKNOWN;
-
-        switch (Get.identifierService().getObjectTypeForComponent(nid)){
-            case CONCEPT:
-                chronologyType = IsaacObjectType.CONCEPT;
-                break;
-            case SEMANTIC:
-                chronologyType = IsaacObjectType.SEMANTIC;
-                break;
-        }
-
-        return getIdString(nid, chronologyType);
+        return getIdString(getChronologySnapshotVersion(nid));
     }
 
-    private String getIdString(int nid, IsaacObjectType chronologyType){
+    public String getIdString(Version version){
 
-        NidSet nidSet;
-        int[] identifierAssemblagesNids = new int[]{
-                TermAux.SNOMED_IDENTIFIER.getNid(),
-                MetaData.LOINC_ID_ASSEMBLAGE____SOLOR.getNid(),
-                MetaData.RXNORM_CUI____SOLOR.getNid()
-        };
+        for(int identifierAssemblageNid : identifierNidPriority){
 
-        for(int assemblageNid : identifierAssemblagesNids){
-            nidSet = lookupNidSetForAssemblage(nid, assemblageNid);
+            NidSet identifierNidsSet = Get.assemblageService()
+                    .getSemanticNidsForComponentFromAssemblage(version.getNid(), identifierAssemblageNid);
 
-            if(nidSet.size() > 0){
-                String id = lookUpIdentifierFromSemantic(nidSet.findFirst().getAsInt());
+            if(!identifierNidsSet.isEmpty() && identifierNidsSet.findFirst().isPresent()){
 
-                if(assemblageNid == TermAux.SNOMED_IDENTIFIER.getNid()){
-                    return id;
-                } else if (assemblageNid == MetaData.LOINC_ID_ASSEMBLAGE____SOLOR.getNid()){
-                    return UuidT5Generator.makeSolorIdFromLoincId(id);
-                } else if (assemblageNid == MetaData.RXNORM_CUI____SOLOR.getNid()){
-                    return UuidT5Generator.makeSolorIdFromRxNormId(id);
+                StringVersion identifierString = (StringVersion) Get.assemblageService()
+                        .getSemanticChronology(identifierNidsSet.findFirst().getAsInt()).getVersionList().get(0);
+
+                if(identifierAssemblageNid == TermAux.SNOMED_IDENTIFIER.getNid()){
+
+                    return identifierString.getString();
+                }else if(identifierAssemblageNid == MetaData.LOINC_ID_ASSEMBLAGE____SOLOR.getNid()){
+
+                    return UuidT5Generator.makeSolorIdFromLoincId(identifierString.getString());
+                }else if(identifierAssemblageNid == MetaData.RXNORM_CUI____SOLOR.getNid()){
+
+                    return UuidT5Generator.makeSolorIdFromRxNormId(identifierString.getString());
+                }
+
+                if(identifierNidsSet.size() > 1 || Get.assemblageService()
+                        .getSemanticChronology(identifierNidsSet.findFirst().getAsInt()).getVersionList().size() > 1){
+                    LOG.warn("Multiple Identifiers from the same Assemblage for Chronology: " + version.getNid());
                 }
             }
-
         }
 
-        switch (chronologyType){
-            case CONCEPT:
-                return UuidT5Generator.makeSolorIdFromUuid(Get.concept(nid).getPrimordialUuid());
-            case SEMANTIC:
-                return UuidT5Generator.makeSolorIdFromUuid(Get.assemblageService().getSemanticChronology(nid).getPrimordialUuid());
-        }
-
-        return "00000000000";
+        return UuidT5Generator.makeSolorIdFromUuid(version.getPrimordialUuid());
     }
 
-
-    public String getTimeString(int stampNid){
-        return new SimpleDateFormat("YYYYMMdd").format(new Date(Get.stampService().getTimeForStamp(stampNid)));
+    public String getTimeString(int nid){
+        return getTimeString(getChronologySnapshotVersion(nid));
     }
 
-    public String getActiveString(int stampNid){
-        return Get.stampService().getStatusForStamp(stampNid).isActive() ? "1" : "0";
+    public String getTimeString(Version version){
+        return new SimpleDateFormat("YYYYMMdd").format(new Date(version.getTime()));
     }
 
-    public String getModuleString(int stampNid){
-        return getIdString(Get.concept(Get.stampService().getModuleNidForStamp(stampNid)).getNid());
+    public String getActiveString(int nid){
+        return getActiveString(getChronologySnapshotVersion(nid));
     }
 
-    private NidSet lookupNidSetForAssemblage(int conceptNid, int assemblageNid){
-        return Get.assemblageService().getSemanticNidsForComponentFromAssemblage(conceptNid, assemblageNid);
+    public String getActiveString(Version version){
+        return version.getStatus().getBoolean() ? "1" : "0";
     }
 
-    private String lookUpIdentifierFromSemantic(int semanticIdentifierNid){
-
-        LatestVersion<ObservableStringVersion> stringVersion =
-                (LatestVersion<ObservableStringVersion>) this.snapshotService.getObservableSemanticVersion(semanticIdentifierNid);
-
-        return stringVersion.isPresent() ? stringVersion.get().getString() : "";
+    public String getConceptPrimitiveOrSufficientDefinedSCTID(int nid){
+        return getConceptPrimitiveOrSufficientDefinedSCTID((ObservableConceptVersion) getChronologySnapshotVersion(nid));
     }
 
-    public String getConceptPrimitiveOrSufficientDefinedSCTID(int conceptNid) {
-        //primitive vs sufficiently
-        //If the stated definition contains a sufficient set, it is sufficiently defined, if not it is primitive.
-        Optional<LogicalExpression> conceptExpression = this.manifold.getLogicalExpression(conceptNid, PremiseType.STATED);
+    public String getConceptPrimitiveOrSufficientDefinedSCTID(ConceptVersion conceptVersion) {
+
+        Optional<LogicalExpression> conceptExpression = this.manifold.getLogicalExpression(conceptVersion.getNid(), PremiseType.STATED);
 
         if (!conceptExpression.isPresent()) {
             return "900000000000074008"; //This seems to happen e.g. SOLOR Concept & SOLOR Concept (SOLOR)
-        }else{
-            if(conceptExpression.get().contains(NodeSemantic.SUFFICIENT_SET)){
+        } else {
+            if (conceptExpression.get().contains(NodeSemantic.SUFFICIENT_SET)) {
                 return "900000000000073002"; //sufficiently defined SCTID
-            }else{
+            } else {
                 return "900000000000074008"; //primitive SCTID
             }
         }
     }
 
     public String getTypeId(int nid){
-        //Definition (core metadata concept)			-	900000000000550004
-        //Fully specified name (core metadata concept)	-	900000000000003001
-        //Synonym (core metadata concept) 				-	900000000000013009
+        return getTypeId((ObservableDescriptionVersion) getChronologySnapshotVersion(nid));
+    }
 
-        final int typeNid = ((LatestVersion<ObservableDescriptionVersion>)
-                this.getSnapshotService().getObservableSemanticVersion(nid)).get().getDescriptionTypeConceptNid();
+    public String getTypeId(DescriptionVersion descriptionVersion){
 
-        if(typeNid == TermAux.DEFINITION_DESCRIPTION_TYPE.getNid())
+
+        int typeNid = descriptionVersion.getDescriptionTypeConceptNid();
+
+        if (typeNid == TermAux.DEFINITION_DESCRIPTION_TYPE.getNid())
             return "900000000000550004";
-        else if(typeNid == TermAux.FULLY_QUALIFIED_NAME_DESCRIPTION_TYPE.getNid())
+        else if (typeNid == TermAux.FULLY_QUALIFIED_NAME_DESCRIPTION_TYPE.getNid())
             return "900000000000003001";
-        else if(typeNid == TermAux.REGULAR_NAME_DESCRIPTION_TYPE.getNid())
+        else if (typeNid == TermAux.REGULAR_NAME_DESCRIPTION_TYPE.getNid())
             return "900000000000013009";
 
-        return "¯\\_(ツ)_/¯";
+        return "Issue::getTypeId(DescriptionVersion descriptionVersion)";
     }
 
     public String getTerm(int nid){
-        return ((LatestVersion<ObservableDescriptionVersion>) this.getSnapshotService().getObservableSemanticVersion(nid)).get().getText();
+        return getTerm((ObservableDescriptionVersion) getChronologySnapshotVersion(nid));
+    }
+
+    public String getTerm(DescriptionVersion descriptionVersion){
+        return descriptionVersion.getText();
     }
 
     public String getCaseSignificanceId(int nid){
-        //Entire term case insensitive (core metadata concept)				-	900000000000448009
-        //Entire term case sensitive (core metadata concept)				-	900000000000017005
-        //Only initial character case insensitive (core metadata concept)	-	900000000000020002
+        return getCaseSignificanceId((ObservableDescriptionVersion) getChronologySnapshotVersion(nid));
+    }
 
-        final int caseSigNid = ((LatestVersion<ObservableDescriptionVersion>)
-                this.getSnapshotService().getObservableSemanticVersion(nid)).get().getCaseSignificanceConceptNid();
+    public String getCaseSignificanceId(DescriptionVersion descriptionVersion){
 
+        int caseSigNid = descriptionVersion.getCaseSignificanceConceptNid();
 
-        if( caseSigNid == TermAux.DESCRIPTION_NOT_CASE_SENSITIVE.getNid())
+        if (caseSigNid == TermAux.DESCRIPTION_NOT_CASE_SENSITIVE.getNid())
             return "900000000000448009";
-        else if(caseSigNid == TermAux.DESCRIPTION_CASE_SENSITIVE.getNid())
+        else if (caseSigNid == TermAux.DESCRIPTION_CASE_SENSITIVE.getNid())
             return "900000000000017005";
-        else if(caseSigNid == TermAux.DESCRIPTION_INITIAL_CHARACTER_SENSITIVE.getNid())
+        else if (caseSigNid == TermAux.DESCRIPTION_INITIAL_CHARACTER_SENSITIVE.getNid())
             return "900000000000020002";
 
-        return "¯\\_(ツ)_/¯";
+        return "Issue::getCaseSignificanceId(DescriptionVersion descriptionVersion)";
     }
 
     public String getLanguageCode(int nid){
+        return getLanguageCode(getChronologySnapshotVersion(nid));
+    }
 
-        int languageNID = Get.assemblageService().getSemanticChronology(nid).getAssemblageNid();
+    public String getLanguageCode(Version version){
+
+        int languageNID = version.getAssemblageNid();
 
         if(languageNID == TermAux.ENGLISH_LANGUAGE.getNid())
             return "en";
-        else
-            return "¯\\_(ツ)_/¯";
 
+        return "Issue::getLanguageCode(Version version)";
+    }
+
+    public int getModuleNid(int nid){
+        return Get.concept(nid).getLatestVersion(this.manifold).get().getModuleNid();
+    }
+
+    public String getSemanticStringValue(int nid){
+        return ((StringVersion) getChronologySnapshotVersion(nid)).getString();
+    }
+
+    public int getSemanticNidValue(int nid){
+        return ((ComponentNidVersion) getChronologySnapshotVersion(nid)).getNid();
+    }
+
+    public VersionType getSemanticSnapshotVersionType(int nid){
+        return getChronologySnapshotVersion(nid).getSemanticType();
+    }
+
+    public Manifold getManifold() {
+        return manifold;
     }
 }

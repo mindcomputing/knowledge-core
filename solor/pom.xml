@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>sh.isaac</groupId>
 		<artifactId>uts-core</artifactId>
-		<version>uts-5.21</version>
+		<version>uts-5.22</version>
 	</parent>
 	<groupId>sh.isaac.uts-core</groupId>
 	<artifactId>solor</artifactId>
@@ -17,5 +17,6 @@
 		<module>solor-mojo</module>
 		<module>direct-import</module>
 		<module>direct-export</module>
+		<module>custom-import</module>
 	</modules>
 </project>

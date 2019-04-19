@@ -1,10 +1,8 @@
 package sh.isaac.solor.rf2.exporters.refsets;
 
 import sh.isaac.api.Get;
-import sh.isaac.api.chronicle.LatestVersion;
 import sh.isaac.api.chronicle.VersionType;
-import sh.isaac.api.component.semantic.SemanticChronology;
-import sh.isaac.api.observable.semantic.version.ObservableComponentNidVersion;
+import sh.isaac.api.component.semantic.version.ComponentNidVersion;
 import sh.isaac.solor.rf2.config.RF2Configuration;
 import sh.isaac.solor.rf2.exporters.RF2DefaultExporter;
 import sh.isaac.solor.rf2.utility.RF2ExportHelper;
@@ -17,9 +15,11 @@ public class RF2LanguageRefsetExporter extends RF2DefaultExporter {
     private final RF2ExportHelper rf2ExportHelper;
     private final IntStream intStream;
     private final Semaphore readSemaphore;
+    private final RF2Configuration rf2Configuration;
 
     public RF2LanguageRefsetExporter(RF2Configuration rf2Configuration, RF2ExportHelper rf2ExportHelper, IntStream intStream, Semaphore readSemaphore) {
         super(rf2Configuration);
+        this.rf2Configuration = rf2Configuration;
         this.rf2ExportHelper = rf2ExportHelper;
         this.intStream = intStream;
         this.readSemaphore = readSemaphore;
@@ -35,30 +35,52 @@ public class RF2LanguageRefsetExporter extends RF2DefaultExporter {
 
             this.intStream
                     .forEach(nid -> {
-                        final StringBuilder stringBuilder = new StringBuilder();
 
-                        for(SemanticChronology dialect : Get.assemblageService().getSemanticChronology(nid).getSemanticChronologyList()) {
+                        super.clearLineOutput();
+                        super.incrementProgressCount();
 
-                            if(dialect.getVersionType() == VersionType.COMPONENT_NID) {//Assuming a dialect semantic
-                                ObservableComponentNidVersion descriptionDialect =
-                                        ((LatestVersion<ObservableComponentNidVersion>)
-                                                rf2ExportHelper.getSnapshotService().getObservableSemanticVersion(dialect.getNid()))
-                                                .get();
-                                int stampNid = rf2ExportHelper.getSnapshotService()
-                                        .getObservableSemanticVersion(dialect.getNid()).getStamps().findFirst().getAsInt();
+                        switch (this.rf2Configuration.getRf2ReleaseType()){
 
-                                stringBuilder.append(descriptionDialect.getPrimordialUuid().toString() + "\t")
-                                        .append(rf2ExportHelper.getTimeString(stampNid) + "\t")
-                                        .append(rf2ExportHelper.getActiveString(stampNid) + "\t")
-                                        .append(rf2ExportHelper.getModuleString(stampNid) + "\t")
-                                        .append(rf2ExportHelper.getIdString(descriptionDialect.getAssemblageNid()) + "\t")
-                                        .append(rf2ExportHelper.getIdString(nid) + "\t")
-                                        .append(rf2ExportHelper.getIdString(descriptionDialect.getComponentNid()))
-                                        .append("\r");
-                            }
+                            case FULL:
 
-                            super.writeToFile(stringBuilder.toString());
+                                Get.assemblageService().getSemanticChronology(nid).getSemanticChronologyList().stream()
+                                        .filter(semanticChronology -> semanticChronology.getVersionType() == VersionType.COMPONENT_NID)
+                                        .flatMap(semanticChronology -> semanticChronology.getVersionList().stream())
+                                        .forEach(version ->
+
+                                                super.outputToWrite
+                                                        .append(version.getPrimordialUuid().toString() + "\t")
+                                                        .append(this.rf2ExportHelper.getTimeString(version) + "\t")
+                                                        .append(this.rf2ExportHelper.getActiveString(version) + "\t")
+                                                        .append(this.rf2ExportHelper.getIdString(version.getModuleNid()) + "\t")
+                                                        .append(this.rf2ExportHelper.getIdString(version.getAssemblageNid()) + "\t")
+                                                        .append(this.rf2ExportHelper.getIdString(nid) + "\t")
+                                                        .append(this.rf2ExportHelper.getIdString(((ComponentNidVersion)version).getComponentNid()))
+                                                        .append("\r\n")
+                                        );
+
+                                break;
+                            case SNAPSHOT:
+
+                                Get.assemblageService().getSemanticChronology(nid).getSemanticChronologyList().stream()
+                                        .filter(semanticChronology -> semanticChronology.getVersionType() == VersionType.COMPONENT_NID)
+                                        .forEach(semanticChronology ->
+                                                super.outputToWrite
+                                                        .append(semanticChronology.getPrimordialUuid().toString() + "\t")
+                                                        .append(this.rf2ExportHelper.getTimeString(nid) + "\t")
+                                                        .append(this.rf2ExportHelper.getActiveString(nid) + "\t")
+                                                        .append(this.rf2ExportHelper.getIdString(this.rf2ExportHelper.getModuleNid(nid)) + "\t")
+                                                        .append(this.rf2ExportHelper.getIdString(Get.assemblageService().getSemanticChronology(nid).getAssemblageNid()) + "\t")
+                                                        .append(this.rf2ExportHelper.getIdString(nid) + "\t")
+                                                        .append(this.rf2ExportHelper.getIdString(this.rf2ExportHelper.getSemanticNidValue(semanticChronology.getNid())))
+                                                        .append("\r\n")
+                                        );
+
+                                break;
                         }
+
+                        super.writeToFile();
+                        super.tryAndUpdateProgressTracker();
                     });
 
         }finally {
