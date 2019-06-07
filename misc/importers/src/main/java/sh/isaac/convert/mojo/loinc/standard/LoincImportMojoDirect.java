@@ -51,6 +51,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
@@ -268,7 +269,7 @@ public class LoincImportMojoDirect extends DirectConverterBaseMojo implements Di
 			dwh = new DirectWriteHelper(TermAux.USER.getNid(), MetaData.LOINC_MODULES____SOLOR.getNid(), MetaData.DEVELOPMENT_PATH____SOLOR.getNid(),
 					converterUUID, "LOINC", false);
 
-			setupModule("LOINC", MetaData.LOINC_MODULES____SOLOR.getPrimordialUuid(), releaseDate.getTime());
+			setupModule("LOINC", MetaData.LOINC_MODULES____SOLOR.getPrimordialUuid(), Optional.of("http://loinc.org"), releaseDate.getTime());
 
 			//Set up our metadata hierarchy
 			dwh.makeMetadataHierarchy(true, true, true, true, true, true, releaseDate.getTime());
@@ -730,7 +731,7 @@ public class LoincImportMojoDirect extends DirectConverterBaseMojo implements Di
 		// From MAP_TO
 		dwh.makeAttributeTypeConcept(null, "COMMENT", "Comment", null, false, DynamicDataType.STRING, null, time);
 
-		dwh.makeAttributeTypeConcept(null, "LOINC_NUM", "LOINC Identifier", null, "Carries the LOINC_NUM native identifier", false, DynamicDataType.STRING,
+		dwh.makeAttributeTypeConcept(null, "LOINC_NUM", "LOINC Identifier", null, "Carries the LOINC_NUM native identifier", true, null,
 				null, time);
 
 		dwh.makeAttributeTypeConcept(null, "ABBREVIATION", "Abbreviation", null, false, DynamicDataType.STRING, null, time);
@@ -1056,7 +1057,7 @@ public class LoincImportMojoDirect extends DirectConverterBaseMojo implements Di
 				dwh.makeStringAnnotation(dwh.getAttributeType("PATH_TO_ROOT"), concept, pathString, time);
 			}
 
-			dwh.makeStringAnnotation(dwh.getAttributeType("LOINC_NUM"), concept, code, time);
+			dwh.makeBrittleStringAnnotation(dwh.getAttributeType("LOINC_NUM"), concept, code, time);
 			dwh.makeBrittleStringAnnotation(MetaData.CODE____SOLOR.getPrimordialUuid(), concept, code, time);
 			this.concepts.add(concept);
 		}
