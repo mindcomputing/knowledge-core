@@ -99,6 +99,8 @@ public class ArtifactImporter
 		sdoDialog.setHeaderText("Select the content to import");
 		sdoDialog.getDialogPane().setContent(sdoPicker);
 		sdoPicker.setPrefWidth(1024);
+		sdoDialog.setResizable(true);
+		
 		sdoDialog.initOwner(parentWindow);
 
 		if (sdoDialog.showAndWait().orElse(null) == ButtonType.OK)
@@ -119,7 +121,7 @@ public class ArtifactImporter
 					{
 						this.updateTitle("Importing " + sdo.toString());
 						this.updateMessage("Importing artifact");
-						
+
 						FileSystem fs = FileSystems.newFileSystem(local.get().toPath(), null);
 						Path root = null;
 						for (Path p : fs.getRootDirectories())
@@ -130,11 +132,10 @@ public class ArtifactImporter
 							}
 							root = p;
 						}
-						
+
 						dc.configure(null, root, sdo.getVersion(), Get.defaultCoordinate());
 
 						//TODO in the future, add the GUI widgets that let the users specify the options.
-						//TODO we also need to support additional required input IBDF files, and making sure other required data is loaded
 						//Use the defaults for now, just to get things working...
 						if (dc.getConverterOptions() != null)
 						{
@@ -146,7 +147,7 @@ public class ArtifactImporter
 								}
 							}
 						}
-						
+
 						dc.convertContent(string -> updateTitle(string), (work, total) -> updateProgress(work, total));
 						fs.close();
 						Get.indexDescriptionService().refreshQueryEngine();
@@ -156,6 +157,7 @@ public class ArtifactImporter
 							alert.setTitle("The import of " + sdo.getArtifactId() + " has finished");
 							alert.setHeaderText("Import complete");
 							alert.initOwner(parentWindow);
+							alert.setResizable(true);
 							alert.showAndWait();
 						});
 					}

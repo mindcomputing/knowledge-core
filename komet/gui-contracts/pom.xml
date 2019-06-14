@@ -12,7 +12,7 @@
 
 	<name>ISAAC’s KOMET: GUI contracts &amp; capabilities</name>
 	<description>
-        Contracts for ISAAC's KOMET plugins.
+		Contracts for ISAAC's KOMET plugins.
 	</description>
 	<dependencies>
 		<dependency>
@@ -79,15 +79,20 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>sh.isaac.uts-core.komet</groupId>
-			<artifactId>open-jdk-fixes</artifactId>
-			<version>${project.parent.version}</version>
-			<type>jar</type>
-		</dependency>
-		<dependency>
 			<groupId>sh.isaac.uts-core.core</groupId>
 			<artifactId>mojo</artifactId>
 			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>sh.isaac.uts-core.komet</groupId>
+			<artifactId>open-jdk-fixes</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>sh.isaac.uts-core.solor</groupId>
+			<artifactId>direct-export</artifactId>
+			<version>${project.parent.version}</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 </project>

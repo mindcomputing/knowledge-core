@@ -435,8 +435,9 @@ public abstract class ChronologyImpl
         if (this.committedVersions.isEmpty() && this.uncommittedVersions.isEmpty()) {
            throw new IllegalStateException();
         }
-        ModelGet.identifierService().setupNid(this.nid, this.assemblageNid, this.getIsaacObjectType(), this.getVersionType());
-
+        if (data.isExternalData()) {
+            ModelGet.identifierService().setupNid(this.nid, this.assemblageNid, this.getIsaacObjectType(), this.getVersionType());
+        }
     }
     
     @Override
@@ -496,26 +497,6 @@ public abstract class ChronologyImpl
     }
 
     /**
-     * Go to version start.
-     *
-     * @param data the data
-     */
-    private void goToVersionStart(ByteArrayDataBuffer data) {
-        if (data.isExternalData()) {
-            throw new UnsupportedOperationException("Can't handle external data for this method.");
-        }
-        getIsaacObjectType().readAndValidateHeader(data);
-        data.getInt();    // this.writeSequence =
-        data.getLong();   // this.primordialUuidMsb =
-        data.getLong();   // this.primordialUuidLsb =
-        skipAdditionalUuids(data);
-        data.getNid();    // this.assemblageNid =
-        data.getNid();    // this.nid =
-        data.getInt();    // this.elementSequence =
-        skipAdditionalChronicleFields(data);
-    }
-
-    /**
      * Read version list.
      *
      * @param bb the bb
@@ -547,26 +528,10 @@ public abstract class ChronologyImpl
     }
 
     /**
-     * Skip additional uuids.
-     *
-     * @param data the data
-     */
-    private void skipAdditionalUuids(ByteArrayDataBuffer data) {
-        final int additionalUuidPartsSize = data.getInt();
-
-        if (additionalUuidPartsSize > 0) {
-            for (int i = 0; i < additionalUuidPartsSize; i++) {
-                data.getLong();
-            }
-        }
-    }
-
-    /**
      * Write if not canceled.
      *
      * @param db the db
      * @param version the version
-     * @param stampSequenceForVersion the stamp sequence for version
      */
     private <V extends StampedVersion> void writeVersion(ByteArrayDataBuffer db,
             V version) {
@@ -1055,6 +1020,10 @@ public abstract class ChronologyImpl
         return (List<V>) versionList;
     }
 
+    public CopyOnWriteArrayList<Version> getCommittedVersionList() {
+        return this.committedVersions;
+    }
+
     public Map<Integer, Version> getStampVersionMap() {
         Map<Integer, Version> result = new HashMap<>();
         getVersionList().forEach((version) -> result.put(version.getStampSequence(), version));
@@ -1208,7 +1177,7 @@ public abstract class ChronologyImpl
         dataArray.add(chronicleBytes);
 
         int versionStart = versionStartPosition;
-        getInt(dataToSplit, versionStart);
+
         int versionSize = getInt(dataToSplit, versionStart);
 
         while (versionSize != 0) {

@@ -28,7 +28,7 @@
 		<dependency>
 			<groupId>sh.isaac.uts-core.core</groupId>
 			<artifactId>api</artifactId>
-			<version>${project.version}</version>
+			<version>${project.parent.version}</version>
 		</dependency>
 	</dependencies>
 </project>

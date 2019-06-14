@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>sh.isaac.uts-core</groupId>
@@ -16,6 +17,22 @@
 	</description>
 	<dependencies>
 		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-controls</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-media</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-graphics</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-fxml</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.controlsfx</groupId>
 			<artifactId>controlsfx</artifactId>
 		</dependency>
@@ -25,43 +42,93 @@
 		</dependency>
 		<dependency>
 			<groupId>de.jensd</groupId>
-			<artifactId>fontawesomefx-commons</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>de.jensd</groupId>
 			<artifactId>fontawesomefx-controls</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>de.jensd</groupId>
+					<artifactId>fontawesomefx-commons</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>de.jensd</groupId>
 			<artifactId>fontawesomefx-emojione</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>de.jensd</groupId>
+					<artifactId>fontawesomefx-commons</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>de.jensd</groupId>
 			<artifactId>fontawesomefx-fontawesome</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>de.jensd</groupId>
+					<artifactId>fontawesomefx-commons</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>de.jensd</groupId>
 			<artifactId>fontawesomefx-icons525</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>de.jensd</groupId>
+					<artifactId>fontawesomefx-commons</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>de.jensd</groupId>
 			<artifactId>fontawesomefx-materialdesignfont</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>de.jensd</groupId>
+					<artifactId>fontawesomefx-commons</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>de.jensd</groupId>
 			<artifactId>fontawesomefx-materialicons</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>de.jensd</groupId>
+					<artifactId>fontawesomefx-commons</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>de.jensd</groupId>
 			<artifactId>fontawesomefx-materialstackicons</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>de.jensd</groupId>
+					<artifactId>fontawesomefx-commons</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>de.jensd</groupId>
 			<artifactId>fontawesomefx-octicons</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>de.jensd</groupId>
+					<artifactId>fontawesomefx-commons</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>de.jensd</groupId>
 			<artifactId>fontawesomefx-weathericons</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>de.jensd</groupId>
+					<artifactId>fontawesomefx-commons</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 </project>

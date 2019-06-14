@@ -52,8 +52,11 @@ import java.lang.ref.WeakReference;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -62,6 +65,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.Semaphore;
@@ -111,8 +115,10 @@ import sh.isaac.api.externalizable.StampAlias;
 import sh.isaac.api.externalizable.StampComment;
 import sh.isaac.api.index.IndexBuilderService;
 import sh.isaac.api.observable.ObservableVersion;
+import sh.isaac.api.task.LabelTaskWithIndeterminateProgress;
 import sh.isaac.api.task.SequentialAggregateTask;
 import sh.isaac.api.util.DataToBytesUtils;
+import sh.isaac.model.ChronologyImpl;
 import sh.isaac.model.VersionImpl;
 import sh.isaac.model.concept.ConceptChronologyImpl;
 import sh.isaac.model.observable.ObservableChronologyImpl;
@@ -530,7 +536,7 @@ public class CommitProvider
                 final StampAlias stampAlias = (StampAlias) isaacExternalizable;
 
                 this.stampAliasMap.addAlias(stampAlias.getStampSequence(), stampAlias.getStampAlias());
-                //TODO [DAN 3] with Stamp Alias, I'm not sure on the implcations this may have for the index.  There 
+                //TODO [DAN 3] with Stamp Alias, I'm not sure on the implications this may have for the index.  There
                 //may be a required index update, with a stamp alias....
                 break;
 
@@ -546,6 +552,84 @@ public class CommitProvider
         }
     }
 
+    @Override
+    public void importIfContentChanged(IsaacExternalizable isaacExternalizable) {
+        switch (isaacExternalizable.getIsaacObjectType()) {
+            case CONCEPT: {
+                final ConceptChronologyImpl conceptChronology = (ConceptChronologyImpl) isaacExternalizable;
+                if (conceptChronology.removeUncommittedVersions()) {
+                    LOG.warn("Removed uncommitted versions on import from: " + conceptChronology);
+                }
+                final Optional<? extends ConceptChronology> optionalExistingChronology = Get.conceptService().getOptionalConcept(conceptChronology.getNid());
+                if (optionalExistingChronology.isEmpty()) {
+                    Get.conceptService()
+                            .writeConcept(conceptChronology);
+                } else {
+                    removeDuplicates(optionalExistingChronology, conceptChronology);
+                    if (!conceptChronology.getVersionList().isEmpty()) {
+                        Get.conceptService()
+                                .writeConcept(conceptChronology);
+                    }
+
+
+                }
+            }
+                break;
+
+            case SEMANTIC:
+                final SemanticChronologyImpl semanticChronology = (SemanticChronologyImpl) isaacExternalizable;
+                if (semanticChronology.removeUncommittedVersions()) {
+                    LOG.warn("Removed uncommitted versions on import from: " + semanticChronology);
+                }
+                final Optional<? extends SemanticChronology> optionalExistingSemantic = Get.assemblageService().getOptionalSemanticChronology(semanticChronology.getNid());
+                if (optionalExistingSemantic.isEmpty()) {
+                    Get.assemblageService()
+                            .writeSemanticChronology(semanticChronology);
+                } else {
+                    removeDuplicates(optionalExistingSemantic, semanticChronology);
+                    if (!semanticChronology.getVersionList().isEmpty()) {
+                        Get.assemblageService()
+                                .writeSemanticChronology(semanticChronology);
+                    }
+                }
+
+                deferNidAction(semanticChronology.getNid());
+                break;
+
+            case STAMP_ALIAS:
+                final StampAlias stampAlias = (StampAlias) isaacExternalizable;
+
+                this.stampAliasMap.addAlias(stampAlias.getStampSequence(), stampAlias.getStampAlias());
+                //TODO [DAN 3] with Stamp Alias, I'm not sure on the implications this may have for the index.  There
+                //may be a required index update, with a stamp alias....
+                break;
+
+            case STAMP_COMMENT:
+                final StampComment stampComment = (StampComment) isaacExternalizable;
+
+                this.stampCommentMap.addComment(stampComment.getStampSequence(), stampComment.getComment());
+                break;
+
+            default:
+                throw new UnsupportedOperationException("ap Can't handle: " + isaacExternalizable.getClass().getName()
+                        + ": " + isaacExternalizable);
+        }
+
+    }
+    private void removeDuplicates(Optional<? extends Chronology> optionalExistingChronology, ChronologyImpl newChronology) {
+        HashSet<String> existingSamps = new HashSet<>();
+        for (Version v : optionalExistingChronology.get().getVersionList()) {
+            existingSamps.add(v.getSampKey());
+        }
+        CopyOnWriteArrayList<Version> versions = newChronology.getCommittedVersionList();
+        Iterator<Version> versionIterator = versions.iterator();
+        while (versionIterator.hasNext()) {
+            Version v = versionIterator.next();
+            if (existingSamps.contains(v.getSampKey())) {
+                versions.remove(v);
+            }
+        }
+   }
     /**
      * Increment and get nid.
      *
@@ -571,10 +655,11 @@ public class CommitProvider
             LOG.info("Post processing import. Deferred set size: " + nids.size());
 
 
-            // update the taxonomy first, incase the description indexer wants to know the taxonomy of a description. 
+            // update the taxonomy first, in case the description indexer wants to know the taxonomy of a description.
             for (final int nid : nids) {
-                if (IsaacObjectType.SEMANTIC == Get.identifierService()
-                        .getObjectTypeForComponent(nid)) {
+                IsaacObjectType objectType = Get.identifierService()
+                        .getObjectTypeForComponent(nid);
+                if (IsaacObjectType.SEMANTIC == objectType) {
                     final SemanticChronology sc = Get.assemblageService()
                             .getSemanticChronology(nid);
 
@@ -587,47 +672,55 @@ public class CommitProvider
                         }
                     }
                 } else {
-                    throw new UnsupportedOperationException("Unexpected nid in deferred set: " + nid);
+                    Get.identifierService()
+                            .getObjectTypeForComponent(nid);
+                    LOG.error("Unexpected nid of type: " + objectType +
+                            " in deferred set: " + nid + " UUIDs: " + Arrays.toString(Get.identifierService().getUuidArrayForNid(nid)));
                 }
             }
-            
-            ArrayList<Future<Long>> futures = new ArrayList<>();
-            List<IndexBuilderService> indexers = Get.services(IndexBuilderService.class);
-            for (final int nid : nids) {
-                if (IsaacObjectType.SEMANTIC == Get.identifierService()
-                        .getObjectTypeForComponent(nid)) {
-                    final SemanticChronology sc = Get.assemblageService()
-                            .getSemanticChronology(nid);
+            if (Get.configurationService().getGlobalDatastoreConfiguration().enableLuceneIndexes()) {
+                ArrayList<Future<Long>> futures = new ArrayList<>();
+                List<IndexBuilderService> indexers = Get.services(IndexBuilderService.class);
+                for (final int nid : nids) {
+                    IsaacObjectType objectType = Get.identifierService()
+                            .getObjectTypeForComponent(nid);
+                    if (IsaacObjectType.SEMANTIC == objectType) {
+                        final SemanticChronology sc = Get.assemblageService()
+                                .getSemanticChronology(nid);
 
-                    for (IndexBuilderService ibs : indexers) {
-                        futures.add(ibs.index(sc));
+                        for (IndexBuilderService ibs : indexers) {
+                            futures.add(ibs.index(sc));
+                        }
+
+                    } else {
+                        Get.identifierService()
+                                .getObjectTypeForComponent(nid);
+                        LOG.error("Unexpected nid of type: " + objectType +
+                                " in deferred set: " + nid + " UUIDs: " + Arrays.toString(Get.identifierService().getUuidArrayForNid(nid)));
                     }
-
-                } else {
-                    throw new UnsupportedOperationException("Unexpected nid in deferred set: " + nid);
                 }
-            }
-            // wait for all indexing operations to complete
-            for (Future<Long> f : futures) {
-                try {
-                    f.get();
-                } catch (InterruptedException | ExecutionException e) {
-                    LOG.error("Unexpected error waiting for index update", e);
-                    exceptions.add(e);
+                // wait for all indexing operations to complete
+                for (Future<Long> f : futures) {
+                    try {
+                        f.get();
+                    } catch (InterruptedException | ExecutionException e) {
+                        LOG.error("Unexpected error waiting for index update", e);
+                        exceptions.add(e);
+                    }
                 }
-            }
 
-            for (IndexBuilderService ibs : indexers) {
-                try {
-                    ibs.sync().get();
-                } catch (Exception e) {
-                    LOG.error("Error rebuilding indexes!", e);
-                    exceptions.add(e);
+                for (IndexBuilderService ibs : indexers) {
+                    try {
+                        ibs.sync().get();
+                    } catch (Exception e) {
+                        LOG.error("Error rebuilding indexes!", e);
+                        exceptions.add(e);
+                    }
                 }
             }
             LOG.info("Post processing import complete");
         }
-       if (exceptions.size() > 0) {
+        if (exceptions.size() > 0) {
             LOG.error("Encountered {} errors during postProcessImportNoChecks", exceptions.size());
             throw new RuntimeException("Errors during import!", exceptions.get(0));
         }
@@ -754,9 +847,7 @@ public class CommitProvider
      * Check and write.
      *
      * @param cc the cc
-     * @param alertCollection the alert collection
      * @param writeSemaphore the write semaphore
-     * @param changeListeners the change listeners
      * @return the task
      */
     private CheckAndWriteTask checkAndWrite(ConceptChronology cc,
@@ -877,6 +968,8 @@ public class CommitProvider
      */
     @PostConstruct
     private void startMe() {
+        LabelTaskWithIndeterminateProgress progressTask = new LabelTaskWithIndeterminateProgress("Starting chronology provider");
+        Get.executor().execute(progressTask);
         try {
             LOG.info("Starting CommitProvider post-construct for change to runlevel: " + LookupService.getProceedingToRunLevel());
 
@@ -1046,6 +1139,8 @@ public class CommitProvider
                     .notifyServiceConfigurationFailure("Commit Provider", e);
             LOG.error("CommitProvider Startup Failure!", e);
             throw new RuntimeException(e);
+        } finally {
+            progressTask.finished();
         }
     }
 

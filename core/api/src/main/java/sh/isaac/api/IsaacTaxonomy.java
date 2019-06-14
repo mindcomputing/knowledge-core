@@ -356,7 +356,7 @@ public class IsaacTaxonomy {
       out.append("import java.util.UUID;\n");
       
       out.append("\n//Generated " + new Date().toString() + "\n");
-      out.append("//Pom Version " + VersionFinder.findProjectVersion(true) + "\n");
+      out.append("//Pom Version " + VersionFinder.findProjectVersion() + "\n");
       
 
       out.append("\n\npublic class " + className + " {\n");
@@ -422,7 +422,7 @@ public class IsaacTaxonomy {
            throws IOException {
       out.append("#YAML Bindings for " + packageName + "." + className + "\n");
       out.append("#Generated " + new Date().toString() + "\n");
-      out.append("#Pom Version " + VersionFinder.findProjectVersion(true) + "\n");
+      out.append("#Pom Version " + VersionFinder.findProjectVersion() + "\n");
       out.append("\nAUXILIARY_METADATA_VERSION: " + auxiliaryMetadataVersion + "\n");
       
       HashSet<String> genConstants = new HashSet<>();
@@ -438,7 +438,7 @@ public class IsaacTaxonomy {
              conceptName = SemanticTags.stripSemanticTagIfPresent(concept.getFullyQualifiedName());
          }
          String constantName = SemanticTags.stripSemanticTagIfPresent(concept.getFullyQualifiedName()).toUpperCase();
-         
+
          if (constantName.indexOf("(") > 0 || constantName.indexOf(")") > 0) {
              throw new RuntimeException("The metadata concept '" + constantName + "' contains parens, which is illegal.");
          }

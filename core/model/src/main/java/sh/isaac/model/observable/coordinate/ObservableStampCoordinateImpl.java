@@ -87,8 +87,11 @@ public class ObservableStampCoordinateImpl
    /** The stamp position property. */
    ObjectProperty<ObservableStampPosition> stampPositionProperty;
 
-   /** The module nids property. */
+   /** The module specifications property. */
    SimpleSetProperty<ConceptSpecification> moduleSpecificationsProperty;
+
+   /** The author specifications property. */
+   SimpleSetProperty<ConceptSpecification> authorSpecificationsProperty;
 
    /** The allowed states. */
    SetProperty<Status> allowedStates;
@@ -170,18 +173,6 @@ public class ObservableStampCoordinateImpl
    @Override
    public ObservableStampCoordinate makeModuleAnalog(Collection<ConceptSpecification> modules, boolean add) {
       return new ObservableStampCoordinateImpl(this.stampCoordinate.makeModuleAnalog(modules, add));
-   }
-
-   
-   @Override
-   public SetProperty<ConceptSpecification> moduleSpecificationsProperty() {
-       if (this.moduleSpecificationsProperty == null) {
-           this.moduleSpecificationsProperty = new SimpleSetProperty(this,
-           ObservableFields.MODULE_SPECIFICATION_SET_FOR_STAMP_COORDINATE.toExternalString(),
-                   FXCollections.observableSet(this.stampCoordinate.getModuleSpecifications()));
-           this.stampCoordinate.setModuleSpecifications(moduleSpecificationsProperty.get());
-       }
-       return this.moduleSpecificationsProperty;
    }
 
    /**
@@ -324,7 +315,36 @@ public class ObservableStampCoordinateImpl
         return this.stampCoordinate.getModuleSpecifications();
     }
 
+    @Override
+    public SetProperty<ConceptSpecification> moduleSpecificationsProperty() {
+        if (this.moduleSpecificationsProperty == null) {
+            this.moduleSpecificationsProperty = new SimpleSetProperty(this,
+                    ObservableFields.MODULE_SPECIFICATION_SET_FOR_STAMP_COORDINATE.toExternalString(),
+                    FXCollections.observableSet(this.stampCoordinate.getModuleSpecifications()));
+            this.stampCoordinate.setModuleSpecifications(moduleSpecificationsProperty.get());
+        }
+        return this.moduleSpecificationsProperty;
+    }
 
-    
+    @Override
+    public SetProperty<ConceptSpecification> authorSpecificationsProperty() {
+        if (this.authorSpecificationsProperty == null) {
+            this.authorSpecificationsProperty = new SimpleSetProperty(this,
+                    ObservableFields.AUTHOR_SPECIFICATION_SET_FOR_STAMP_COORDINATE.toExternalString(),
+                    FXCollections.observableSet(this.stampCoordinate.getAuthorSpecifications()));
+            this.stampCoordinate.setAuthorSpecifications(authorSpecificationsProperty.get());
+        }
+        return this.authorSpecificationsProperty;
+    }
+
+    @Override
+    public Set<ConceptSpecification> getAuthorSpecifications() {
+        return this.stampCoordinate.getAuthorSpecifications();
+    }
+
+    @Override
+    public NidSet getAuthorNids() {
+        return this.stampCoordinate.getAuthorNids();
+    }
 }
 

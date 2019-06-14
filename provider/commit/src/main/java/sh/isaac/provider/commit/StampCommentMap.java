@@ -46,6 +46,11 @@ package sh.isaac.provider.commit;
 
 //~--- JDK imports ------------------------------------------------------------
 
+import sh.isaac.api.collections.IntObjectHashMap;
+import sh.isaac.api.datastore.ExtendedStore;
+import sh.isaac.api.datastore.ExtendedStoreData;
+import sh.isaac.api.externalizable.StampComment;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
@@ -86,7 +91,7 @@ public class StampCommentMap {
    private final Lock write = this.rwl.writeLock();
 
    /** The stamp comment map for in-memory stores*/
-   private OpenIntObjectHashMap<String> stampCommentMap;
+   private IntObjectHashMap<String> stampCommentMap;
    
    /**
     * Storage for DataStore linked storage
@@ -98,7 +103,7 @@ public class StampCommentMap {
     * Construct a default stamp comment map, which holds the comments in memory, and must be read / written to the file system.
     */
    public StampCommentMap() {
-      stampCommentMap = new OpenIntObjectHashMap<>();
+      stampCommentMap = new IntObjectHashMap<>();
    }
    
    /**

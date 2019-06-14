@@ -36,6 +36,8 @@
  */
 package sh.isaac.provider.datastore.taxonomy;
 
+import sh.isaac.api.task.LabelTaskWithIndeterminateProgress;
+import sh.isaac.model.taxonomy.TaxonomyRecordPrimitive;
 import java.lang.ref.WeakReference;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -96,7 +98,6 @@ import sh.isaac.model.TaxonomyDebugService;
 import sh.isaac.model.coordinate.ManifoldCoordinateImpl;
 import sh.isaac.model.coordinate.StampCoordinateImpl;
 import sh.isaac.model.coordinate.StampPositionImpl;
-import sh.isaac.model.taxonomy.TaxonomyRecordPrimitive;
 import sh.isaac.provider.datastore.chronology.ChronologyUpdate;
 
 //~--- classes ----------------------------------------------------------------
@@ -260,6 +261,8 @@ public class TaxonomyProvider
      */
     @PostConstruct
     private void startMe() {
+        LabelTaskWithIndeterminateProgress progressTask = new LabelTaskWithIndeterminateProgress("Starting chronology provider");
+        Get.executor().execute(progressTask);
         try {
             LOG.info("Starting TaxonomyProvider post-construct");
             this.store = Get.service(DataStore.class);
@@ -279,6 +282,8 @@ public class TaxonomyProvider
             LookupService.getService(SystemStatusService.class)
                     .notifyServiceConfigurationFailure("Taxonomy Provider", e);
             throw new RuntimeException(e);
+        } finally {
+            progressTask.finished();
         }
     }
 

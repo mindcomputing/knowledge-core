@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>sh.isaac.uts-core</groupId>
@@ -39,30 +40,9 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>sh.isaac.uts-core.provider</groupId>
-			<artifactId>logic</artifactId>
-			<version>${project.parent.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
 			<groupId>sh.isaac.uts-core.solor</groupId>
 			<artifactId>direct-import</artifactId>
 			<version>${project.parent.version}</version>
-		</dependency>
- 		<dependency>
-			<groupId>sh.isaac.uts-core.provider</groupId>
-			<artifactId>datastore-locator</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>sh.isaac.uts-core.provider</groupId>
-			<artifactId>stamp</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>sh.isaac.uts-core.provider</groupId>
-			<artifactId>query</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.opencsv</groupId>
@@ -76,12 +56,10 @@
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-plugin-api</artifactId>
-			<optional>true</optional> <!-- Don't bring in sub-dependencies -->
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven.plugin-tools</groupId>
 			<artifactId>maven-plugin-annotations</artifactId>
-			<optional>true</optional> <!-- Don't bring in sub-dependencies -->
 		</dependency>
 		<dependency>
 			<groupId>org.testng</groupId>
@@ -92,6 +70,12 @@
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-core</artifactId>
 			<version>3.7.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>xml-apis</groupId>
+					<artifactId>xml-apis</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- Some of the importer mojos do some futzing with log4j inner classes, need this to compile, but those classes aren't used in normal runtime, 
@@ -158,8 +142,18 @@
 							<generateDirectory>${project.build.directory}/generated-sources/mvx</generateDirectory>
 						</configuration>
 					</execution>
-					<!--execution> <goals> <goal>generate</goal> </goals> <configuration> <generatePackage>coreschema</generatePackage> <schemaDirectory>src/main/resources/hl7v3/datatypes</schemaDirectory> 
-						<schemaIncludes> <include>hl7-r2_datatypes.xsd</include> </schemaIncludes> </configuration> </execution -->
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<generatePackage>coreschema</generatePackage>
+							<schemaDirectory>${project.basedir}/src/main/resources/hl7v3/datatypes</schemaDirectory>
+							<schemaIncludes>
+								<include>hl7-r2_datatypes.xsd</include>
+							</schemaIncludes>
+						</configuration>
+					</execution>
 					<execution>
 						<goals>
 							<goal>generate</goal>
@@ -167,7 +161,7 @@
 						<id>mif</id>
 						<configuration>
 							<generatePackage>mifschema</generatePackage>
-							<schemaDirectory>src/main/resources/hl7v3/mif</schemaDirectory>
+							<schemaDirectory>${project.basedir}/src/main/resources/hl7v3/mif</schemaDirectory>
 							<schemaIncludes>
 								<include>xhtml1-strict.xsd</include>
 								<include>mif-COMPLETE.xsd</include>

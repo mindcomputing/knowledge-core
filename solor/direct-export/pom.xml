@@ -32,17 +32,9 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>sh.isaac.uts-core.komet</groupId>
-			<artifactId>gui-contracts</artifactId>
-			<version>${project.parent.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
-		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/net.lingala.zip4j/zip4j -->
 		<dependency>
 			<groupId>net.lingala.zip4j</groupId>
 			<artifactId>zip4j</artifactId>

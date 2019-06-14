@@ -138,21 +138,20 @@ public interface TaxonomyService
     * @return the snapshot that is NOT backed by a {@link Tree}
     */
    TaxonomySnapshot getSnapshotNoTree(ManifoldCoordinate mc);
-   
 
-	/**
-	 * Calls {@link #getSnapshot(ManifoldCoordinate)} with a manifold constructed from the provided path, 
-	 * modules, and states.  Uses {@link PremiseType#STATED} and a time of MAX_VALUE.  Language is set to the 
-	 * system default.
-	 * @param pathNid
-	 * @param modules
-	 * @param allowedStates
-	 * @param computeTree true, if this should call {@link #getSnapshot(ManifoldCoordinate)}, false if it should call
-	 * {@link #getSnapshotNoTree(ManifoldCoordinate)}
-	 * @return the Snapshot service
-	 */
+    /**
+     * Calls {@link #getSnapshot(ManifoldCoordinate)} with a manifold constructed from the provided path, 
+     * modules, and states.  Uses {@link PremiseType#STATED} and a time of MAX_VALUE.  Language is set to the 
+     * system default.
+     * @param pathNid
+     * @param modules
+     * @param allowedStates
+     * @param computeTree true, if this should call {@link #getSnapshot(ManifoldCoordinate)}, false if it should call
+     * {@link #getSnapshotNoTree(ManifoldCoordinate)}
+     * @return the Snapshot service
+     */
    TaxonomySnapshot getStatedLatestSnapshot(int pathNid, Set<ConceptSpecification> modules, EnumSet<Status> allowedStates, boolean computeTree);
-
+   
    /**
     * 
     * @param conceptAssemblageNid The assemblage Nid which specifies the assemblage where the concepts in this tree

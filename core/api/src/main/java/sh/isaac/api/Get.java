@@ -44,10 +44,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Stream;
@@ -57,14 +59,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jvnet.hk2.annotations.Service;
 import com.lmax.disruptor.dsl.Disruptor;
-import java.util.Collection;
-import java.util.concurrent.CountDownLatch;
 import javafx.concurrent.Task;
-import org.apache.mahout.math.map.OpenIntObjectHashMap;
 import sh.isaac.api.alert.AlertEvent;
 import sh.isaac.api.bootstrap.TermAux;
 import sh.isaac.api.chronicle.LatestVersion;
 import sh.isaac.api.chronicle.VersionType;
+import sh.isaac.api.collections.IntObjectHashMap;
 import sh.isaac.api.collections.IntSet;
 import sh.isaac.api.commit.ChangeSetWriterService;
 import sh.isaac.api.commit.CommitService;
@@ -95,6 +95,7 @@ import sh.isaac.api.index.IndexSemanticQueryService;
 import sh.isaac.api.logic.LogicService;
 import sh.isaac.api.logic.LogicalExpressionBuilderService;
 import sh.isaac.api.metacontent.MetaContentService;
+import sh.isaac.api.observable.ObservableChronology;
 import sh.isaac.api.observable.ObservableChronologyService;
 import sh.isaac.api.observable.ObservableSnapshotService;
 import sh.isaac.api.preferences.PreferencesService;
@@ -204,8 +205,8 @@ public class Get
    
    private static PreferencesService preferencesService;
    
-   private static final OpenIntObjectHashMap<ConceptSpecification> TERM_AUX_CACHE = new OpenIntObjectHashMap<>();
-    private static CountDownLatch termAuxCacheLatch = new CountDownLatch(1);
+   private static final IntObjectHashMap<ConceptSpecification> TERM_AUX_CACHE = new IntObjectHashMap<>();
+   private static CountDownLatch termAuxCacheLatch = new CountDownLatch(1);
 
    
    //~--- constructors --------------------------------------------------------
@@ -914,6 +915,9 @@ public class Get
     */
    public static Task<Void> startIndexTask(
          @SuppressWarnings("unchecked") Class<? extends IndexBuilderService>... indexersToReindex) {
+      if (!configurationService().getGlobalDatastoreConfiguration().enableLuceneIndexes()) {
+         throw new UnsupportedOperationException();
+      }
       final GenerateIndexes indexingTask = new GenerateIndexes(indexersToReindex);
 
       LookupService.getService(WorkExecutors.class)
@@ -966,8 +970,6 @@ public class Get
       return workExecutors;
    }
 
-   //~--- get methods ---------------------------------------------------------
-
    public static Disruptor<AlertEvent> alertDisruptor() {
       return ALERT_DISRUPTOR;
    }
@@ -1006,6 +1008,16 @@ public class Get
    private static final ConcurrentSkipListSet<ApplicationStates> APPLICATION_STATES = new ConcurrentSkipListSet<>();
    public static ConcurrentSkipListSet<ApplicationStates> applicationStates() {
        return APPLICATION_STATES;
+   }
+
+   public static ObservableChronology observableChronology(UUID... uuids) {
+      return Get.observableChronologyService().getObservableChronology(Get.nidForUuids(uuids));
+   }
+   public static ObservableChronology observableChronology(int nid) {
+      return Get.observableChronologyService().getObservableChronology(nid);
+   }
+   public static ObservableChronology observableChronology(ConceptSpecification spec) {
+      return Get.observableChronologyService().getObservableChronology(spec);
    }
 }
 

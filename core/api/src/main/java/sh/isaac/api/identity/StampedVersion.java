@@ -113,5 +113,19 @@ public interface StampedVersion {
     * between the current time and midnight, January 1, 1970 UTC.
     */
    long getTime();
+
+   /**
+    * Create a unique key from the versions status, author, module, and path
+    * Used to see if a version has changed other than just the timestamp. Used
+    * to reimport metadata if changed.
+    */
+   default String getSampKey() {
+      StringBuilder keyBuilder = new StringBuilder();
+      keyBuilder.append(getStatus().toString());
+      keyBuilder.append(getAuthorNid());
+      keyBuilder.append(getModuleNid());
+      keyBuilder.append(getPathNid());
+      return keyBuilder.toString();
+   }
 }
 

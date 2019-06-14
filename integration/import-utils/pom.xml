@@ -50,11 +50,6 @@
 		</dependency>
 		<dependency>
 			<groupId>sh.isaac.uts-core.provider</groupId>
-			<artifactId>identifier</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>sh.isaac.uts-core.provider</groupId>
 			<artifactId>commit</artifactId>
 			<version>${project.version}</version>
 		</dependency>

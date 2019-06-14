@@ -165,7 +165,12 @@ public class ChangeSetLoadProvider
                                         .getStream()
                                         .forEach(
                                                 o -> {
-                                                    commitService.importNoChecks(o);
+                                                    try {
+                                                        commitService.importNoChecks(o);
+                                                    } catch (Throwable e) {
+                                                        LOG.error("Error importing: "
+                                                                + path.toAbsolutePath() + "\n" + o + "\n", e);
+                                                    }
                                                 });
                                 if (this.processedChangesets != null) {
                                     this.processedChangesets.put(path.getFileName()
@@ -177,7 +182,12 @@ public class ChangeSetLoadProvider
                             throw new RuntimeException(e);
                         }
                     });
-            commitService.postProcessImportNoChecks();
+            try {
+                commitService.postProcessImportNoChecks();
+            } catch (Throwable e) {
+                LOG.error("Error post processing: " + files, e);
+            }
+
         }
         LOG.info(
                 "Finished Change Set Load Provider load.  Loaded {}, Skipped {} because they were previously processed",

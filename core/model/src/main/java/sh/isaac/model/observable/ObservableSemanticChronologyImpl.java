@@ -52,8 +52,10 @@ import sh.isaac.api.chronicle.VersionType;
 import sh.isaac.api.component.semantic.version.ComponentNidVersion;
 import sh.isaac.api.coordinate.EditCoordinate;
 import sh.isaac.model.observable.version.ObservableDescriptionVersionImpl;
+import sh.isaac.model.observable.version.ObservableImageVersionImpl;
 import sh.isaac.model.semantic.version.DescriptionVersionImpl;
 import sh.isaac.api.component.semantic.version.DescriptionVersion;
+import sh.isaac.api.component.semantic.version.ImageVersion;
 import sh.isaac.api.component.semantic.version.LogicGraphVersion;
 import sh.isaac.api.component.semantic.version.LongVersion;
 import sh.isaac.api.component.semantic.version.StringVersion;
@@ -199,6 +201,8 @@ public class ObservableSemanticChronologyImpl
             return (OV) new ObservableLogicGraphVersionImpl((LogicGraphVersion) semanticVersion, this);
          case RF2_RELATIONSHIP:
             return (OV) new ObservableRf2RelationshipImpl((Rf2Relationship) semanticVersion, this);
+         case IMAGE:
+            return (OV) new ObservableImageVersionImpl((ImageVersion) semanticVersion, this);
          
          case DYNAMIC:
             LOG.warn("Incomplete implementation of dynamic semantic: " + 

@@ -33,11 +33,6 @@
 			<artifactId>mv-datastore</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		<!--dependency>  Doesn't play nice with the existing design, cannot co-exist
-			<groupId>sh.isaac.uts-core.provider</groupId>
-			<artifactId>postgresql-datastore</artifactId>
-			<version>${project.version}</version>
-		</dependency-->
 	</dependencies>
 	<profiles>
 		<profile>

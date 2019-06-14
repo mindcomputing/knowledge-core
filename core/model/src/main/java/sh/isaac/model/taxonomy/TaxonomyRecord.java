@@ -36,8 +36,7 @@
  */
 package sh.isaac.model.taxonomy;
 
-import java.util.Arrays;
-//~--- JDK imports ------------------------------------------------------------
+import static sh.isaac.api.commit.StampService.FIRST_STAMP_SEQUENCE;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,23 +44,17 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.IntStream;
-
-//~--- non-JDK imports --------------------------------------------------------
-import org.apache.mahout.math.function.IntObjectProcedure;
 import org.apache.mahout.math.list.IntArrayList;
-import org.apache.mahout.math.map.OpenIntObjectHashMap;
 import org.apache.mahout.math.set.OpenIntHashSet;
-
 import sh.isaac.api.Get;
 import sh.isaac.api.Status;
 import sh.isaac.api.bootstrap.TermAux;
+import sh.isaac.api.collections.IntObjectHashMap;
 import sh.isaac.api.collections.NidSet;
-import static sh.isaac.api.commit.StampService.FIRST_STAMP_SEQUENCE;
+import sh.isaac.api.coordinate.ManifoldCoordinate;
 import sh.isaac.api.coordinate.StampCoordinate;
 import sh.isaac.api.snapshot.calculator.RelativePositionCalculator;
-import sh.isaac.api.coordinate.ManifoldCoordinate;
 
-//~--- classes ----------------------------------------------------------------
 /**
  * For each concept nid (a key in the map), there is a list of
  * type-stamp-flags. These type-stamp-flags compact into a primitive long value.
@@ -86,8 +79,8 @@ public class TaxonomyRecord {
     /**
      * key = origin concept nid; value = TypeStampTaxonomyRecords.
      */
-    private final OpenIntObjectHashMap<TypeStampTaxonomyRecords> conceptNidRecordMap
-            = new OpenIntObjectHashMap<>(11);
+    private final IntObjectHashMap<TypeStampTaxonomyRecords> conceptNidRecordMap
+            = new IntObjectHashMap<>(11);
 
     //~--- constructors --------------------------------------------------------
     /**
@@ -261,7 +254,7 @@ public class TaxonomyRecord {
             NidSet typeSequenceSet,
             ManifoldCoordinate mc) {
 
-        if (this.conceptNidRecordMap.containsKey(conceptNid) && 
+        if (this.conceptNidRecordMap.containsKey(conceptNid) &&
                 Get.concept(conceptNid).getLatestVersion(mc.getDestinationStampCoordinate()).isPresent()) {
             return this.conceptNidRecordMap.get(conceptNid)
                     .containsConceptNidViaType(typeSequenceSet, mc, RelativePositionCalculator.getCalculator(mc.getStampCoordinate()));
@@ -280,7 +273,7 @@ public class TaxonomyRecord {
      */
     public boolean containsConceptNidViaType(int conceptNid, int typeSequence, ManifoldCoordinate mc) {
 
-        if (this.conceptNidRecordMap.containsKey(conceptNid) && 
+        if (this.conceptNidRecordMap.containsKey(conceptNid) &&
                 Get.concept(conceptNid).getLatestVersion(mc.getDestinationStampCoordinate()).isPresent()) {
             return this.conceptNidRecordMap.get(conceptNid)
                     .containsConceptNidViaType(typeSequence, mc, RelativePositionCalculator.getCalculator(mc.getStampCoordinate()));
@@ -303,7 +296,7 @@ public class TaxonomyRecord {
             ManifoldCoordinate mc,
             int flags) {
 
-        if (this.conceptNidRecordMap.containsKey(conceptNid) && 
+        if (this.conceptNidRecordMap.containsKey(conceptNid) &&
                 Get.concept(conceptNid).getLatestVersion(mc.getDestinationStampCoordinate()).isPresent()) {
             return this.conceptNidRecordMap.get(conceptNid)
                     .containsConceptNidViaType(typeSequenceSet, flags, RelativePositionCalculator.getCalculator(mc.getStampCoordinate()));
@@ -423,11 +416,17 @@ public class TaxonomyRecord {
      * @return the int[]
      */
     public int[] pack() {
-        final PackConceptSequenceStampRecords packer = new PackConceptSequenceStampRecords();
-
-        this.conceptNidRecordMap.forEachPair(packer);
-        //validate(packer.taxonomyRecordArray);
-        return packer.taxonomyRecordArray;
+        IntArrayList keys = this.conceptNidRecordMap.keys();
+        keys.sort();
+        int[] taxonomyRecordArray = new int[length()];
+        int destinationPosition = 0;
+        for (int key: keys.elements()) {
+            taxonomyRecordArray[destinationPosition++] = key;
+            TypeStampTaxonomyRecords records = this.conceptNidRecordMap.get(key);
+            records.addToIntArray(taxonomyRecordArray, destinationPosition);
+            destinationPosition += records.length();
+        }
+        return taxonomyRecordArray;
     }
 
     /**
@@ -663,7 +662,7 @@ public class TaxonomyRecord {
                 }
             });
 
-            if (computer.isLatestActive(stampsForConceptIntSet.keys().elements()) && 
+            if (computer.isLatestActive(stampsForConceptIntSet.keys().elements()) &&
                     Get.conceptService().getConceptChronology(destinationConceptNid).getLatestVersion(
                             mc.getDestinationStampCoordinate()).isPresent()) {
                 conceptNidIntSet.add(destinationConceptNid);
@@ -788,39 +787,5 @@ public class TaxonomyRecord {
         IntArrayList typeSequenceList = typeSequenceIntSet.keys();
         typeSequenceList.sort();
         return typeSequenceList.elements();
-    }
-
-    //~--- inner classes -------------------------------------------------------
-    /**
-     * The Class PackConceptSequenceStampRecords.
-     */
-    private class PackConceptSequenceStampRecords
-            implements IntObjectProcedure<TypeStampTaxonomyRecords> {
-
-        /**
-         * The taxonomy record array.
-         */
-        int[] taxonomyRecordArray = new int[length()];
-
-        /**
-         * The destination position.
-         */
-        int destinationPosition = 0;
-
-        //~--- methods ----------------------------------------------------------
-        /**
-         * Apply.
-         *
-         * @param conceptNid the concept nid
-         * @param stampRecordsUnpacked the stamp records unpacked
-         * @return true, if successful
-         */
-        @Override
-        public boolean apply(int conceptSequence, TypeStampTaxonomyRecords stampRecordsUnpacked) {
-            this.taxonomyRecordArray[this.destinationPosition++] = conceptSequence;
-            stampRecordsUnpacked.addToIntArray(this.taxonomyRecordArray, this.destinationPosition);
-            this.destinationPosition += stampRecordsUnpacked.length();
-            return true;
-        }
     }
 }

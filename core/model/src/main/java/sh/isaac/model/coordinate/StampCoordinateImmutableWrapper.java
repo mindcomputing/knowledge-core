@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import sh.isaac.api.Status;
@@ -118,5 +119,19 @@ public class StampCoordinateImmutableWrapper implements StampCoordinate {
     public Set<ConceptSpecification> getModuleSpecifications() {
         return stampCoordinate.getModuleSpecifications();
     }
-    
+
+    @Override
+    public Set<ConceptSpecification> getAuthorSpecifications() {
+        return stampCoordinate.getAuthorSpecifications();
+    }
+
+    @Override
+    public UUID getStampCoordinateUuid() {
+        return stampCoordinate.getStampCoordinateUuid();
+    }
+
+    @Override
+    public NidSet getAuthorNids() {
+        return stampCoordinate.getAuthorNids();
+    }
 }

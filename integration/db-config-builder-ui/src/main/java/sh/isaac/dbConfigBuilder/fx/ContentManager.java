@@ -39,6 +39,7 @@ import sh.isaac.api.LookupService;
 import sh.isaac.dbConfigBuilder.fx.fxUtil.Images;
 import sh.isaac.dbConfigBuilder.prefs.StoredPrefs;
 import sh.isaac.komet.iconography.Iconography;
+import sh.isaac.komet.iconography.IconographyHelper;
 
 /**
  * A GUI for uploading, creating / running content converters, and building databases for ISAAC.
@@ -88,7 +89,7 @@ public class ContentManager extends Application
 		});
 
 		cmc_.finishSetup(this);
-		primaryStage.getScene().getStylesheets().add(Iconography.getStyleSheetStringUrl());
+		primaryStage.getScene().getStylesheets().add(IconographyHelper.getStyleSheetStringUrl());
 		primaryStage.getScene().getStylesheets().add(ContentManager.class.getResource("/contentManager.css").toString());
 
 		primaryStage.show();
@@ -120,6 +121,7 @@ public class ContentManager extends Application
 					alert.setTitle("Incorrect password");
 					alert.setHeaderText("The provided password is incorrect.  ");
 					alert.setContentText("Please choose how to proceed");
+					alert.setResizable(true);
 
 					Optional<String> result = alert.showAndWait();
 					if (result.isPresent())
@@ -175,7 +177,7 @@ public class ContentManager extends Application
 		tid.getEditor().setAccessibleRole(AccessibleRole.PASSWORD_FIELD);
 		Tooltip.install(tid.getEditor(), new Tooltip("This password is used to encrypt and decrypt the git and artifact repository passwords."));
 		tid.initOwner(primaryStage_.getOwner());
-
+		tid.setResizable(true);
 		return (tid.showAndWait().orElse("")).toCharArray();
 	}
 	

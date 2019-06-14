@@ -265,4 +265,22 @@ public interface GlobalDatastoreConfiguration extends UserConfigurationInternalI
 	{
 		throw new UnsupportedOperationException();
 	}
+	
+	/**
+	 * A global switch that can be used to disable the index services all at once.
+	 *
+	 * @return true, if lucene indexes should be enabled in this config.
+	 */
+	public default boolean enableLuceneIndexes()
+	{
+		return true;
+	}
+	
+	/**
+	 * @param enable change the state of the lucene enable flag
+	 */
+	public default void setEnableLuceneIndexs(boolean enable)
+	{
+		throw new UnsupportedOperationException();
+	}
 }

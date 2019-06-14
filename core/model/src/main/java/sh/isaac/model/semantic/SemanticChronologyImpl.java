@@ -63,6 +63,7 @@ import sh.isaac.model.semantic.version.AbstractVersionImpl;
 import sh.isaac.model.semantic.version.ComponentNidVersionImpl;
 import sh.isaac.model.semantic.version.DescriptionVersionImpl;
 import sh.isaac.model.semantic.version.DynamicImpl;
+import sh.isaac.model.semantic.version.ImageVersionImpl;
 import sh.isaac.model.semantic.version.LogicGraphVersionImpl;
 import sh.isaac.model.semantic.version.LongVersionImpl;
 import sh.isaac.model.semantic.version.SemanticVersionImpl;
@@ -184,6 +185,9 @@ public class SemanticChronologyImpl
 
       case LOGIC_GRAPH:
          return new LogicGraphVersionImpl(chronology, stampSequence, bb);
+
+      case IMAGE:
+         return new ImageVersionImpl(chronology, stampSequence, bb);
 
       case DYNAMIC:
          return new DynamicImpl(chronology, stampSequence, bb);
@@ -375,6 +379,9 @@ public class SemanticChronologyImpl
 
       case LOGIC_GRAPH:
          return (M) new LogicGraphVersionImpl((SemanticChronologyImpl) this, stampSequence);
+
+      case IMAGE:
+            return (M) new ImageVersionImpl((SemanticChronologyImpl) this, stampSequence);
 
       case STRING:
          return (M) new StringVersionImpl((SemanticChronology) this, stampSequence);

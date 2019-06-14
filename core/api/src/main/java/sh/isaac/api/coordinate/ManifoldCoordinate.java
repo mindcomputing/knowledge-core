@@ -101,7 +101,7 @@ public interface ManifoldCoordinate
    PremiseType getTaxonomyPremiseType();
    
    /**
-    * @return The destination stamp coordinate, 
+    * @return The destination stamp coordinate,
     * 
     * In most cases, this coordinate will be the same object that is returned by {@link #getStampCoordinate()}, 
     * But, it may be a different coordinate, depending on the construction - for example, a use case like returning inactive concepts

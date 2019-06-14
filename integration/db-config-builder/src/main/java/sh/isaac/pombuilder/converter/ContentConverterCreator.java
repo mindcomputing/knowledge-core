@@ -182,7 +182,6 @@ public class ContentConverterCreator
 					unpackArtifacts.append(ibdf.getArtifactId());
 					unpackArtifacts.append(",");
 				}
-
 				unpackDependencies = unpackDependencies.replace("#UNPACK_ARTIFACTS#", unpackArtifacts.toString());
 			}
 

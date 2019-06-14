@@ -84,7 +84,12 @@ public class GlobalDatastoreConfigurationProvider implements GlobalDatastoreConf
 	{
 		// only for HK2
 		LOG.info("Setting up Configuration Service");
-		dataStore = Get.service(MetaContentService.class).<String,Object>openStore("GlobalDatastoreConfig");
+		MetaContentService service = LookupService.getService(MetaContentService.class);
+		if (service != null) {
+			dataStore = Get.service(MetaContentService.class).<String,Object>openStore("GlobalDatastoreConfig");
+		} else {
+			throw new RuntimeException("Classpath configuration error!  No MetaContentService available!");
+		}
 		//need to delay the init of the defaultCoordianteProvider till the identifier service is up (level 2) but
 		//want this service to be available for other config options before starting the DB....
 	}
@@ -504,29 +509,29 @@ public class GlobalDatastoreConfigurationProvider implements GlobalDatastoreConf
 			case STAMP_COORDINATE:
 				return (T)defaultCoordinateProvider.getDefaultStampCoordinate();
 			case CLASSIFIER:
-				return (T)new Integer(defaultCoordinateProvider.getDefaultLogicCoordinate().getClassifierNid());
+				return (T) Integer.valueOf(defaultCoordinateProvider.getDefaultLogicCoordinate().getClassifierNid());
 			case DESCRIPTION_LOGIC_PROFILE:
-				return (T)new Integer(defaultCoordinateProvider.getDefaultLogicCoordinate().getDescriptionLogicProfileNid());
+				return (T) Integer.valueOf(defaultCoordinateProvider.getDefaultLogicCoordinate().getDescriptionLogicProfileNid());
 			case DESCRIPTION_TYPE_PREFERENCE_LIST:
 				return (T)defaultCoordinateProvider.getDefaultLanguageCoordinate().getDescriptionTypePreferenceList();
 			case DIALECT_ASSEMBLAGE_PREFERENCE_LIST:
 				return (T)defaultCoordinateProvider.getDefaultLanguageCoordinate().getDialectAssemblagePreferenceList();
 			case INFERRED_ASSEMBLAGE:
-				return (T)new Integer(defaultCoordinateProvider.getDefaultLogicCoordinate().getInferredAssemblageNid());
+				return (T) Integer.valueOf(defaultCoordinateProvider.getDefaultLogicCoordinate().getInferredAssemblageNid());
 			case LANGUAGE:
-				return (T)new Integer(defaultCoordinateProvider.getDefaultLanguageCoordinate().getLanguageConceptNid());
+				return (T) Integer.valueOf(defaultCoordinateProvider.getDefaultLanguageCoordinate().getLanguageConceptNid());
 			case EDIT_MODULE:
-				return(T)new Integer(defaultCoordinateProvider.getDefaultEditCoordinate().getModuleNid());
+				return(T) Integer.valueOf(defaultCoordinateProvider.getDefaultEditCoordinate().getModuleNid());
 			case EDIT_PATH:
-				return (T)new Integer(defaultCoordinateProvider.getDefaultEditCoordinate().getPathNid());
+				return (T) Integer.valueOf(defaultCoordinateProvider.getDefaultEditCoordinate().getPathNid());
 			case STATED_ASSEMBLAGE:
-				return (T)new Integer(defaultCoordinateProvider.getDefaultLogicCoordinate().getStatedAssemblageNid());
+				return (T) Integer.valueOf(defaultCoordinateProvider.getDefaultLogicCoordinate().getStatedAssemblageNid());
 			case TIME:
-				return (T)new Long(defaultCoordinateProvider.getDefaultStampCoordinate().getStampPosition().getTime());
+				return (T) Long.valueOf(defaultCoordinateProvider.getDefaultStampCoordinate().getStampPosition().getTime());
 			case PREMISE_TYPE:
 				return (T)defaultCoordinateProvider.getDefaultManifoldCoordinate().getTaxonomyPremiseType();
 			case USER:
-				return (T)new Integer(defaultCoordinateProvider.getDefaultEditCoordinate().getAuthorNid());
+				return (T) Integer.valueOf(defaultCoordinateProvider.getDefaultEditCoordinate().getAuthorNid());
 			default :
 				throw new RuntimeException("Oops");
 		}
@@ -652,5 +657,24 @@ public class GlobalDatastoreConfigurationProvider implements GlobalDatastoreConf
 	{
 		dataStore.clear();
 		defaultCoordinateProvider = new DefaultCoordinateProvider();
+	}
+
+	@Override
+	public boolean enableLuceneIndexes()
+	{
+		if (hasOption("enableLucene"))
+		{
+			return getOption("enableLucene");
+		}
+		else
+		{
+			return GlobalDatastoreConfiguration.super.enableLuceneIndexes();
+		}
+	}
+
+	@Override
+	public void setEnableLuceneIndexs(boolean enable)
+	{
+		putOption("enableLucene", new Boolean(enable));
 	}
 }

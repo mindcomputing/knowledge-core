@@ -20,6 +20,8 @@ import java.time.LocalDateTime;
 import sh.komet.gui.control.concept.PropertySheetItemConceptNidWrapper;
 import sh.komet.gui.control.concept.ConceptLabel;
 import sh.komet.gui.control.concept.ConceptForControlWrapper;
+import sh.komet.gui.control.image.ImageSourceEditor;
+import sh.komet.gui.control.image.PropertySheetImageWrapper;
 import sh.komet.gui.control.measure.PropertySheetMeasureWrapper;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -173,6 +175,8 @@ public class PropertyEditorFactory implements Callback<PropertySheet.Item, Prope
         } else if (propertySheetItem instanceof PropertySheetItemObjectListWrapper) {
             return Editors.createChoiceEditor(propertySheetItem,
                     ((PropertySheetItemObjectListWrapper) propertySheetItem).getAllowedValues());
+        } else if (propertySheetItem instanceof PropertySheetImageWrapper) {
+            return new ImageSourceEditor(((PropertySheetImageWrapper)propertySheetItem).imageDataProperty());
         }
         
         

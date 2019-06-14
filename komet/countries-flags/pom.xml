@@ -16,4 +16,10 @@
 			<url>https://file000.flaticon.com/downloads/license/license.pdf</url>
 		</license>
 	</licenses>
+	<dependencies>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-graphics</artifactId>
+		</dependency>
+	</dependencies>
 </project>

@@ -44,11 +44,13 @@ import org.kie.api.runtime.StatelessKieSession;
 import sh.isaac.api.BusinessRulesResource;
 import sh.isaac.api.BusinessRulesService;
 import sh.isaac.api.ConfigurationService;
+import sh.isaac.api.Get;
 import sh.isaac.api.LookupService;
 import sh.isaac.api.component.concept.ConceptSpecification;
 import sh.isaac.api.logic.LogicNode;
 import sh.isaac.api.logic.LogicalExpression;
 import sh.isaac.api.observable.ObservableCategorizedVersion;
+import sh.isaac.api.task.LabelTaskWithIndeterminateProgress;
 import sh.komet.gui.contract.RulesDrivenKometService;
 import sh.komet.gui.control.PropertySheetMenuItem;
 import sh.komet.gui.manifold.Manifold;
@@ -76,6 +78,8 @@ public class DroolsRulesProvider implements BusinessRulesService, RulesDrivenKom
      */
     @PostConstruct
     protected void startMe() {
+        LabelTaskWithIndeterminateProgress progressTask = new LabelTaskWithIndeterminateProgress("Starting Drools provider");
+        Get.executor().execute(progressTask);
         try {
             LOG.info("Starting Drools Rules Provider post-construct");
 
@@ -113,6 +117,8 @@ public class DroolsRulesProvider implements BusinessRulesService, RulesDrivenKom
             
         } catch (IOException ex) {
             throw new RuntimeException(ex);
+        } finally {
+            progressTask.finished();
         }
         
     }
