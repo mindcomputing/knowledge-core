@@ -278,6 +278,10 @@ public interface GlobalDatastoreConfiguration extends UserConfigurationInternalI
 	
 	/**
 	 * @param enable change the state of the lucene enable flag
+	 * 
+	 * Note that this value can be overridden by specifying a system property of 
+	 * {@link SystemPropertyConstants#ENABLE_LUCENE} 
+	 * with 'true' or 'false'
 	 */
 	public default void setEnableLuceneIndexs(boolean enable)
 	{

@@ -662,6 +662,15 @@ public class GlobalDatastoreConfigurationProvider implements GlobalDatastoreConf
 	@Override
 	public boolean enableLuceneIndexes()
 	{
+		String temp = System.getProperty(SystemPropertyConstants.ENABLE_LUCENE);
+		
+		if (StringUtils.isNotBlank(temp))
+		{
+			boolean enableFromSystem = Boolean.parseBoolean(temp);
+			LOG.info("Overriding datastore configuration for 'enableLuceneIndexes' with System Property " + SystemPropertyConstants.ENABLE_LUCENE + ": " + enableFromSystem);
+			return enableFromSystem;
+		}
+		
 		if (hasOption("enableLucene"))
 		{
 			return getOption("enableLucene");
@@ -675,6 +684,6 @@ public class GlobalDatastoreConfigurationProvider implements GlobalDatastoreConf
 	@Override
 	public void setEnableLuceneIndexs(boolean enable)
 	{
-		putOption("enableLucene", new Boolean(enable));
+		putOption("enableLucene", Boolean.valueOf(enable));
 	}
 }
