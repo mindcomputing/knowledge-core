@@ -915,7 +915,7 @@ public class Get
     */
    public static Task<Void> startIndexTask(
          @SuppressWarnings("unchecked") Class<? extends IndexBuilderService>... indexersToReindex) {
-      if (!configurationService().getGlobalDatastoreConfiguration().enableLuceneIndexes()) {
+      if (!Get.configurationService().getGlobalDatastoreConfiguration().enableLuceneIndexes()) {
          throw new UnsupportedOperationException();
       }
       final GenerateIndexes indexingTask = new GenerateIndexes(indexersToReindex);

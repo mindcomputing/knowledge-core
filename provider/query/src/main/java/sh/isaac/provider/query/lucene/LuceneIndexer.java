@@ -1138,7 +1138,7 @@ public abstract class LuceneIndexer
     */
    @Override
    public Path getDataStorePath() {
-      if (!Get.useLuceneIndexes()) {
+      if (!Get.configurationService().getGlobalDatastoreConfiguration().enableLuceneIndexes()) {
             return null;
       }
       return this.indexFolder.toPath();
