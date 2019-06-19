@@ -1051,7 +1051,7 @@
 						<hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
 						<supportBranchPrefix>support/</supportBranchPrefix>
 						<versionTagPrefix></versionTagPrefix>
-						<origin>origin</origin>
+						<origin>vetsez</origin>
 					</gitFlowConfig>
 				</configuration>
 			</plugin>
