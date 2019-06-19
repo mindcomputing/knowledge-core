@@ -20,11 +20,6 @@
 		</dependency>
 		<dependency>
 			<groupId>sh.isaac.uts-core.provider</groupId>
-			<artifactId>concept</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>sh.isaac.uts-core.provider</groupId>
 			<artifactId>chronology</artifactId>
 			<version>${project.version}</version>
 		</dependency>
