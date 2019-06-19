@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>sh.isaac</groupId>
 	<artifactId>uts-core</artifactId>
-	<version>uts-5.24-SNAPSHOT</version>
+	<version>uts-6.00-SNAPSHOT</version>
 
 	<name>UTS Core: Universal Terminology Suite</name>
 
@@ -949,7 +949,7 @@
 									<pluginExecutionFilter>
 										<groupId>sh.isaac.uts-core.core</groupId>
 										<artifactId>mojo</artifactId>
-										<versionRange>[uts-5.24-SNAPSHOT,)</versionRange>
+										<versionRange>[uts-6.00-SNAPSHOT,)</versionRange>
 										<goals>
 											<goal>export-taxonomy</goal>
 											<goal>setup-isaac</goal>
