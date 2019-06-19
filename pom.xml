@@ -106,7 +106,6 @@
 		<maven-site-plugin.version>3.6</maven-site-plugin.version>
 		<maven-source-plugin.version>3.0.1</maven-source-plugin.version>
 		<maven-surefire-plugin.version>3.0.0-M3</maven-surefire-plugin.version>
-		<maven-toolchains-plugin.version>1.1</maven-toolchains-plugin.version>
 		<maven-war-plugin.version>3.2.0</maven-war-plugin.version>
 		<opencsv.version>4.1</opencsv.version>
 		<poi-ooxml.version>3.17</poi-ooxml.version>
@@ -723,26 +722,6 @@
 			<plugins>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-toolchains-plugin</artifactId>
-					<version>${maven-toolchains-plugin.version}</version>
-					<executions>
-						<execution>
-							<goals>
-								<goal>toolchain</goal>
-							</goals>
-						</execution>
-					</executions>
-					<configuration>
-						<toolchains>
-							<jdk>
-								<version>${java.version}</version>
-								<vendor>${java.vendor}</vendor>
-							</jdk>
-						</toolchains>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-enforcer-plugin</artifactId>
 					<version>${maven-enforcer-plugin.version}</version>
 				</plugin>
@@ -814,6 +793,7 @@
 					<configuration>
 						<failOnError>false</failOnError>
 						<additionalparam>-Xdoclint:none</additionalparam>
+						<javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -976,19 +956,6 @@
 										<ignore />
 									</action>
 								</pluginExecution>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.apache.maven.plugins</groupId>
-										<artifactId>maven-toolchains-plugin</artifactId>
-										<versionRange>[1.1,)</versionRange>
-										<goals>
-											<goal>toolchain</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
 							</pluginExecutions>
 						</lifecycleMappingMetadata>
 					</configuration>
@@ -1007,25 +974,6 @@
 		</pluginManagement>
 
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-toolchains-plugin</artifactId>
-				<executions>
-					<execution>
-						<goals>
-							<goal>toolchain</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<toolchains>
-						<jdk>
-							<version>${java.version}</version>
-							<vendor>${java.vendor}</vendor>
-						</jdk>
-					</toolchains>
-				</configuration>
-			</plugin>
 			<plugin>
 				<groupId>com.amashchenko.maven.plugin</groupId>
 				<artifactId>gitflow-maven-plugin</artifactId>

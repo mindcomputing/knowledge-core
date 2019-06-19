@@ -35,7 +35,7 @@ pipeline {
 			steps {
 				//by default, this runs mvn clean install.  If you want it to deploy, DEPLOY should be specified in jenkins -> configure system -> env variables
 				//Set it to something like 'deploy -DaltDeploymentRepository=snapshotRepo::default::http://52.61.165.55:9092/nexus/content/repositories/snapshots/'
-				sh "mvn clean $MVN_TASK -t jenkins-toolchains.xml"
+				sh "mvn clean $MVN_TASK"
 				openTasks high: 'FIXME', normal: 'TODO', pattern: '**/*.java'
 			}
 		}
