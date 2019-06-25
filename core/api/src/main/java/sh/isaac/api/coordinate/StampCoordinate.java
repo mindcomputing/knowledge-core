@@ -177,5 +177,14 @@ public interface StampCoordinate
      * stamp coordinate.
      */
     NidSet getAuthorNids();
+
+   
+   /**
+    * Create a new Stamp Coordinate identical to the this coordinate, with the {@link #getModulePreferenceOrderForVersions()} 
+    * replaced by this new list.
+    * @param newModulePreferenceOrder 
+    * @return the new coordinate
+    */
+   public StampCoordinate makeModulePreferenceOrderAnalog(List<ConceptSpecification> newModulePreferenceOrder);
 }
 
