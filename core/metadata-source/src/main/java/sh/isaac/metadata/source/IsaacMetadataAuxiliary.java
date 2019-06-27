@@ -447,71 +447,61 @@ public class IsaacMetadataAuxiliary extends IsaacTaxonomy {
                        .addComponentIntSemantic(UUID.fromString("704ebb91-f713-5485-ae2e-ddcf315f70f8"), TEXT_FOR_DESCRIPTION, 0, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
                        .addComponentIntSemantic(UUID.fromString("423cd6bd-d939-57cc-adfa-3e0a748a3c25"), LANGUAGE_CONCEPT_NID_FOR_DESCRIPTION, 1, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
                        .addComponentIntSemantic(UUID.fromString("68563e65-b39e-5604-af38-864127870429"), DESCRIPTION_TYPE_FOR_DESCRIPTION, 2, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
-                       .addComponentIntSemantic(UUID.fromString("68563e65-b39e-5604-af38-864127870429"), CASE_SIGNIFICANCE_CONCEPT_NID_FOR_DESCRIPTION, 3, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
-                       .addUuids(UUID.fromString("45021920-9567-11e5-8994-feff819cdc9f"));
+                       .addComponentIntSemantic(UUID.fromString("68563e65-b39e-5604-af38-864127870429"), CASE_SIGNIFICANCE_CONCEPT_NID_FOR_DESCRIPTION, 3, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS);
                createConcept(TermAux.SPANISH_LANGUAGE, 
                      TermAux.DESCRIPTION_ASSEMBLAGE.getNid())
                        .addComponentIntSemantic(UUID.fromString("3294978d-15b0-598e-b6c6-819d65d23960"), TEXT_FOR_DESCRIPTION, 0, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
                        .addComponentIntSemantic(UUID.fromString("f4b423a7-e548-5b8a-be3b-59ed29dc5ef2"), LANGUAGE_CONCEPT_NID_FOR_DESCRIPTION, 1, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
                        .addComponentIntSemantic(UUID.fromString("340e18fc-3528-5b32-ba27-670ce9dd9dcf"), DESCRIPTION_TYPE_FOR_DESCRIPTION, 2, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
-                       .addComponentIntSemantic(UUID.fromString("55b9b3b5-f720-5cea-aac4-e01a33470105"), CASE_SIGNIFICANCE_CONCEPT_NID_FOR_DESCRIPTION, 3, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
-                       .addUuids(UUID.fromString("45021c36-9567-11e5-8994-feff819cdc9f"));
+                       .addComponentIntSemantic(UUID.fromString("55b9b3b5-f720-5cea-aac4-e01a33470105"), CASE_SIGNIFICANCE_CONCEPT_NID_FOR_DESCRIPTION, 3, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS);
                createConcept(TermAux.FRENCH_LANGUAGE, 
                      TermAux.DESCRIPTION_ASSEMBLAGE.getNid())
                        .addComponentIntSemantic(UUID.fromString("a52da1b9-a923-5869-99d2-b4b5bc47c87c"), TEXT_FOR_DESCRIPTION, 0, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
                        .addComponentIntSemantic(UUID.fromString("b6be17f5-4389-526e-9a94-1f1dd7d303b1"), LANGUAGE_CONCEPT_NID_FOR_DESCRIPTION, 1, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
                        .addComponentIntSemantic(UUID.fromString("c3fbd2dd-a2a3-5d7a-a58b-6a68462e009b"), DESCRIPTION_TYPE_FOR_DESCRIPTION, 2, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
-                       .addComponentIntSemantic(UUID.fromString("8f156027-ba6f-54cc-b327-9abc8fb0bb28"), CASE_SIGNIFICANCE_CONCEPT_NID_FOR_DESCRIPTION, 3, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
-                       .addUuids(UUID.fromString("45021dbc-9567-11e5-8994-feff819cdc9f"));
+                       .addComponentIntSemantic(UUID.fromString("8f156027-ba6f-54cc-b327-9abc8fb0bb28"), CASE_SIGNIFICANCE_CONCEPT_NID_FOR_DESCRIPTION, 3, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS);
                createConcept(TermAux.DANISH_LANGUAGE, 
                      TermAux.DESCRIPTION_ASSEMBLAGE.getNid())
                        .addComponentIntSemantic(UUID.fromString("48eab53d-7d9e-593d-a006-1918a6a14440"), TEXT_FOR_DESCRIPTION, 0, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
                        .addComponentIntSemantic(UUID.fromString("0e509d15-4aad-548a-b423-65ceebf26ee0"), LANGUAGE_CONCEPT_NID_FOR_DESCRIPTION, 1, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
                        .addComponentIntSemantic(UUID.fromString("b55a4395-cfbd-55c4-8512-c8944e8e5509"), DESCRIPTION_TYPE_FOR_DESCRIPTION, 2, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
-                       .addComponentIntSemantic(UUID.fromString("af9aac66-3244-5622-8b66-2e1f028b5497"), CASE_SIGNIFICANCE_CONCEPT_NID_FOR_DESCRIPTION, 3, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
-                       .addUuids(UUID.fromString("45021f10-9567-11e5-8994-feff819cdc9f"));
+                       .addComponentIntSemantic(UUID.fromString("af9aac66-3244-5622-8b66-2e1f028b5497"), CASE_SIGNIFICANCE_CONCEPT_NID_FOR_DESCRIPTION, 3, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS);
                createConcept(TermAux.POLISH_LANGUAGE, 
                      TermAux.DESCRIPTION_ASSEMBLAGE.getNid())
                        .addComponentIntSemantic(UUID.fromString("c790ee35-72ec-5685-8ad2-f768b6de00fb"), TEXT_FOR_DESCRIPTION, 0, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
                        .addComponentIntSemantic(UUID.fromString("e974688d-05af-5791-8a59-9fb2cdeaeedd"), LANGUAGE_CONCEPT_NID_FOR_DESCRIPTION, 1, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
                        .addComponentIntSemantic(UUID.fromString("d75ee68e-c0e5-5243-8c63-c7f48fa7eaea"), DESCRIPTION_TYPE_FOR_DESCRIPTION, 2, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
-                       .addComponentIntSemantic(UUID.fromString("51652b05-02f6-5eac-84bb-9a08c0020c5a"), CASE_SIGNIFICANCE_CONCEPT_NID_FOR_DESCRIPTION, 3, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
-                       .addUuids(UUID.fromString("45022140-9567-11e5-8994-feff819cdc9f"));
+                       .addComponentIntSemantic(UUID.fromString("51652b05-02f6-5eac-84bb-9a08c0020c5a"), CASE_SIGNIFICANCE_CONCEPT_NID_FOR_DESCRIPTION, 3, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS);
                createConcept(TermAux.DUTCH_LANGUAGE, 
                      TermAux.DESCRIPTION_ASSEMBLAGE.getNid())
                        .addComponentIntSemantic(UUID.fromString("6ced8ded-7e67-518f-9050-a876782f9ce7"), TEXT_FOR_DESCRIPTION, 0, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
                        .addComponentIntSemantic(UUID.fromString("8e4cebc4-b9d9-523b-9fc3-2c331bc964fc"), LANGUAGE_CONCEPT_NID_FOR_DESCRIPTION, 1, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
                        .addComponentIntSemantic(UUID.fromString("0191b805-c94d-5d95-a36d-6de06625561f"), DESCRIPTION_TYPE_FOR_DESCRIPTION, 2, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
-                       .addComponentIntSemantic(UUID.fromString("7371683b-10d4-5b6e-997e-df5e1914670f"), CASE_SIGNIFICANCE_CONCEPT_NID_FOR_DESCRIPTION, 3, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
-                       .addUuids(UUID.fromString("45022280-9567-11e5-8994-feff819cdc9f"));
+                       .addComponentIntSemantic(UUID.fromString("7371683b-10d4-5b6e-997e-df5e1914670f"), CASE_SIGNIFICANCE_CONCEPT_NID_FOR_DESCRIPTION, 3, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS);
                createConcept(TermAux.LITHUANIAN_LANGUAGE, 
                      TermAux.DESCRIPTION_ASSEMBLAGE.getNid())
                        .addComponentIntSemantic(UUID.fromString("a53357a0-9ae0-5e2e-a18a-9e69efbf682f"), TEXT_FOR_DESCRIPTION, 0, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
                        .addComponentIntSemantic(UUID.fromString("37cdcc04-a793-55f0-9424-2e32e1b2c4bb"), LANGUAGE_CONCEPT_NID_FOR_DESCRIPTION, 1, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
                        .addComponentIntSemantic(UUID.fromString("e3882496-d970-5c06-8b8c-33398c211e58"), DESCRIPTION_TYPE_FOR_DESCRIPTION, 2, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
-                       .addComponentIntSemantic(UUID.fromString("e844638b-6cc5-5062-96f1-3087cc14f837"), CASE_SIGNIFICANCE_CONCEPT_NID_FOR_DESCRIPTION, 3, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
-                       .addUuids(UUID.fromString("45022410-9567-11e5-8994-feff819cdc9f"));
+                       .addComponentIntSemantic(UUID.fromString("e844638b-6cc5-5062-96f1-3087cc14f837"), CASE_SIGNIFICANCE_CONCEPT_NID_FOR_DESCRIPTION, 3, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS);
                createConcept(TermAux.CHINESE_LANGUAGE, 
                      TermAux.DESCRIPTION_ASSEMBLAGE.getNid())
                        .addComponentIntSemantic(UUID.fromString("c182c189-9b66-5a7d-a834-d278efbfaf45"), TEXT_FOR_DESCRIPTION, 0, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
                        .addComponentIntSemantic(UUID.fromString("58a9fc07-3d6a-5d7e-9fc6-d74aecf92772"), LANGUAGE_CONCEPT_NID_FOR_DESCRIPTION, 1, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
                        .addComponentIntSemantic(UUID.fromString("dcf1d02e-c729-54eb-86bb-aba2688f39dc"), DESCRIPTION_TYPE_FOR_DESCRIPTION, 2, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
-                       .addComponentIntSemantic(UUID.fromString("566d0fe0-2728-5941-9822-0e38bd6a4b5c"), CASE_SIGNIFICANCE_CONCEPT_NID_FOR_DESCRIPTION, 3, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
-                       .addUuids(UUID.fromString("45022532-9567-11e5-8994-feff819cdc9f"));
+                       .addComponentIntSemantic(UUID.fromString("566d0fe0-2728-5941-9822-0e38bd6a4b5c"), CASE_SIGNIFICANCE_CONCEPT_NID_FOR_DESCRIPTION, 3, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS);
                createConcept(TermAux.JAPANESE_LANGUAGE, 
                      TermAux.DESCRIPTION_ASSEMBLAGE.getNid())
                        .addComponentIntSemantic(UUID.fromString("1fcb21be-3958-5914-93f0-9d73cebe1d10"), TEXT_FOR_DESCRIPTION, 0, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
                        .addComponentIntSemantic(UUID.fromString("56991166-7c20-5cce-8506-7c168aaa2e2b"), LANGUAGE_CONCEPT_NID_FOR_DESCRIPTION, 1, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
                        .addComponentIntSemantic(UUID.fromString("1e825368-49f6-5adc-ba20-27fd8b033cf0"), DESCRIPTION_TYPE_FOR_DESCRIPTION, 2, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
-                       .addComponentIntSemantic(UUID.fromString("753feb91-af58-5b26-9edc-3cb7329d8da9"), CASE_SIGNIFICANCE_CONCEPT_NID_FOR_DESCRIPTION, 3, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
-                       .addUuids(UUID.fromString("450226cc-9567-11e5-8994-feff819cdc9f"));
+                       .addComponentIntSemantic(UUID.fromString("753feb91-af58-5b26-9edc-3cb7329d8da9"), CASE_SIGNIFICANCE_CONCEPT_NID_FOR_DESCRIPTION, 3, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS);
                createConcept(TermAux.SWEDISH_LANGUAGE, 
                      TermAux.DESCRIPTION_ASSEMBLAGE.getNid())
                        .addComponentIntSemantic(UUID.fromString("f4f2bbcf-75ce-5fae-ac4c-53bb5b4de9b1"), TEXT_FOR_DESCRIPTION, 0, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
                        .addComponentIntSemantic(UUID.fromString("d602c3de-b49c-5a79-8927-2ca88759fef0"), LANGUAGE_CONCEPT_NID_FOR_DESCRIPTION, 1, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
                        .addComponentIntSemantic(UUID.fromString("d74f25a4-a543-58f4-811d-fb58c22406a4"), DESCRIPTION_TYPE_FOR_DESCRIPTION, 2, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
-                       .addComponentIntSemantic(UUID.fromString("c48e9061-1296-5228-a671-5025e7221cd4"), CASE_SIGNIFICANCE_CONCEPT_NID_FOR_DESCRIPTION, 3, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS)
-                       .addUuids(UUID.fromString("45022848-9567-11e5-8994-feff819cdc9f"));
+                       .addComponentIntSemantic(UUID.fromString("c48e9061-1296-5228-a671-5025e7221cd4"), CASE_SIGNIFICANCE_CONCEPT_NID_FOR_DESCRIPTION, 3, TermAux.ASSEMBLAGE_SEMANTIC_FIELDS);
                createConcept("Korean language", null, TermAux.DESCRIPTION_ASSEMBLAGE.getNid(), null);
                createConcept("Russian language", null, TermAux.DESCRIPTION_ASSEMBLAGE.getNid(), null);
                createConcept("Irish language", null, TermAux.DESCRIPTION_ASSEMBLAGE.getNid(), null);
