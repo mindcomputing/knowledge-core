@@ -149,7 +149,7 @@ public interface StampCoordinate
    
    
    @Override
-   StampCoordinate deepClone();
+   public StampCoordinate deepClone();
    
    /**
     * Create a new Stamp Coordinate identical to the this coordinate, but with the modules modified.
@@ -158,7 +158,7 @@ public interface StampCoordinate
     * supplied modules should replace the existing modules
     * @return the new coordinate
     */
-    StampCoordinate makeModuleAnalog(Collection<ConceptSpecification> modules, boolean add);
+    public StampCoordinate makeModuleAnalog(Collection<ConceptSpecification> modules, boolean add);
 
     /**
      * An empty list is a wild-card, and should match all authors. If there are
@@ -178,7 +178,6 @@ public interface StampCoordinate
      */
     NidSet getAuthorNids();
 
-   
    /**
     * Create a new Stamp Coordinate identical to the this coordinate, with the {@link #getModulePreferenceOrderForVersions()} 
     * replaced by this new list.

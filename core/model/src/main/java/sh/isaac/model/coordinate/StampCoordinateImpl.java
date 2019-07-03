@@ -127,7 +127,6 @@ public class StampCoordinateImpl
         // noop for jaxb
     }
 
-
     /**
      * Instantiates a new stamp coordinate impl.
      *
