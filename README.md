@@ -116,7 +116,48 @@ REPO_PASSWORD
 
 Make sure that offline is set to false in your settings.xml file. 
 ```
-mvn jgitflow:release-start jgitflow:release-finish -DreleaseVersion=uts-5.24 -DdevelopmentVersion=uts-5.25-SNAPSHOT -DaltDeploymentRepository=awsnexus::default::http://52.61.167.217:9092/nexus/content/repositories/releases
+mvn gitflow:release-start gitflow:release-finish\
+ -DreleaseVersion=uts-6.00 -DdevelopmentVersion=uts-6.01-SNAPSHOT\ 
+ -DaltDeploymentRepository=awsnexus::default::http://52.61.167.217:9092/nexus/content/repositories/releases\
+ -DpostReleaseGoals="clean deploy"
 
-$ mvn jgitflow:release-start jgitflow:release-finish -Prelease-deploy
+```
+
+## Creating a feature branch
+```
+mvn gitflow:feature-start
+```
+You will be prompted for the feature name:
+```
+What is a name of feature branch? feature/: F2
+```
+## Finishing a feature branch
+```
+mvn gitflow:feature-finish
+```
+## JDK 11 notes
+Crazy command to launch in eclipse:
+Also had to add javafx controls, base, and graphics as "modules" in the run configuration.
+Someday... will figure out if its even possible to properly integrate this information into the maven build, so Eclipse finds it...
+
+```
+-DSHOW_BETA_FEATURES=true --add-modules=javafx.controls --add-exports javafx.graphics/com.sun.glass.ui=ALL-UNNAMED --add-exports javafx.graphics/com.sun.javafx.iio=ALL-UNNAMED --add-exports javafx.graphics/com.sun.javafx.iio.common=ALL-UNNAMED --add-exports javafx.graphics/com.sun.javafx.application=ALL-UNNAMED --add-exports javafx.graphics/com.sun.javafx.util=ALL-UNNAMED --add-exports javafx.base/com.sun.javafx.reflect=ALL-UNNAMED --add-exports javafx.base/com.sun.javafx.beans=ALL-UNNAMED --add-exports javafx.base/com.sun.javafx.runtime=ALL-UNNAMED --add-exports javafx.base/com.sun.javafx.collections=ALL-UNNAMED --add-exports javafx.graphics/com.sun.javafx.tk=ALL-UNNAMED --add-exports javafx.base/com.sun.javafx.binding=ALL-UNNAMED --add-exports javafx.base/com.sun.javafx.logging=ALL-UNNAMED --add-exports javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED --add-opens javafx.graphics/javafx.concurrent=ALL-UNNAMED
+```
+
+Useful on linux, and with repo content
+
+```
+-Dsun.awt.disablegrab=true -DM2_PATH=/mnt/STORAGE/Work/VetsEZ/Maven/repository/
+```
+To turn off messages such as the following from JAXB:
+```
+WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by com.sun.xml.bind.v2.runtime.reflect.opt.Injector (file:/home/tra/.m2/repository/com/sun/xml/bind/jaxb-impl/2.3.0/jaxb-impl-2.3.0.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int)
+WARNING: Please consider reporting this to the maintainers of com.sun.xml.bind.v2.runtime.reflect.opt.Injector
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release
+```
+Add the following flag to the java start  command
+```
+--add-opens java.base/java.lang=ALL-UNNAMED
 ```
