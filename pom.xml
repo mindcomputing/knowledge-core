@@ -988,7 +988,10 @@
 					<enableSshAgent>true</enableSshAgent>
 					<fetchRemote>false</fetchRemote>
 					<installProject>true</installProject>
-					<scmCommentPrefix>[jgitflow-plugin] </scmCommentPrefix>
+					<commitMessages>
+						<releaseStartMessage>[gitflow] Update versions for release</releaseStartMessage>
+						<releaseFinishMessage>[gitflow] Update for next development version</releaseFinishMessage>
+					</commitMessages>
 					<username>${git.user}</username>
 					<password>${git.password}</password>
 					<skipTestProject>true</skipTestProject>
