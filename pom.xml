@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>sh.isaac</groupId>
 	<artifactId>uts-core</artifactId>
-	<version>uts-6.00-SNAPSHOT</version>
+	<version>6.00-uts-SNAPSHOT</version>
 
 	<name>UTS Core: Universal Terminology Suite</name>
 
@@ -930,7 +930,7 @@
 									<pluginExecutionFilter>
 										<groupId>sh.isaac.uts-core.core</groupId>
 										<artifactId>mojo</artifactId>
-										<versionRange>[uts-6.00-SNAPSHOT,)</versionRange>
+										<versionRange>[6.00-uts-SNAPSHOT,)</versionRange>
 										<goals>
 											<goal>export-taxonomy</goal>
 											<goal>setup-isaac</goal>
@@ -980,6 +980,7 @@
 				<artifactId>gitflow-maven-plugin</artifactId>
 				<version>${gitflow-maven-plugin-version}</version>
 				<configuration>
+					<verbose>true</verbose>
 					<tychoBuild>false</tychoBuild>
 					<allowSnapshots>false</allowSnapshots>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
@@ -987,7 +988,6 @@
 					<enableSshAgent>true</enableSshAgent>
 					<fetchRemote>false</fetchRemote>
 					<installProject>true</installProject>
-					<pushReleases>true</pushReleases>
 					<scmCommentPrefix>[jgitflow-plugin] </scmCommentPrefix>
 					<username>${git.user}</username>
 					<password>${git.password}</password>
