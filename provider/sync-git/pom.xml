@@ -10,8 +10,8 @@
 	<packaging>jar</packaging>
 	<name>ISAAC provider: Sync - git</name>
 	<description>
-      ISAAC File Sync service, implemented with GIT
-   </description>
+		ISAAC File Sync service, implemented with GIT
+	</description>
 
 	<dependencies>
 		<dependency>
