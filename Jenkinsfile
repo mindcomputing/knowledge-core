@@ -44,6 +44,13 @@ pipeline {
 		always { 
 			junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
 			cleanWs()
+			slackSend()
+		}
+		failure {
+			slackSend()
+		}
+		fixed {
+			slackSend()
 		}
 	}
 }
