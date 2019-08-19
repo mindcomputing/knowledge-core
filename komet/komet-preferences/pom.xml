@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>sh.isaac.uts-core</groupId>
 		<artifactId>komet</artifactId>
-		<version>6.05-uts</version>
+		<version>6.06-uts-SNAPSHOT</version>
 	</parent>
 	<groupId>sh.isaac.uts-core.komet</groupId>
 	<artifactId>komet-preferences</artifactId>

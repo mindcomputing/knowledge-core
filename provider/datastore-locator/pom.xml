@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>sh.isaac.uts-core</groupId>
 		<artifactId>provider</artifactId>
-		<version>6.05-uts</version>
+		<version>6.06-uts-SNAPSHOT</version>
 	</parent>
 	<groupId>sh.isaac.uts-core.provider</groupId>
 	<artifactId>datastore-locator</artifactId>
