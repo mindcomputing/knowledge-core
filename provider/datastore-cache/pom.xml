@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>sh.isaac.uts-core</groupId>
 		<artifactId>provider</artifactId>
-		<version>6.07-uts</version>
+		<version>6.08-uts-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
