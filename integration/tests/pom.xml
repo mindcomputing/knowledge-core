@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>sh.isaac.uts-core</groupId>
 		<artifactId>integration</artifactId>
-		<version>6.10-uts</version>
+		<version>6.11-uts-SNAPSHOT</version>
 	</parent>
 	<groupId>sh.isaac.uts-core.integration</groupId>
 	<artifactId>tests</artifactId>
