@@ -131,7 +131,7 @@ to build this code.
 Make sure that offline is set to false in your settings.xml file. 
 
 ```
-mvn -B gitflow:release-start gitflow:release-finish -DreleaseVersion=6.09-uts -DdevelopmentVersion=6.10-uts-SNAPSHOT -DargLine=-DaltDeploymentRepository=awsnexus::default::http://52.61.167.217:9092/nexus/content/repositories/releases -DpostReleaseGoals="clean deploy"
+mvn -B gitflow:release-start gitflow:release-finish -DreleaseVersion=6.10-uts -DdevelopmentVersion=6.11-uts-SNAPSHOT -DargLine=-DaltDeploymentRepository=awsnexus::default::http://52.61.167.217:9092/nexus/content/repositories/releases -DpostReleaseGoals="clean deploy"
 
 ```
 
