@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>sh.isaac.uts-core</groupId>
 		<artifactId>provider</artifactId>
-		<version>6.22-uts</version>
+		<version>6.23-uts-SNAPSHOT</version>
 	</parent>
 	<groupId>sh.isaac.uts-core.provider</groupId>
 	<artifactId>query</artifactId>
