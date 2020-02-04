@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>sh.isaac.uts-core</groupId>
 		<artifactId>provider</artifactId>
-		<version>6.24-uts</version>
+		<version>6.25-uts-SNAPSHOT</version>
 	</parent>
 	<groupId>sh.isaac.uts-core.provider</groupId>
 	<artifactId>postgresql-datastore</artifactId>
