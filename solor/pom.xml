@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>sh.isaac</groupId>
 		<artifactId>uts-core</artifactId>
-		<version>6.28-uts-SNAPSHOT</version>
+		<version>6.28-uts</version>
 	</parent>
 	<groupId>sh.isaac.uts-core</groupId>
 	<artifactId>solor</artifactId>
