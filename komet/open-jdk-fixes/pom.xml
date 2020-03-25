@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>sh.isaac.uts-core</groupId>
 		<artifactId>komet</artifactId>
-		<version>6.30-uts</version>
+		<version>6.31-uts-SNAPSHOT</version>
 	</parent>
 	<groupId>sh.isaac.uts-core.komet</groupId>
 	<artifactId>open-jdk-fixes</artifactId>

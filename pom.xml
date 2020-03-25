@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>sh.isaac</groupId>
 	<artifactId>uts-core</artifactId>
-	<version>6.30-uts</version>
+	<version>6.31-uts-SNAPSHOT</version>
 
 	<name>UTS Core: Universal Terminology Suite</name>
 
