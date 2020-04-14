@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>sh.isaac.uts-core</groupId>
 		<artifactId>misc</artifactId>
-		<version>6.32-uts-SNAPSHOT</version>
+		<version>6.32-uts</version>
 	</parent>
 	<groupId>sh.isaac.uts-core.misc</groupId>
 	<artifactId>importers</artifactId>
