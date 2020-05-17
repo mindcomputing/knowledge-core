@@ -56,6 +56,14 @@
 		<url>https://bitbucket.vetsez.net/scm/uts/uts-core.git</url>
 	</scm>
 
+	<distributionManagement>
+		<snapshotRepository>
+			<id>github</id>
+			<name>GitHub mindcomputing Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/mindcomputing/uts-core</url>
+		</snapshotRepository>
+	</distributionManagement>
+
 	<properties>
 		<!-- https://stackoverflow.com/questions/26144541/why-am-i-getting-maven-error-unable-to-determine-if-resource-x-exists-in-http#35673586 -->
 		<dependency.locations.enabled>false</dependency.locations.enabled>
