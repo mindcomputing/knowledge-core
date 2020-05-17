@@ -2,11 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>sh.isaac.uts-core</groupId>
+		<groupId>sh.isaac.knowledge-core</groupId>
 		<artifactId>core</artifactId>
-		<version>6.33-uts-SNAPSHOT</version>
+		<version>6.33-knowledge-SNAPSHOT</version>
 	</parent>
-	<groupId>sh.isaac.uts-core.core</groupId>
+	<groupId>sh.isaac.knowledge-core.core</groupId>
 	<artifactId>metadata</artifactId>
 	<packaging>jar</packaging>
 	<name>ISAAC core: Metadata</name>
@@ -17,7 +17,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>sh.isaac.uts-core.core</groupId>
+			<groupId>sh.isaac.knowledge-core.core</groupId>
 			<artifactId>api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -36,83 +36,83 @@
 		</resources>
 		<plugins>
 			<plugin>
-				<groupId>sh.isaac.uts-core.core</groupId>
+				<groupId>sh.isaac.knowledge-core.core</groupId>
 				<artifactId>mojo</artifactId>
 				<version>${project.version}</version>
 				<dependencies>
 					<dependency>
-						<groupId>sh.isaac.uts-core.provider</groupId>
+						<groupId>sh.isaac.knowledge-core.provider</groupId>
 						<artifactId>preferences</artifactId>
 						<version>${project.parent.version}</version>
 						<type>jar</type>
 					</dependency>
 					<dependency>
-						<groupId>sh.isaac.uts-core.core</groupId>
+						<groupId>sh.isaac.knowledge-core.core</groupId>
 						<artifactId>metadata-source</artifactId>
 						<version>${project.version}</version>
 					</dependency>
 					<dependency>
-						<groupId>sh.isaac.uts-core.core</groupId>
+						<groupId>sh.isaac.knowledge-core.core</groupId>
 						<artifactId>model</artifactId>
 						<version>${project.version}</version>
 					</dependency>
 					<dependency>
-						<groupId>sh.isaac.uts-core.provider</groupId>
+						<groupId>sh.isaac.knowledge-core.provider</groupId>
 						<artifactId>ibdf</artifactId>
 						<version>${project.version}</version>
 					</dependency>
 					<dependency>
-						<groupId>sh.isaac.uts-core.provider</groupId>
+						<groupId>sh.isaac.knowledge-core.provider</groupId>
 						<artifactId>chronology</artifactId>
 						<version>${project.version}</version>
 					</dependency>
 					<dependency>
-						<groupId>sh.isaac.uts-core.provider</groupId>
+						<groupId>sh.isaac.knowledge-core.provider</groupId>
 						<artifactId>identifier</artifactId>
 						<version>${project.version}</version>
 					</dependency>
 					<dependency>
-						<groupId>sh.isaac.uts-core.provider</groupId>
+						<groupId>sh.isaac.knowledge-core.provider</groupId>
 						<artifactId>path</artifactId>
 						<version>${project.version}</version>
 					</dependency>
 					<dependency>
-						<groupId>sh.isaac.uts-core.provider</groupId>
+						<groupId>sh.isaac.knowledge-core.provider</groupId>
 						<artifactId>commit</artifactId>
 						<version>${project.version}</version>
 					</dependency>
 					<dependency>
-						<groupId>sh.isaac.uts-core.provider</groupId>
+						<groupId>sh.isaac.knowledge-core.provider</groupId>
 						<artifactId>stamp</artifactId>
 						<version>${project.version}</version>
 					</dependency>
 					<dependency>
-						<groupId>sh.isaac.uts-core.provider</groupId>
+						<groupId>sh.isaac.knowledge-core.provider</groupId>
 						<artifactId>coordinate</artifactId>
 						<version>${project.version}</version>
 					</dependency>
 					<dependency>
-						<groupId>sh.isaac.uts-core.core</groupId>
+						<groupId>sh.isaac.knowledge-core.core</groupId>
 						<artifactId>log-config</artifactId>
 						<version>${project.version}</version>
 					</dependency>
 					<dependency>
-						<groupId>sh.isaac.uts-core.provider</groupId>
+						<groupId>sh.isaac.knowledge-core.provider</groupId>
 						<artifactId>progress</artifactId>
 						<version>${project.version}</version>
 					</dependency>
 					<dependency>
-						<groupId>sh.isaac.uts-core.provider</groupId>
+						<groupId>sh.isaac.knowledge-core.provider</groupId>
 						<artifactId>query</artifactId>
 						<version>${project.version}</version>
 					</dependency>
 					<dependency>
-						<groupId>sh.isaac.uts-core.core</groupId>
+						<groupId>sh.isaac.knowledge-core.core</groupId>
 						<artifactId>mapping-constants</artifactId>
 						<version>${project.version}</version>
 					</dependency>
 					<dependency>
-						<groupId>sh.isaac.uts-core.misc</groupId>
+						<groupId>sh.isaac.knowledge-core.misc</groupId>
 						<artifactId>vhat-constants</artifactId>
 						<version>${project.version}</version>
 					</dependency>
@@ -231,12 +231,12 @@
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>sh.isaac.uts-core.core</groupId>
+						<groupId>sh.isaac.knowledge-core.core</groupId>
 						<artifactId>mojo</artifactId>
 						<version>${project.version}</version>
 						<dependencies>
 							<dependency>
-								<groupId>sh.isaac.uts-core.provider</groupId>
+								<groupId>sh.isaac.knowledge-core.provider</groupId>
 								<artifactId>datastore-locator</artifactId>
 								<version>${project.version}</version>
 							</dependency>
@@ -256,12 +256,12 @@
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>sh.isaac.uts-core.core</groupId>
+						<groupId>sh.isaac.knowledge-core.core</groupId>
 						<artifactId>mojo</artifactId>
 						<version>${project.version}</version>
 						<dependencies>
 							<dependency>
-								<groupId>sh.isaac.uts-core.provider</groupId>
+								<groupId>sh.isaac.knowledge-core.provider</groupId>
 								<artifactId>postgress</artifactId>
 								<version>${project.version}</version>
 							</dependency>

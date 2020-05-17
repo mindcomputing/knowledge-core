@@ -73,7 +73,7 @@
 	
 	<dependencies>
 		<dependency>
-			<groupId>sh.isaac.uts-core.core</groupId>
+			<groupId>sh.isaac.knowledge-core.core</groupId>
 			<artifactId>mojo</artifactId>
 			<version>${loader.version}</version>
 			<scope>compile</scope>
@@ -130,7 +130,7 @@
 			</plugin>
 			
 			<plugin>
-				<groupId>sh.isaac.uts-core.core</groupId>
+				<groupId>sh.isaac.knowledge-core.core</groupId>
 				<artifactId>mojo</artifactId>
 				<version>${loader.version}</version>
 				<executions>
@@ -152,13 +152,13 @@
 				</executions>
 				<dependencies>
 					<dependency>
-						<groupId>sh.isaac.uts-core.core</groupId>
+						<groupId>sh.isaac.knowledge-core.core</groupId>
 						<artifactId>log-config</artifactId>
 						<version>${loader.version}</version>
 						<scope>compile</scope>
 					</dependency>
 					<dependency>
-						<groupId>sh.isaac.uts-core.misc</groupId>
+						<groupId>sh.isaac.knowledge-core.misc</groupId>
 						<artifactId>differ</artifactId>
 						<version>${loader.version}</version>
 						<scope>compile</scope>

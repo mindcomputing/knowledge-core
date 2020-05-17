@@ -3,10 +3,10 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>sh.isaac</groupId>
-		<artifactId>uts-core</artifactId>
-		<version>6.33-uts-SNAPSHOT</version>
+		<artifactId>knowledge-core</artifactId>
+		<version>6.33-knowledge-SNAPSHOT</version>
 	</parent>
-	<groupId>sh.isaac.uts-core</groupId>
+	<groupId>sh.isaac.knowledge-core</groupId>
 	<artifactId>provider</artifactId>
 	<packaging>pom</packaging>
 	<name>ISAAC provider: (MMP)</name>

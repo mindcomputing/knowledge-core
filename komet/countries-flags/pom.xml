@@ -2,11 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>sh.isaac.uts-core</groupId>
+		<groupId>sh.isaac.knowledge-core</groupId>
 		<artifactId>komet</artifactId>
-		<version>6.33-uts-SNAPSHOT</version>
+		<version>6.33-knowledge-SNAPSHOT</version>
 	</parent>
-	<groupId>sh.isaac.uts-core.komet</groupId>
+	<groupId>sh.isaac.knowledge-core.komet</groupId>
 	<artifactId>countries-flags</artifactId>
 	<packaging>jar</packaging>
 	<name>ISAAC’s KOMET: Countries and flags</name>

@@ -2,11 +2,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>sh.isaac.uts-core</groupId>
+		<groupId>sh.isaac.knowledge-core</groupId>
 		<artifactId>komet</artifactId>
-		<version>6.33-uts-SNAPSHOT</version>
+		<version>6.33-knowledge-SNAPSHOT</version>
 	</parent>
-	<groupId>sh.isaac.uts-core.komet</groupId>
+	<groupId>sh.isaac.knowledge-core.komet</groupId>
 	<artifactId>semantic-view</artifactId>
 	<packaging>jar</packaging>
 
@@ -17,30 +17,30 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>sh.isaac.uts-core.core</groupId>
+			<groupId>sh.isaac.knowledge-core.core</groupId>
 			<artifactId>metadata</artifactId>
 			<version>${project.parent.version}</version>
 			<type>jar</type>
 		</dependency>
 		<dependency>
-			<groupId>sh.isaac.uts-core.misc</groupId>
+			<groupId>sh.isaac.knowledge-core.misc</groupId>
 			<artifactId>util</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>sh.isaac.uts-core.integration</groupId>
+			<groupId>sh.isaac.knowledge-core.integration</groupId>
 			<artifactId>db-config-builder-ui</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 
 		<!-- ISAAC App Utils. -->
 		<dependency>
-			<groupId>sh.isaac.uts-core.komet</groupId>
+			<groupId>sh.isaac.knowledge-core.komet</groupId>
 			<artifactId>iconography</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>sh.isaac.uts-core.komet</groupId>
+			<groupId>sh.isaac.knowledge-core.komet</groupId>
 			<artifactId>gui-contracts</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>

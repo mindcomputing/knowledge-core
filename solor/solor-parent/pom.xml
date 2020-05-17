@@ -2,11 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>sh.isaac.uts-core</groupId>
+		<groupId>sh.isaac.knowledge-core</groupId>
 		<artifactId>solor</artifactId>
-		<version>6.33-uts-SNAPSHOT</version>
+		<version>6.33-knowledge-SNAPSHOT</version>
 	</parent>
-	<groupId>sh.isaac.uts-core.solor</groupId>
+	<groupId>sh.isaac.knowledge-core.solor</groupId>
 	<artifactId>solor-parent</artifactId>
 	<packaging>pom</packaging>
 	<name>ISAAC SOLOR: Parent pom</name>
@@ -29,7 +29,7 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
-					<groupId>sh.isaac.uts-core.solor</groupId>
+					<groupId>sh.isaac.knowledge-core.solor</groupId>
 					<artifactId>solor-mojo</artifactId>
 					<version>${project.parent.version}</version>
 				</plugin>
@@ -41,7 +41,7 @@
 				<artifactId>maven-enforcer-plugin</artifactId>
 				<dependencies>
 					<dependency>
-						<groupId>sh.isaac.uts-core.solor</groupId>
+						<groupId>sh.isaac.knowledge-core.solor</groupId>
 						<artifactId>solor-mojo</artifactId>
 						<version>${project.parent.version}</version>
 					</dependency>

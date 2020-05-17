@@ -3,22 +3,22 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>sh.isaac</groupId>
-	<artifactId>uts-core</artifactId>
-	<version>6.33-uts-SNAPSHOT</version>
+	<artifactId>knowledge-core</artifactId>
+	<version>6.33-knowledge-SNAPSHOT</version>
 
-	<name>UTS Core: Universal Terminology Suite</name>
+	<name>Knowledge Core</name>
 
-	<description>UTS: Universal Terminology Suite: Based on ISAAC: Informatics Analytic Architecture. ISAAC is a project to support
-		tooling for a coherent informatics  architecture that builds on top of a description-logic terminology foundation.
-		This ISAAC parent pom that standardizes common dependencies and plugins for ISAAC modules.
+	<description>
+		Based on the Solor.io codebase, formerly known as ISAAC.
+		A dynamic semantic architecture for the analysis of models, logic, and language.
 	</description>
 
-	<url>http://solor.io</url>
+	<url>https://github.com/mindcomputing/knowledge-core</url>
 
 	<organization>
 		<name>
-			Organizations participating in ISAAC, ISAAC's KOMET, and SOLOR development include the
-			US Veterans Health Administration, OSHERA, and the Health Services Platform Consortium.
+			Organizations participating in Knowledge, ISAAC, KOMET, and SOLOR development include the
+			US Veterans Health Administration, Mind Computing, OSHERA, Logica Health, and the Health Services Platform Consortium.
 		</name>
 	</organization>
 
@@ -53,14 +53,15 @@
 	<packaging>pom</packaging>
 
 	<scm>
-		<url>https://bitbucket.vetsez.net/scm/uts/uts-core.git</url>
+		<url>https://github.com/mindcomputing/knowledge-core</url>
+		<connection>scm:git:https://github.com/mindcomputing/knowledge-core.git</connection>
 	</scm>
 
 	<distributionManagement>
 		<snapshotRepository>
 			<id>github</id>
 			<name>GitHub mindcomputing Apache Maven Packages</name>
-			<url>https://maven.pkg.github.com/mindcomputing/uts-core</url>
+			<url>https://maven.pkg.github.com/mindcomputing/knowledge-core</url>
 		</snapshotRepository>
 	</distributionManagement>
 
@@ -148,16 +149,15 @@
 	<developers>
 		<developer>
 			<properties>
-				<info>For a listing of developers, clone the project and execute 'git shortlog
-					-sn'</info>
+				<info>For a listing of developers, clone the project and execute 'git shortlog -sn'</info>
 			</properties>
 			<name />
 		</developer>
 	</developers>
 
 	<issueManagement>
-		<system>Jira</system>
-		<url>https://jira.vetsez.net/projects/UTS/</url>
+		<system>Github</system>
+		<url>https://github.com/logicahealth/komet/issues</url>
 	</issueManagement>
 
 	<repositories>
@@ -938,9 +938,9 @@
 								</pluginExecution>
 								<pluginExecution>
 									<pluginExecutionFilter>
-										<groupId>sh.isaac.uts-core.core</groupId>
+										<groupId>sh.isaac.knowledge-core.core</groupId>
 										<artifactId>mojo</artifactId>
-										<versionRange>[6.00-uts-SNAPSHOT,)</versionRange>
+										<versionRange>[6.00-knowledge-SNAPSHOT,)</versionRange>
 										<goals>
 											<goal>export-taxonomy</goal>
 											<goal>setup-isaac</goal>
@@ -1014,7 +1014,7 @@
 						<hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
 						<supportBranchPrefix>support/</supportBranchPrefix>
 						<versionTagPrefix></versionTagPrefix>
-						<origin>vetsez</origin>
+						<origin>origin</origin>
 					</gitFlowConfig>
 				</configuration>
 			</plugin>

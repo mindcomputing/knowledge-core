@@ -2,11 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>sh.isaac.uts-core</groupId>
+		<groupId>sh.isaac.knowledge-core</groupId>
 		<artifactId>komet</artifactId>
-		<version>6.33-uts-SNAPSHOT</version>
+		<version>6.33-knowledge-SNAPSHOT</version>
 	</parent>
-	<groupId>sh.isaac.uts-core.komet</groupId>
+	<groupId>sh.isaac.knowledge-core.komet</groupId>
 	<artifactId>gui-contracts</artifactId>
 	<packaging>jar</packaging>
 
@@ -28,7 +28,7 @@
 			<artifactId>tornadofx-controls</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>sh.isaac.uts-core.core</groupId>
+			<groupId>sh.isaac.knowledge-core.core</groupId>
 			<artifactId>api</artifactId>
 			<version>${project.version}</version>
 			<type>jar</type>
@@ -39,57 +39,57 @@
 			<version>1.4.2</version>
 		</dependency>
 		<dependency>
-			<groupId>sh.isaac.uts-core.komet</groupId>
+			<groupId>sh.isaac.knowledge-core.komet</groupId>
 			<artifactId>iconography</artifactId>
 			<version>${project.parent.version}</version>
 			<type>jar</type>
 		</dependency>
 		<dependency>
-			<groupId>sh.isaac.uts-core.komet</groupId>
+			<groupId>sh.isaac.knowledge-core.komet</groupId>
 			<artifactId>countries-flags</artifactId>
 			<version>${project.parent.version}</version>
 			<type>jar</type>
 		</dependency>
 		<dependency>
-			<groupId>sh.isaac.uts-core.core</groupId>
+			<groupId>sh.isaac.knowledge-core.core</groupId>
 			<artifactId>metadata</artifactId>
 			<version>${project.parent.version}</version>
 			<type>jar</type>
 		</dependency>
 		<dependency>
-			<groupId>sh.isaac.uts-core.solor</groupId>
+			<groupId>sh.isaac.knowledge-core.solor</groupId>
 			<artifactId>direct-import</artifactId>
 			<version>${project.parent.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>sh.isaac.uts-core.misc</groupId>
+			<groupId>sh.isaac.knowledge-core.misc</groupId>
 			<artifactId>importers</artifactId>
 			<version>${project.parent.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>sh.isaac.uts-core.misc</groupId>
+			<groupId>sh.isaac.knowledge-core.misc</groupId>
 			<artifactId>util</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>sh.isaac.uts-core.integration</groupId>
+			<groupId>sh.isaac.knowledge-core.integration</groupId>
 			<artifactId>db-config-builder</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>sh.isaac.uts-core.core</groupId>
+			<groupId>sh.isaac.knowledge-core.core</groupId>
 			<artifactId>mojo</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>sh.isaac.uts-core.komet</groupId>
+			<groupId>sh.isaac.knowledge-core.komet</groupId>
 			<artifactId>open-jdk-fixes</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>sh.isaac.uts-core.solor</groupId>
+			<groupId>sh.isaac.knowledge-core.solor</groupId>
 			<artifactId>direct-export</artifactId>
 			<version>${project.parent.version}</version>
 			<scope>compile</scope>

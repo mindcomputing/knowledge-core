@@ -3,17 +3,17 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>sh.isaac.uts-core</groupId>
+		<groupId>sh.isaac.knowledge-core</groupId>
 		<artifactId>core</artifactId>
-		<version>6.33-uts-SNAPSHOT</version>
+		<version>6.33-knowledge-SNAPSHOT</version>
 	</parent>
-	<groupId>sh.isaac.uts-core.core</groupId>
+	<groupId>sh.isaac.knowledge-core.core</groupId>
 	<artifactId>model</artifactId>
 	<name>ISAAC core: Model</name>
 
 	<dependencies>
 		<dependency>
-			<groupId>sh.isaac.uts-core.core</groupId>
+			<groupId>sh.isaac.knowledge-core.core</groupId>
 			<artifactId>api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -28,7 +28,7 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>sh.isaac.uts-core.core</groupId>
+			<groupId>sh.isaac.knowledge-core.core</groupId>
 			<artifactId>log-config</artifactId>
 			<version>${project.parent.version}</version>
 			<scope>test</scope>

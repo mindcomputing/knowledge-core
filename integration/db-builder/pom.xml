@@ -2,11 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>sh.isaac.uts-core</groupId>
+		<groupId>sh.isaac.knowledge-core</groupId>
 		<artifactId>integration</artifactId>
-		<version>6.33-uts-SNAPSHOT</version>
+		<version>6.33-knowledge-SNAPSHOT</version>
 	</parent>
-	<groupId>sh.isaac.uts-core.integration</groupId>
+	<groupId>sh.isaac.knowledge-core.integration</groupId>
 	<artifactId>db-builder</artifactId>
 	<packaging>pom</packaging>
 	<name>ISAAC integration: Database builder</name>
@@ -24,100 +24,100 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
-					<groupId>sh.isaac.uts-core.core</groupId>
+					<groupId>sh.isaac.knowledge-core.core</groupId>
 					<artifactId>mojo</artifactId>
 					<version>${project.parent.version}</version>
 					<dependencies>
 						<dependency>
-							<groupId>sh.isaac.uts-core.provider</groupId>
+							<groupId>sh.isaac.knowledge-core.provider</groupId>
 							<artifactId>chronology</artifactId>
 							<version>${project.parent.version}</version>
 						</dependency>
 						<dependency>
-							<groupId>sh.isaac.uts-core.provider</groupId>
+							<groupId>sh.isaac.knowledge-core.provider</groupId>
 							<artifactId>datastore-locator</artifactId>
 							<version>${project.parent.version}</version>
 						</dependency>
 						<dependency>
-							<groupId>sh.isaac.uts-core.provider</groupId>
+							<groupId>sh.isaac.knowledge-core.provider</groupId>
 							<artifactId>preferences</artifactId>
 							<version>${project.parent.version}</version>
 						</dependency>
 						<dependency>
-							<groupId>sh.isaac.uts-core.core</groupId>
+							<groupId>sh.isaac.knowledge-core.core</groupId>
 							<artifactId>model</artifactId>
 							<version>${project.parent.version}</version>
 						</dependency>
 						<dependency>
-							<groupId>sh.isaac.uts-core.provider</groupId>
+							<groupId>sh.isaac.knowledge-core.provider</groupId>
 							<artifactId>ibdf</artifactId>
 							<version>${project.parent.version}</version>
 						</dependency>
 						<dependency>
-							<groupId>sh.isaac.uts-core.provider</groupId>
+							<groupId>sh.isaac.knowledge-core.provider</groupId>
 							<artifactId>commit</artifactId>
 							<version>${project.parent.version}</version>
 						</dependency>
 						<dependency>
-							<groupId>sh.isaac.uts-core.provider</groupId>
+							<groupId>sh.isaac.knowledge-core.provider</groupId>
 							<artifactId>stamp</artifactId>
 							<version>${project.parent.version}</version>
 						</dependency>
 						<dependency>
-							<groupId>sh.isaac.uts-core.provider</groupId>
+							<groupId>sh.isaac.knowledge-core.provider</groupId>
 							<artifactId>chronology</artifactId>
 							<version>${project.parent.version}</version>
 						</dependency>
 						<dependency>
-							<groupId>sh.isaac.uts-core.provider</groupId>
+							<groupId>sh.isaac.knowledge-core.provider</groupId>
 							<artifactId>memory-managment</artifactId>
 							<version>${project.parent.version}</version>
 						</dependency>
 						<dependency>
-							<groupId>sh.isaac.uts-core.provider</groupId>
+							<groupId>sh.isaac.knowledge-core.provider</groupId>
 							<artifactId>progress</artifactId>
 							<version>${project.parent.version}</version>
 						</dependency>
 						<dependency>
-							<groupId>sh.isaac.uts-core.provider</groupId>
+							<groupId>sh.isaac.knowledge-core.provider</groupId>
 							<artifactId>coordinate</artifactId>
 							<version>${project.parent.version}</version>
 						</dependency>
 						<dependency>
-							<groupId>sh.isaac.uts-core.provider</groupId>
+							<groupId>sh.isaac.knowledge-core.provider</groupId>
 							<artifactId>path</artifactId>
 							<version>${project.parent.version}</version>
 						</dependency>
 						<dependency>
-							<groupId>sh.isaac.uts-core.provider</groupId>
+							<groupId>sh.isaac.knowledge-core.provider</groupId>
 							<artifactId>logic</artifactId>
 							<version>${project.parent.version}</version>
 							<exclusions>
 								<exclusion>
-									<groupId>sh.isaac.uts-core.provider</groupId>
+									<groupId>sh.isaac.knowledge-core.provider</groupId>
 									<artifactId>taxonomy</artifactId>
 								</exclusion>
 							</exclusions>
 						</dependency>
 						<dependency>
-							<groupId>sh.isaac.uts-core.provider</groupId>
+							<groupId>sh.isaac.knowledge-core.provider</groupId>
 							<artifactId>query</artifactId>
 							<version>${project.parent.version}</version>
 						</dependency>
 						<dependency>
-							<groupId>sh.isaac.uts-core.core</groupId>
+							<groupId>sh.isaac.knowledge-core.core</groupId>
 							<artifactId>log-config</artifactId>
 							<version>${project.parent.version}</version>
 						</dependency>
 						<!-- This shouldn't be needed, but in the db builder GUI, we do depend on this, and the maven executor doesn't keep the classpaths clean 
 							which causes classpath confusion, and bizarre errors. Easier to just include this on the mojo execution classpath as well. -->
 						<dependency>
-							<groupId>sh.isaac.uts-core.provider</groupId>
+							<groupId>sh.isaac.knowledge-core.provider</groupId>
 							<artifactId>sync-git</artifactId>
 							<version>${project.parent.version}</version>
 						</dependency>
 						<dependency>
-							<groupId>sh.isaac.uts-core.misc</groupId>
+							<groupId>sh.isaac.knowledge-core.misc</groupId>
 							<artifactId>vhat-util</artifactId>
 							<version>${project.parent.version}</version>
 						</dependency>

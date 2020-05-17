@@ -3,11 +3,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>sh.isaac.uts-core</groupId>
+		<groupId>sh.isaac.knowledge-core</groupId>
 		<artifactId>misc</artifactId>
-		<version>6.33-uts-SNAPSHOT</version>
+		<version>6.33-knowledge-SNAPSHOT</version>
 	</parent>
-	<groupId>sh.isaac.uts-core.misc</groupId>
+	<groupId>sh.isaac.knowledge-core.misc</groupId>
 	<artifactId>importers</artifactId>
 	<packaging>maven-plugin</packaging>
 
@@ -15,32 +15,32 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>sh.isaac.uts-core.misc</groupId>
+			<groupId>sh.isaac.knowledge-core.misc</groupId>
 			<artifactId>util</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>sh.isaac.uts-core.misc</groupId>
+			<groupId>sh.isaac.knowledge-core.misc</groupId>
 			<artifactId>vhat-constants</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>sh.isaac.uts-core.misc</groupId>
+			<groupId>sh.isaac.knowledge-core.misc</groupId>
 			<artifactId>vhat-util</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>sh.isaac.uts-core.integration</groupId>
+			<groupId>sh.isaac.knowledge-core.integration</groupId>
 			<artifactId>import-utils</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>sh.isaac.uts-core.core</groupId>
+			<groupId>sh.isaac.knowledge-core.core</groupId>
 			<artifactId>model</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>sh.isaac.uts-core.solor</groupId>
+			<groupId>sh.isaac.knowledge-core.solor</groupId>
 			<artifactId>direct-import</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
@@ -97,7 +97,7 @@
 		</dependency>
 		<!-- This gets us nice console logging, so long as we are running ad-hoc tests from the src/test/java package -->
 		<dependency>
-			<groupId>sh.isaac.uts-core.core</groupId>
+			<groupId>sh.isaac.knowledge-core.core</groupId>
 			<artifactId>log-config</artifactId>
 			<version>${project.parent.version}</version>
 			<scope>test</scope>
@@ -112,7 +112,7 @@
 			<artifactId>SnomedCTParser</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>sh.isaac.uts-core.core</groupId>
+			<groupId>sh.isaac.knowledge-core.core</groupId>
 			<artifactId>metadata</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
