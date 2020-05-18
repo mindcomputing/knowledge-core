@@ -19,6 +19,5 @@
 		<module>util</module>
 		<module>vhat-constants</module>
 		<module>vhat-util</module>
-		<module>differ</module>
 	</modules>
 </project>
