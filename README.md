@@ -1,5 +1,6 @@
 Knowledge Core
 ======================
+![Knowledge Snapshot Build](https://github.com/mindcomputing/knowledge-core/workflows/Knowledge%20Snapshot%20Build/badge.svg)
 
 This project is a Mind Computing maintained fork of https://github.com/logicahealth/komet
 
