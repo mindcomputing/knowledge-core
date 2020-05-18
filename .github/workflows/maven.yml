@@ -1,6 +1,6 @@
 # This is for GitHub CI
 
-name: Test build Documentation
+name: Knowledge Snapshot Build
 
 on:
   push:
