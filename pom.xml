@@ -71,7 +71,7 @@
 		<enforcer-api.version>3.0.0-M3</enforcer-api.version>
 		<fortify.version>16.10</fortify.version>
 		<gitflow-maven-plugin-version>1.14.0</gitflow-maven-plugin-version>
-		<guava.version>28.1-jre</guava.version>
+		<guava.version>32.0.0-jre</guava.version>
 		<hk2.version>2.6.1</hk2.version>
 		<HK2Utilities.version>1.5.2</HK2Utilities.version>
 		<httpclient.version>4.5.10</httpclient.version>
