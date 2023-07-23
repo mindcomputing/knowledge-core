@@ -82,7 +82,7 @@
 		<jdepend-maven-plugin.version>2.0</jdepend-maven-plugin.version>
 		<jna.version>5.5.0</jna.version>
 		<json-io.version>4.11.1</json-io.version>
-		<junit.version>4.12</junit.version>  <!-- Need to migrate to 5 at some point -->
+		<junit.version>4.13.1</junit.version>  <!-- Need to migrate to 5 at some point -->
 		<lifecycle-mapping.version>1.0.0</lifecycle-mapping.version>
 		<log4j.version>2.12.1</log4j.version>
 		<maven-assembly-plugin.version>3.2.0</maven-assembly-plugin.version>
